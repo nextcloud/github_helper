@@ -1,0 +1,38 @@
+{
+  "org": "nextcloud",
+  "repos": [
+    "server",
+    "activity",
+    "apps",
+    "documentation",
+    "files_primary_s3",
+    "files_pdfviewer",
+    "files_texteditor",
+    "files_videoplayer",
+    "firstrunwizard",
+    "gallery",
+    "notifications",
+    "password_policy",
+    "serverinfo",
+    "templateeditor",
+    "user_saml",
+    "updater"
+  ],
+  "dueDates": {
+  },
+  "renameLabels": {
+  },
+  "addLabels": [
+  ],
+  "deleteLabels": [
+  ],
+  "renameMilestones": {
+  },
+  "addMilestones": [
+    "Nextcloud 9.0.54",
+    "Nextcloud 10.0",
+    "Nextcloud 11.0"
+  ],
+  "versionAdded": {
+  }
+}
