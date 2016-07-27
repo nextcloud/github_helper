@@ -5,6 +5,8 @@
     "activity",
     "apps",
     "documentation",
+    "files_accesscontrol",
+    "files_automatedtagging",
     "files_primary_s3",
     "files_pdfviewer",
     "files_texteditor",
