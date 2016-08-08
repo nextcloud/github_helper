@@ -23,9 +23,6 @@ if(!file_exists('credentials.json')) {
 function milestoneSort($a, $b) {
 	return strnatcasecmp($a['title'], $b['title']);
 }
-function labelSort($a, $b) {
-	return strnatcasecmp($a['name'], $b['name']);
-}
 function skipBecauseOfVersionConstraint($versionAdded, $milestoneOrLabelName) {
 	$version = explode('-', $milestoneOrLabelName)[0];
 	return version_compare($versionAdded, $version) === 1;
@@ -42,12 +39,10 @@ $repositories = [];
 $updateDueDate = [];
 
 $SHOW_MILESTONE = true;
-$SHOW_LABEL = true;
 
 foreach($config['repos'] as $repo) {
 	$repositories[$repo] = [
 		'milestones' => [],
-		'labels' => [],
 	];
 
 	print('Repo ' . $config['org'] . '/' . $repo . PHP_EOL);
@@ -79,38 +74,6 @@ foreach($config['repos'] as $repo) {
 			];
 		}
 		if($SHOW_MILESTONE) print($NO_COLOR . PHP_EOL);
-
-	}
-
-		continue;
-	if($SHOW_LABEL) print("  Labels" . PHP_EOL);
-	$labels = $paginator->fetchAll($client->api('issues')->labels(), 'all', [$config['org'], $repo]);
-	uasort($labels, 'labelSort');
-	foreach($labels as $label) {
-		if($label['name'][1] === '.') {
-			$repositories[$repo]['labels'][$label['name']] = null;
-
-			$repositories[$repo]['labels'][$label['name']] = [
-				'color' => $label['color']
-			];
-			if(strpos($label['name'], '-current') !== false) {
-				$issues = $client->api('issue')->all($config['org'], $repo, ['labels' => $label['name']]);
-				$openCount = count($issues);
-
-				if($SHOW_LABEL) {
-					if($openCount === 0) {
-						print($COLOR_GRAY);
-					} else {
-						print($COLOR_RED);
-					}
-					print("    " . $label['name'] . ' ' . $openCount . $NO_COLOR . PHP_EOL);
-				}
-				$repositories[$repo]['labels'][$label['name']] = [
-					'color' => $label['color'],
-					'open' => $openCount,
-				];
-			}
-		}
 	}
 }
 
@@ -159,41 +122,6 @@ foreach($repositories as $name => $repository) {
 			#continue; // comment this to ADD MILESTONES
 			// TODO ask for the update
 			$client->api('issue')->milestones()->create($config['org'], $name, $data);
-
-		}
-	}
-
-		continue;
-
-	foreach($repository['labels'] as $label => $info) {
-		if(array_key_exists($label, $config['renameLabels'])) {
-			print($COLOR_RED . $config['org'] . '/' . $name . ': rename label ' . $label . ' -> ' . $config['renameLabels'][$label] . ' (open issues: ' . $info['open'] . ')' . $NO_COLOR . PHP_EOL);
-			continue; // comment this to RENAME LABELS
-			// TODO ask for the update
-			$client->api('issue')->labels()->update($config['org'], $name, $label, $config['renameLabels'][$label], $info['color']);
-		}
-	}
-
-	foreach($config['deleteLabels'] as $label) {
-		if(array_key_exists($label, $repository['labels'])) {
-			print($COLOR_RED . $config['org'] . '/' . $name . ': delete label ' . $label . $NO_COLOR . PHP_EOL);
-			continue; // comment this to DELETE LABELS
-			// TODO ask for the update
-			$client->api('issue')->labels()->deleteLabel($config['org'], $name, $label);
-
-		}
-	}
-
-	foreach($config['addLabels'] as $label) {
-		if(!array_key_exists($label, $repository['labels'])) {
-			if(isset($config['versionAdded'][$name]) && skipBecauseOfVersionConstraint($config['versionAdded'][$name], $label)) {
-				print($config['org'] . '/' . $name . ': skipped label ' . $label . $NO_COLOR . PHP_EOL);
-				continue;
-			}
-			print($COLOR_RED . $config['org'] . '/' . $name . ': add label ' . $label . $NO_COLOR . PHP_EOL);
-			continue; // comment this to ADD LABELS
-			// TODO ask for the update
-			$client->api('issue')->labels()->create($config['org'], $name, [ 'name' => $label, 'color' => '996633' ]);
 
 		}
 	}
