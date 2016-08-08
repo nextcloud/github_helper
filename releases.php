@@ -63,7 +63,7 @@ foreach($config['repos'] as $repo) {
 		} else {
 			if($SHOW_MILESTONE) print($COLOR_GRAY. $milestone['title']);
 		}
-		/*if(property_exists($config['dueDates'], $milestone['title']) &&
+		if(array_key_exists($milestone['title'], $config['dueDates']) &&
 			$milestone['due_on'] !== $config['dueDates'][$milestone['title']] . 'T04:00:00Z') {
 			if($SHOW_MILESTONE) print($COLOR_RED . ' update due date');
 			$updateDueDate[] = [
@@ -77,7 +77,7 @@ foreach($config['repos'] as $repo) {
 				'oldDueDate' => $milestone['due_on'],
 				'newDueDate' => $config['dueDates'][$milestone['title']] . 'T04:00:00Z',
 			];
-		}*/
+		}
 		if($SHOW_MILESTONE) print($NO_COLOR . PHP_EOL);
 
 	}
@@ -155,7 +155,7 @@ foreach($repositories as $name => $repository) {
 			];
 			if(array_key_exists($milestone, $config['dueDates'])) {
 				$data['due_on'] = $config['dueDates'][$milestone] . 'T04:00:00Z';
-		}
+			}
 			#continue; // comment this to ADD MILESTONES
 			// TODO ask for the update
 			$client->api('issue')->milestones()->create($config['org'], $name, $data);
@@ -204,7 +204,7 @@ if(count($updateDueDate)) {
 
 	foreach($updateDueDate as $date) {
 		print($COLOR_RED . $date['org'] . '/' . $date['repo'] . ' ' . $date['title'] . ' from ' . $date['oldDueDate'] . ' to ' . $date['newDueDate'] . $NO_COLOR . PHP_EOL);
-		continue; // comment this to UPDATE DUE DATES
+		#continue; // comment this to UPDATE DUE DATES
 		// TODO ask for the update
 		$client->api('issue')->milestones()->update($date['org'], $date['repo'], $date['number'], [
 			'title' => $date['title'],
