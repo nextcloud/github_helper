@@ -7,8 +7,8 @@
     "documentation",
     "files_accesscontrol",
     "files_automatedtagging",
-    "files_primary_s3",
     "files_pdfviewer",
+    "files_retention",
     "files_texteditor",
     "files_videoplayer",
     "firstrunwizard",
@@ -35,7 +35,12 @@
     "Nextcloud 11.0"
   ],
   "versionAdded": {
+    "files_accesscontrol": "10",
+    "files_automatedtagging": "10",
+    "files_retention": "10",
     "networkconfig": "11",
-    "nextcloud_announcements": "11"
+    "nextcloud_announcements": "11",
+    "serverinfo": "10",
+    "survey_client": "10"
   }
 }
