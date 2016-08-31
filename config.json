@@ -3,7 +3,6 @@
   "repos": [
     "server",
     "activity",
-    "nextcloud_announcements",
     "apps",
     "documentation",
     "files_accesscontrol",
@@ -14,6 +13,8 @@
     "files_videoplayer",
     "firstrunwizard",
     "gallery",
+    "networkconfig",
+    "nextcloud_announcements",
     "notifications",
     "password_policy",
     "serverinfo",
@@ -33,5 +34,7 @@
     "Nextcloud 11.0"
   ],
   "versionAdded": {
+    "networkconfig": "11",
+    "nextcloud_announcements": "11"
   }
 }

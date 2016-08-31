@@ -24,7 +24,7 @@ function milestoneSort($a, $b) {
 	return strnatcasecmp($a['title'], $b['title']);
 }
 function skipBecauseOfVersionConstraint($versionAdded, $milestoneOrLabelName) {
-	$version = explode('-', $milestoneOrLabelName)[0];
+	$version = explode(' ', $milestoneOrLabelName)[1];
 	return version_compare($versionAdded, $version) === 1;
 }
 
