@@ -3,6 +3,7 @@
   "repos": [
     "server",
     "activity",
+    "nextcloud_announcements",
     "apps",
     "documentation",
     "files_accesscontrol",
@@ -23,11 +24,12 @@
   "dueDates": {
     "Nextcloud 10.0": "2016-08-27"
   },
-  "renameMilestones": {
-  },
+  "closeMilestones": [
+    "Nextcloud 10.0"
+  ],
   "addMilestones": [
     "Nextcloud 9.0.54",
-    "Nextcloud 10.0",
+    "Nextcloud 10.0.1",
     "Nextcloud 11.0"
   ],
   "versionAdded": {
