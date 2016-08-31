@@ -82,24 +82,24 @@ print("Remaining requests to GitHub this hour: " . \Github\HttpClient\Message\Re
 
 foreach($repositories as $name => $repository) {
 	foreach($repository['milestones'] as $milestone => $info) {
-		if(array_key_exists($milestone, $config['renameMilestones'])) {
+		if(in_array($milestone, $config['closeMilestones'])) {
 			$data = [
-				"title" => $config['renameMilestones'][$milestone],
+				"title" => $milestone,
 				"state" => $info['state'],
 				"description" => $info['description'] ,
 				"due_on" => $info['due_on']
 			];
-			if(strpos($config['renameMilestones'][$milestone], '-') === false && $info['open_issues'] === 0) {
+			if($info['open_issues'] === 0) {
 				$data['state'] = 'closed';
 			}
 			$textStyle = $data['state'] === 'open' ? $BOLD : '';
-			print($COLOR_RED . $config['org'] . '/' . $name . ': rename milestone ' . $milestone . ' -> ' . $config['renameMilestones'][$milestone] . ' - state: ' . $textStyle . $data['state'] . $NO_COLOR . PHP_EOL);
+			$textColor = $data['state'] === 'open' ? $COLOR_RED : '';
+			print($textColor . $config['org'] . '/' . $name . ': close milestone ' . $milestone . ' - state: ' . $textStyle . $data['state'] . $NO_COLOR . PHP_EOL);
 
-			if(array_key_exists($config['renameMilestones'][$milestone], $config['dueDates'])) {
-				$newName = $config['renameMilestones'][$milestone];
-				$data['due_on'] = $config['dueDates'][$newName] . 'T04:00:00Z';
+			if(array_key_exists($milestone, $config['dueDates'])) {
+				$data['due_on'] = $config['dueDates'][$milestone] . 'T04:00:00Z';
 			}
-			continue; // comment this to RENAME MILESTONES
+			#continue; // comment this to CLOSE MILESTONES
 			// TODO ask for the update
 			$client->api('issue')->milestones()->update($config['org'], $name, $info['number'], $data);
 		}
@@ -112,7 +112,7 @@ foreach($repositories as $name => $repository) {
 				continue;
 			}
 
-			print($COLOR_RED . $config['org'] . '/' . $name . ': add milestone ' . $milestone . $NO_COLOR . PHP_EOL);
+			print($config['org'] . '/' . $name . ': add milestone ' . $milestone . $NO_COLOR . PHP_EOL);
 			$data = [
 				"title" => $milestone
 			];
