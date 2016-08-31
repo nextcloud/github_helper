@@ -18,6 +18,7 @@
     "notifications",
     "password_policy",
     "serverinfo",
+    "survey_client",
     "templateeditor",
     "user_saml",
     "updater"

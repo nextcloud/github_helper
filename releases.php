@@ -132,6 +132,9 @@ if(count($updateDueDate)) {
 
 	foreach($updateDueDate as $date) {
 		print($COLOR_RED . $date['org'] . '/' . $date['repo'] . ' ' . $date['title'] . ' from ' . $date['oldDueDate'] . ' to ' . $date['newDueDate'] . $NO_COLOR . PHP_EOL);
+		if(in_array($date['title'], $config['closeMilestones'])) {
+			continue; // no need to change the due date of a milestone that is meant to be closed
+		}
 		#continue; // comment this to UPDATE DUE DATES
 		// TODO ask for the update
 		$client->api('issue')->milestones()->update($date['org'], $date['repo'], $date['number'], [
