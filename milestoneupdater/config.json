@@ -7,7 +7,9 @@
     "apps",
     "documentation",
     "files_accesscontrol",
+    "files_antivirus",
     "files_automatedtagging",
+    "files_downloadactivity",
     "files_pdfviewer",
     "files_retention",
     "files_texteditor",
@@ -25,8 +27,6 @@
     "updater"
   ],
   "dueDates": {
-    "Nextcloud 9.0.54": "2016-09-21",
-    "Nextcloud 10.0": "2016-08-27",
     "Nextcloud 10.0.1": "2016-09-21"
   },
   "closeMilestones": [
@@ -42,6 +42,7 @@
   "versionAdded": {
     "files_accesscontrol": "10",
     "files_automatedtagging": "10",
+    "files_downloadactivity": "11",
     "files_retention": "10",
     "networkconfig": "11",
     "nextcloud_announcements": "11",
