@@ -23,8 +23,7 @@
     "serverinfo",
     "survey_client",
     "templateeditor",
-    "user_saml",
-    "updater"
+    "user_saml"
   ],
   "dueDates": {
     "Nextcloud 10.0.1": "2016-09-21"
@@ -37,7 +36,8 @@
   "addMilestones": [
     "Nextcloud 9.0.55",
     "Nextcloud 10.0.2",
-    "Nextcloud 11.0"
+    "Nextcloud 11.0",
+    "Nextcloud 12.0"
   ],
   "versionAdded": {
     "files_accesscontrol": "10",
