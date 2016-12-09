@@ -63,5 +63,5 @@ foreach($repositories as $repo) {
 	// Push the signed tag
 	shell_exec('cd ' . __DIR__ . '/' . $repo . ' && git push origin ' . $tag);
 	// Delete repository
-	shell_exec('cd ' . __DIR__ . ' && rm -rf ' . $repo)
+	shell_exec('cd ' . __DIR__ . ' && rm -rf ' . $repo);
 }
