@@ -49,6 +49,33 @@ switch($branch) {
 			'example-files',
 		];
 		break;
+	case 'stable11':
+		$repositories = [
+			'server',
+			'3rdparty',
+			'apps',
+			'files_pdfviewer',
+			'files_texteditor',
+			'files_videoplayer',
+			'gallery',
+			'apps',
+			'firstrunwizard',
+			'activity',
+			'templateeditor',
+			'notifications',
+			'password_policy',
+			'user_saml',
+			'files_accesscontrol',
+			'files_automatedtagging',
+			'files_retention',
+			'serverinfo',
+			'survey_client',
+			'example-files',
+			'logreader',
+			'updater',
+			'nextcloud_announcements',
+		];
+		break;
 	case 'master':
 		$repositories = [
 			'server',
