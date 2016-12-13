@@ -31,12 +31,13 @@
   "closeMilestones": [
     "Nextcloud 9.0.55",
     "Nextcloud 10.0",
-    "Nextcloud 10.0.2"
+    "Nextcloud 10.0.2",
+    "Nextcloud 11.0"
   ],
   "addMilestones": [
     "Nextcloud 9.0.56",
     "Nextcloud 10.0.3",
-    "Nextcloud 11.0",
+    "Nextcloud 11.0.1",
     "Nextcloud 12.0"
   ],
   "versionAdded": {
