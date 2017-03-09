@@ -6,6 +6,7 @@
     "activity",
     "apps",
     "documentation",
+    "external",
     "files_accesscontrol",
     "files_antivirus",
     "files_automatedtagging",
@@ -41,6 +42,7 @@
     "Nextcloud 12.0"
   ],
   "versionAdded": {
+    "external": "12",
     "files_accesscontrol": "10",
     "files_automatedtagging": "10",
     "files_downloadactivity": "11",
