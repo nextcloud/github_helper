@@ -18,7 +18,6 @@
     "firstrunwizard",
     "gallery",
     "logreader",
-    "networkconfig",
     "nextcloud_announcements",
     "notifications",
     "password_policy",
@@ -31,14 +30,14 @@
     "Nextcloud 10.0.1": "2016-09-21"
   },
   "closeMilestones": [
-    "Nextcloud 9.0.57",
-    "Nextcloud 10.0.4",
-    "Nextcloud 11.0.2"
-  ],
-  "addMilestones": [
     "Nextcloud 9.0.58",
     "Nextcloud 10.0.5",
-    "Nextcloud 11.0.3",
+    "Nextcloud 11.0.3"
+  ],
+  "addMilestones": [
+    "Nextcloud 9.0.59",
+    "Nextcloud 10.0.6",
+    "Nextcloud 11.0.4",
     "Nextcloud 12.0"
   ],
   "versionAdded": {
