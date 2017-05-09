@@ -90,7 +90,6 @@ switch($branch) {
 			'activity',
 			'notifications',
 			'password_policy',
-			'user_saml',
 			'serverinfo',
 			'survey_client',
 			'example-files',
