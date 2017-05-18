@@ -76,6 +76,28 @@ switch($branch) {
 			'nextcloud_announcements',
 		];
 		break;
+	case 'stable12':
+		$repositories = [
+			'server',
+			'3rdparty',
+			'apps',
+			'files_pdfviewer',
+			'files_texteditor',
+			'files_videoplayer',
+			'gallery',
+			'apps',
+			'firstrunwizard',
+			'activity',
+			'notifications',
+			'password_policy',
+			'serverinfo',
+			'survey_client',
+			'example-files',
+			'logreader',
+			'updater',
+			'nextcloud_announcements',
+		];
+		break;		
 	case 'master':
 		$repositories = [
 			'server',
