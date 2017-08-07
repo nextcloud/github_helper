@@ -59,7 +59,7 @@ foreach($config['repos'] as $repo) {
 			if($SHOW_MILESTONE) print($COLOR_GRAY. $milestone['title']);
 		}
 		if(array_key_exists($milestone['title'], $config['dueDates']) &&
-			$milestone['due_on'] !== $config['dueDates'][$milestone['title']] . 'T04:00:00Z') {
+			$milestone['due_on'] !== $config['dueDates'][$milestone['title']] . 'T07:00:00Z') {
 			if($SHOW_MILESTONE) print($COLOR_RED . ' update due date');
 			$updateDueDate[] = [
 				'org' => $config['org'],
@@ -70,7 +70,7 @@ foreach($config['repos'] as $repo) {
 				'title' => $milestone['title'],
 				'description' => $milestone['description'],
 				'oldDueDate' => $milestone['due_on'],
-				'newDueDate' => $config['dueDates'][$milestone['title']] . 'T04:00:00Z',
+				'newDueDate' => $config['dueDates'][$milestone['title']] . 'T07:00:00Z',
 			];
 		}
 		if($SHOW_MILESTONE) print($NO_COLOR . PHP_EOL);
@@ -97,7 +97,7 @@ foreach($repositories as $name => $repository) {
 			print($textColor . $config['org'] . '/' . $name . ': close milestone ' . $milestone . ' - state: ' . $textStyle . $data['state'] . $NO_COLOR . PHP_EOL);
 
 			if(array_key_exists($milestone, $config['dueDates'])) {
-				$data['due_on'] = $config['dueDates'][$milestone] . 'T04:00:00Z';
+				$data['due_on'] = $config['dueDates'][$milestone] . 'T07:00:00Z';
 			}
 			#continue; // comment this to CLOSE MILESTONES
 			// TODO ask for the update
@@ -117,7 +117,7 @@ foreach($repositories as $name => $repository) {
 				"title" => $milestone
 			];
 			if(array_key_exists($milestone, $config['dueDates'])) {
-				$data['due_on'] = $config['dueDates'][$milestone] . 'T04:00:00Z';
+				$data['due_on'] = $config['dueDates'][$milestone] . 'T07:00:00Z';
 			}
 			#continue; // comment this to ADD MILESTONES
 			// TODO ask for the update

@@ -27,18 +27,18 @@
     "user_saml"
   ],
   "dueDates": {
-    "Nextcloud 10.0.1": "2016-09-21"
+    "Nextcloud 11.0.5": "2017-09-12",
+    "Nextcloud 12.0.2": "2017-09-12"
   },
   "closeMilestones": [
     "Nextcloud 9.0.59",
-    "Nextcloud 10.0.5",
-    "Nextcloud 11.0.3",
-    "Nextcloud 12.0"
-  ],
-  "addMilestones": [
     "Nextcloud 10.0.6",
     "Nextcloud 11.0.4",
-    "Nextcloud 12.0.1",
+    "Nextcloud 12.0",
+    "Nextcloud 12.0.1"
+  ],
+  "addMilestones": [
+    "Nextcloud 11.0.5",
     "Nextcloud 12.0.2",
     "Nextcloud 13"
   ],
