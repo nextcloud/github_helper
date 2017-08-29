@@ -21,6 +21,7 @@
     "nextcloud_announcements",
     "notifications",
     "password_policy",
+    "quota_warning",
     "serverinfo",
     "survey_client",
     "templateeditor",
@@ -52,6 +53,7 @@
     "logreader": "11",
     "networkconfig": "11",
     "nextcloud_announcements": "11",
+    "quota_warning": "12",
     "serverinfo": "10",
     "survey_client": "10"
   }
