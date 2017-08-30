@@ -41,7 +41,9 @@
   ],
   "addMilestones": [
     "Nextcloud 11.0.5",
+    "Nextcloud 11.0.6",
     "Nextcloud 12.0.3",
+    "Nextcloud 12.0.4",
     "Nextcloud 13"
   ],
   "versionAdded": {
