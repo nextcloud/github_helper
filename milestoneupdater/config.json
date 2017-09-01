@@ -23,6 +23,7 @@
     "notifications",
     "password_policy",
     "quota_warning",
+    "ransomware_protection",
     "serverinfo",
     "survey_client",
     "templateeditor",
@@ -58,6 +59,7 @@
     "networkconfig": "11",
     "nextcloud_announcements": "11",
     "quota_warning": "12",
+    "ransomware_protection": "12",
     "serverinfo": "10",
     "survey_client": "10"
   }
