@@ -1,0 +1,35 @@
+{
+  "org": "nextcloud",
+  "master": "server",
+  "repos": [
+    "3rdparty",
+    "activity",
+    "apps",
+    "documentation",
+    "external",
+    "files_accesscontrol",
+    "files_antivirus",
+    "files_automatedtagging",
+    "files_downloadactivity",
+    "files_pdfviewer",
+    "files_retention",
+    "files_texteditor",
+    "files_videoplayer",
+    "firstrunwizard",
+    "gallery",
+    "globalsiteselector",
+    "logreader",
+    "nextcloud_announcements",
+    "notifications",
+    "password_policy",
+    "quota_warning",
+    "ransomware_protection",
+    "serverinfo",
+    "survey_client",
+    "templateeditor",
+    "user_saml"
+  ],
+  "exclude": [
+    "/^feature:/"
+  ]
+}
