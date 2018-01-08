@@ -32,7 +32,8 @@
   ],
   "dueDates": {
     "Nextcloud 11.0.7": "2018-01-17",
-    "Nextcloud 12.0.5": "2018-01-17"
+    "Nextcloud 12.0.5": "2018-01-17",
+    "Nextcloud 13.0.0": "2018-01-24"
   },
   "closeMilestones": [
     "Nextcloud 9.0.59",
