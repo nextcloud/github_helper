@@ -108,7 +108,7 @@ foreach($repositories as $name => $repository) {
 	foreach($config['addMilestones'] as $milestone) {
 		if(!array_key_exists($milestone, $repository['milestones'])) {
 			if(isset($config['versionAdded'][$name]) && skipBecauseOfVersionConstraint($config['versionAdded'][$name], $milestone)) {
-				print($config['org'] . '/' . $name . ': skipped milestone ' . $milestone . $NO_COLOR . PHP_EOL);
+				print($COLOR_GRAY . $config['org'] . '/' . $name . ': skipped milestone ' . $milestone . $NO_COLOR . PHP_EOL);
 				continue;
 			}
 
