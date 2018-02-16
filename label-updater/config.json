@@ -4,8 +4,10 @@
   "repos": [
     "3rdparty",
     "activity",
+    "announcementcenter",
     "apps",
     "documentation",
+    "end_to_end_encryption",
     "external",
     "files_accesscontrol",
     "files_antivirus",
@@ -25,6 +27,7 @@
     "quota_warning",
     "ransomware_protection",
     "serverinfo",
+    "spreed",
     "survey_client",
     "templateeditor",
     "user_saml"
