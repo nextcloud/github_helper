@@ -36,17 +36,16 @@
     "Nextcloud 13.0.1": "2018-03-14"
   },
   "closeMilestones": [
-    "Nextcloud 11.0.7",
-    "Nextcloud 12.0.5",
-    "Nextcloud 13"
-  ],
-  "addMilestones": [
     "Nextcloud 11.0.8",
     "Nextcloud 11.0.9",
     "Nextcloud 12.0.6",
+    "Nextcloud 13.0.1"
+  ],
+  "addMilestones": [
     "Nextcloud 12.0.7",
-    "Nextcloud 13.0.1",
+    "Nextcloud 12.0.8",
     "Nextcloud 13.0.2",
+    "Nextcloud 13.0.3",
     "Nextcloud 14"
   ],
   "versionAdded": {
