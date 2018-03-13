@@ -40,6 +40,24 @@ class GenerateChangelogCommand extends Command
 		$orgName = 'nextcloud';
 		$repoName = 'server';
 
+		$reposToIterate = [
+			"server",
+			"3rdparty",
+			"activity",
+			"apps",
+			"files_pdfviewer",
+			"files_texteditor",
+			"files_videoplayer",
+			"firstrunwizard",
+			"gallery",
+			"logreader",
+			"nextcloud_announcements",
+			"notifications",
+			"password_policy",
+			"serverinfo",
+			"survey_client",
+		];
+
 
 		if (!file_exists(__DIR__ . '/../credentials.json')) {
 			throw new Exception('Credentials file is missing - please provide your credentials in credentials.json in the root folder.');
@@ -62,7 +80,20 @@ class GenerateChangelogCommand extends Command
 		$output->writeln("base: $base");
 		$output->writeln("head: $head");
 
-		$pullRequests = [];
+		$milestoneToCheck = null;
+		if (substr($base, 0, 1) === 'v') {
+			$version = explode('.', substr($base, 1));
+			if (count($version) !== 3) {
+				$output->writeln('<error>Detected version does not have exactly 3 numbers separated by a dot.</error>');
+			} else {
+				$version[2] = (string)((int)$version[2] + 1);
+				$milestoneToCheck = join('.', $version);
+			}
+		} else {
+			$output->writeln('<error>No version detected - the output will not contain any pending PRs. Use a git tag starting with "v" like "v13.0.5".</error>');
+		}
+
+		$prTitles = ['closed' => [], 'pending' => []];
 
 		# TODO
 		#$client = new \Redis();
@@ -75,38 +106,34 @@ class GenerateChangelogCommand extends Command
 		#$client->addCache($pool);
 		$client->authenticate($credentialsData['apikey'], Github\Client::AUTH_URL_TOKEN);
 
-		/** @var \Github\Api\Repo $repo */
-		$repo = $client->api('repo');
-		try {
-			$output->writeln('Fetching git history ...');
-			$diff = $repo->commits()->compare($orgName, $repoName, $base, $head);
-		} catch(\Github\Exception\RuntimeException $e) {
-			if ($e->getMessage() === 'Not Found') {
-				$output->writeln('<error>Could not find base or head reference.</error>');
-				return;
+		foreach ($reposToIterate as $repoName) {
+
+			$pullRequests = [];
+			/** @var \Github\Api\Repo $repo */
+			$repo = $client->api('repo');
+			try {
+				$output->writeln("Fetching git history for $repoName...");
+				$diff = $repo->commits()->compare($orgName, $repoName, $base, $head);
+			} catch (\Github\Exception\RuntimeException $e) {
+				if ($e->getMessage() === 'Not Found') {
+					$output->writeln('<error>Could not find base or head reference.</error>');
+					return;
+				}
+				throw $e;
 			}
-			throw $e;
-		}
 
-		foreach($diff['commits'] as $commit) {
-			$fullMessage = $commit['commit']['message'];
-			list($firstLine, ) = explode("\n", $fullMessage, 2);
-			if (substr($firstLine, 0, 20) === 'Merge pull request #') {
-				$firstLine = substr($firstLine, 20);
-				list($number, ) = explode(" ", $firstLine, 2);
-				$pullRequests[] = $number;
+			foreach ($diff['commits'] as $commit) {
+				$fullMessage = $commit['commit']['message'];
+				list($firstLine,) = explode("\n", $fullMessage, 2);
+				if (substr($firstLine, 0, 20) === 'Merge pull request #') {
+					$firstLine = substr($firstLine, 20);
+					list($number,) = explode(" ", $firstLine, 2);
+					$pullRequests[] = $number;
+				}
 			}
-		}
 
-		if (substr($base, 0, 1) === 'v') {
-			$version = explode('.', substr($base, 1));
-			if (count($version) !== 3) {
-				$output->writeln('<error>Detected version does not have exactly 3 numbers separated by a dot.</error>');
-			} else {
-				$version[2] = (string)((int)$version[2] + 1);
-
-				$milestoneToCheck = join('.', $version);
-				$output->writeln("Fetching pending PRs for $milestoneToCheck ...");
+			if ($milestoneToCheck !== null) {
+				$output->writeln("Fetching pending PRs for $repoName $milestoneToCheck ...");
 
 				$query = "query{
   repository(owner: \"$orgName\", name: \"$repoName\") {
@@ -132,39 +159,46 @@ class GenerateChangelogCommand extends Command
 					}
 				}
 			}
-		} else {
-			$output->writeln('<error>No version detected - the output will not contain any pending PRs. Use a git tag starting with "v" like "v13.0.5".</error>');
-		}
 
-
-		$query = <<<'QUERY'
+			$query = <<<'QUERY'
 query {
 QUERY;
-		$query .= '    repository(owner: "' . $orgName . '", name: "' . $repoName . '") {';
+			$query .= '    repository(owner: "' . $orgName . '", name: "' . $repoName . '") {';
 
-		foreach($pullRequests as $pullRequest) {
-			$query .= "pr$pullRequest: pullRequest(number: $pullRequest) { number, title, state },";
-		}
+			foreach ($pullRequests as $pullRequest) {
+				$query .= "pr$pullRequest: pullRequest(number: $pullRequest) { number, title, state },";
+			}
 
-		$query .= <<<'QUERY'
+			$query .= <<<'QUERY'
     }
 }
 QUERY;
 
-		$output->writeln('Fetching PR titles ...');
-		$response = $client->api('graphql')->execute($query);
+			$output->writeln("Fetching PR titles for $repoName ...");
+			$response = $client->api('graphql')->execute($query);
 
-		$prTitles = ['closed' => [], 'pending' => []];
-
-		foreach($response['data']['repository'] as $pr) {
-			$title = $pr['title'];
-			$title = preg_replace('!(\[|\()(stable)? ?(10|11|12|13)(\]|\))?!i', '', $title);
-			$title = trim($title);
-			$title = strtoupper(substr($title, 0, 1)) . substr($title, 1);
-			if ($pr['state'] === 'MERGED') {
-				$prTitles['closed'][$pr['number']] = $title;
-			} else {
-				$prTitles['pending'][$pr['number']] = $title;
+			if (!isset($response['data']['repository'])) {
+				continue;
+			}
+			foreach ($response['data']['repository'] as $pr) {
+				$title = $pr['title'];
+				$title = preg_replace('!(\[|\()(stable)? ?(10|11|12|13)(\]|\))?!i', '', $title);
+				$title = trim($title);
+				$title = strtoupper(substr($title, 0, 1)) . substr($title, 1);
+				$id = '#' . $pr['number'];
+				if ($repoName !== 'server') {
+					$id = $repoName . $id;
+				}
+				$data = [
+					'repoName' => $repoName,
+					'number' => $pr['number'],
+					'title' => $title,
+				];
+				if ($pr['state'] === 'MERGED') {
+					$prTitles['closed'][$id] = $data;
+				} else {
+					$prTitles['pending'][$id] = $data;
+				}
 			}
 		}
 
@@ -173,8 +207,11 @@ QUERY;
 
 		switch($format) {
 			case 'html':
-				foreach($prTitles['closed'] as $number => $title) {
-					$output->writeln("<li><a href='https://github.com/$orgName/$repoName/pulls/$number'>$title (server#$number)</a></li>");
+				foreach($prTitles['closed'] as $id => $data) {
+					$repoName = $data['repoName'];
+					$number = $data['number'];
+					$title = $data['title'];
+					$output->writeln("<li><a href='https://github.com/$orgName/$repoName/pulls/$number'>$title ($repoName#$number)</a></li>");
 				}
 				$count = count($prTitles['pending']);
 				if ($count > 0) {
@@ -182,8 +219,11 @@ QUERY;
 				}
 				break;
 			case 'forum':
-				foreach($prTitles['closed'] as $number => $title) {
-					$output->writeln("* [$title (server#$number)](https://github.com/$orgName/$repoName/pulls/$number)");
+				foreach($prTitles['closed'] as $id => $data) {
+					$repoName = $data['repoName'];
+					$number = $data['number'];
+					$title = $data['title'];
+					$output->writeln("* [$title ($repoName#$number)](https://github.com/$orgName/$repoName/pulls/$number)");
 				}
 				$count = count($prTitles['pending']);
 				if ($count > 0) {
@@ -192,14 +232,28 @@ QUERY;
 				break;
 			case 'markdown':
 			default:
-				foreach($prTitles['closed'] as $number => $title) {
-					$output->writeln("* #$number $title");
+				foreach($prTitles['closed'] as $id => $data) {
+					$repoName = $data['repoName'];
+					$number = $data['number'];
+					$title = $data['title'];
+					if ($repoName === 'server') {
+						$output->writeln("* #$number $title");
+					} else {
+						$output->writeln("* [$repoName#$number](https://github.com/$orgName/$repoName/pulls/$number) $title");
+					}
 				}
 				if (count($prTitles['pending'])) {
 					$output->writeln("\n\nPending PRs:\n");
 				}
-				foreach($prTitles['pending'] as $number => $title) {
-					$output->writeln("* [ ] #$number $title");
+				foreach($prTitles['pending'] as $id => $data) {
+					$repoName = $data['repoName'];
+					$number = $data['number'];
+					$title = $data['title'];
+					if ($repoName === 'server') {
+						$output->writeln("* [ ] #$number $title");
+					} else {
+						$output->writeln("* [ ] [$repoName#$number](https://github.com/$orgName/$repoName/pulls/$number) $title");
+					}
 				}
 				break;
 		}
