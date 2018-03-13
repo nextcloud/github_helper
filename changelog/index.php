@@ -211,7 +211,7 @@ QUERY;
 					$repoName = $data['repoName'];
 					$number = $data['number'];
 					$title = $data['title'];
-					$output->writeln("<li><a href='https://github.com/$orgName/$repoName/pulls/$number'>$title ($repoName#$number)</a></li>");
+					$output->writeln("<li><a href=\"https://github.com/$orgName/$repoName/pulls/$number\">$title ($repoName#$number)</a></li>");
 				}
 				$count = count($prTitles['pending']);
 				if ($count > 0) {
