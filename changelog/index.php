@@ -211,7 +211,7 @@ QUERY;
 					$repoName = $data['repoName'];
 					$number = $data['number'];
 					$title = $data['title'];
-					$output->writeln("<li><a href=\"https://github.com/$orgName/$repoName/pulls/$number\">$title ($repoName#$number)</a></li>");
+					$output->writeln("<li><a href=\"https://github.com/$orgName/$repoName/pull/$number\">$title ($repoName#$number)</a></li>");
 				}
 				$count = count($prTitles['pending']);
 				if ($count > 0) {
@@ -223,7 +223,7 @@ QUERY;
 					$repoName = $data['repoName'];
 					$number = $data['number'];
 					$title = $data['title'];
-					$output->writeln("* [$title ($repoName#$number)](https://github.com/$orgName/$repoName/pulls/$number)");
+					$output->writeln("* [$title ($repoName#$number)](https://github.com/$orgName/$repoName/pull/$number)");
 				}
 				$count = count($prTitles['pending']);
 				if ($count > 0) {
@@ -239,7 +239,7 @@ QUERY;
 					if ($repoName === 'server') {
 						$output->writeln("* #$number $title");
 					} else {
-						$output->writeln("* [$repoName#$number](https://github.com/$orgName/$repoName/pulls/$number) $title");
+						$output->writeln("* [$repoName#$number](https://github.com/$orgName/$repoName/pull/$number) $title");
 					}
 				}
 				if (count($prTitles['pending'])) {
@@ -252,7 +252,7 @@ QUERY;
 					if ($repoName === 'server') {
 						$output->writeln("* [ ] #$number $title");
 					} else {
-						$output->writeln("* [ ] [$repoName#$number](https://github.com/$orgName/$repoName/pulls/$number) $title");
+						$output->writeln("* [ ] [$repoName#$number](https://github.com/$orgName/$repoName/pull/$number) $title");
 					}
 				}
 				break;
