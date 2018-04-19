@@ -9,6 +9,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Helper\ProgressBar;
 # TODO
 #use Cache\Adapter\Redis\RedisCachePool;
 
@@ -106,13 +107,32 @@ class GenerateChangelogCommand extends Command
 		#$client->addCache($pool);
 		$client->authenticate($credentialsData['apikey'], Github\Client::AUTH_URL_TOKEN);
 
+		$factor = 2;
+		if ($milestoneToCheck !== null) {
+			$factor = 3;
+		}
+
+		$progressBar = new ProgressBar($output, count($reposToIterate) * $factor);
+		$progressBar->setFormat(
+			implode(
+				"\n",
+				[
+					' %message%',
+					' %current%/%max% [%bar%] %percent:3s%%',
+					' Remaining: %remaining:6s%',
+				]
+			)
+		);
+		$progressBar->setMessage('Starting ...');
+		$progressBar->start();
+
 		foreach ($reposToIterate as $repoName) {
 
 			$pullRequests = [];
 			/** @var \Github\Api\Repo $repo */
 			$repo = $client->api('repo');
 			try {
-				$output->writeln("Fetching git history for $repoName...");
+				$progressBar->setMessage("Fetching git history for $repoName...");
 				$diff = $repo->commits()->compare($orgName, $repoName, $base, $head);
 			} catch (\Github\Exception\RuntimeException $e) {
 				if ($e->getMessage() === 'Not Found') {
@@ -131,9 +151,10 @@ class GenerateChangelogCommand extends Command
 					$pullRequests[] = $number;
 				}
 			}
+			$progressBar->advance();
 
 			if ($milestoneToCheck !== null) {
-				$output->writeln("Fetching pending PRs for $repoName $milestoneToCheck ...");
+				$progressBar->setMessage("Fetching pending PRs for $repoName $milestoneToCheck ...");
 
 				$query = "query{
   repository(owner: \"$orgName\", name: \"$repoName\") {
@@ -158,6 +179,7 @@ class GenerateChangelogCommand extends Command
 						}
 					}
 				}
+				$progressBar->advance();
 			}
 
 			$query = <<<'QUERY'
@@ -174,10 +196,11 @@ QUERY;
 }
 QUERY;
 
-			$output->writeln("Fetching PR titles for $repoName ...");
+			$progressBar->setMessage("Fetching PR titles for $repoName ...");
 			$response = $client->api('graphql')->execute($query);
 
 			if (!isset($response['data']['repository'])) {
+				$progressBar->advance();
 				continue;
 			}
 			foreach ($response['data']['repository'] as $pr) {
@@ -200,7 +223,11 @@ QUERY;
 					$prTitles['pending'][$id] = $data;
 				}
 			}
+			$progressBar->advance();
 		}
+		$progressBar->finish();
+
+		$output->writeln('');
 
 		ksort($prTitles['closed']);
 		ksort($prTitles['pending']);
