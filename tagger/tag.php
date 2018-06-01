@@ -149,7 +149,7 @@ switch($branch) {
 
 foreach($repositories as $repo) {
 	// Clone the repository
-	shell_exec('cd ' . __DIR__ . ' && git clone https://github.com/nextcloud/' . $repo . '.git');
+	shell_exec('cd ' . __DIR__ . ' && git clone git@github.com:nextcloud/' . $repo . '.git');
 	// Checkout the required branch
 	shell_exec('cd ' . __DIR__ . '/'. $repo . ' && git checkout ' . $branch);
 	// Create a signed tag
