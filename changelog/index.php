@@ -87,8 +87,18 @@ class GenerateChangelogCommand extends Command
 			if (count($version) !== 3) {
 				$output->writeln('<error>Detected version does not have exactly 3 numbers separated by a dot.</error>');
 			} else {
-				$version[2] = (string)((int)$version[2] + 1);
-				$milestoneToCheck = join('.', $version);
+				if (strpos($version[2], 'RC') !== false || strpos($version[2], 'beta') !== false) {
+					$version[2] = (string)((int)$version[2]); // this basically removes the beta/RC part
+					$milestoneToCheck = join('.', $version);
+
+					if (strpos($milestoneToCheck, '.0.0') !== false) {
+						$milestoneToCheck = str_replace('.0.0', '', $milestoneToCheck);
+					}
+				} else {
+					$version[2] = (string)((int)$version[2] + 1);
+					$milestoneToCheck = join('.', $version);
+				}
+				$output->writeln("Checking milestone $milestoneToCheck for pending PRs ...");
 			}
 		} else {
 			$output->writeln('<error>No version detected - the output will not contain any pending PRs. Use a git tag starting with "v" like "v13.0.5".</error>');
