@@ -27,7 +27,7 @@ $repositories = [
 
 foreach($repositories as $repo) {
 	// Clone the repository
-	shell_exec('cd ' . __DIR__ . ' && git clone https://github.com/nextcloud/' . $repo . '.git');
+	shell_exec('cd ' . __DIR__ . ' && git clone git@github.com:nextcloud/' . $repo);
 	// Checkout the new branch
 	shell_exec('cd ' . __DIR__ . '/'. $repo . ' && git checkout -b ' . $branch);
 	// Push the branch
