@@ -13,7 +13,6 @@ $repositories = [
 	'files_texteditor',
 	'files_videoplayer',
 	'gallery',
-	'apps',
 	'firstrunwizard',
 	'activity',
 	'notifications',
