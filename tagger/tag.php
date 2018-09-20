@@ -15,7 +15,6 @@ switch($branch) {
 			'files_texteditor',
 			'files_videoplayer',
 			'gallery',
-			'apps',
 			'firstrunwizard',
 			'activity',
 			'templateeditor',
@@ -34,7 +33,6 @@ switch($branch) {
 			'files_texteditor',
 			'files_videoplayer',
 			'gallery',
-			'apps',
 			'firstrunwizard',
 			'activity',
 			'templateeditor',
@@ -58,7 +56,6 @@ switch($branch) {
 			'files_texteditor',
 			'files_videoplayer',
 			'gallery',
-			'apps',
 			'firstrunwizard',
 			'activity',
 			'templateeditor',
@@ -77,72 +74,8 @@ switch($branch) {
 		];
 		break;
 	case 'stable12':
-		$repositories = [
-			'server',
-			'3rdparty',
-			'apps',
-			'files_pdfviewer',
-			'files_texteditor',
-			'files_videoplayer',
-			'gallery',
-			'apps',
-			'firstrunwizard',
-			'activity',
-			'notifications',
-			'password_policy',
-			'serverinfo',
-			'survey_client',
-			'example-files',
-			'logreader',
-			'updater',
-			'nextcloud_announcements',
-		];
-		break;		
 	case 'stable13':
-		$repositories = [
-			'server',
-			'3rdparty',
-			'apps',
-			'files_pdfviewer',
-			'files_texteditor',
-			'files_videoplayer',
-			'gallery',
-			'apps',
-			'firstrunwizard',
-			'activity',
-			'notifications',
-			'password_policy',
-			'serverinfo',
-			'survey_client',
-			'example-files',
-			'logreader',
-			'updater',
-			'nextcloud_announcements',
-		];
-		break;
 	case 'stable14':
-		// keep them in sync with the ones from brancher/branch.php
-		$repositories = [
-			'server',
-			'3rdparty',
-			'apps',
-			'files_pdfviewer',
-			'files_texteditor',
-			'files_videoplayer',
-			'gallery',
-			'apps',
-			'firstrunwizard',
-			'activity',
-			'notifications',
-			'password_policy',
-			'serverinfo',
-			'survey_client',
-			'example-files',
-			'logreader',
-			'updater',
-			'nextcloud_announcements',
-		];
-		break;
 	case 'master':
 		// keep them in sync with the ones from brancher/branch.php
 		$repositories = [
@@ -153,7 +86,6 @@ switch($branch) {
 			'files_texteditor',
 			'files_videoplayer',
 			'gallery',
-			'apps',
 			'firstrunwizard',
 			'activity',
 			'notifications',
