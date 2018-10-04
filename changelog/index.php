@@ -215,7 +215,7 @@ QUERY;
 			}
 			foreach ($response['data']['repository'] as $pr) {
 				$title = $pr['title'];
-				$title = preg_replace('!(\[|\()(stable)? ?(10|11|12|13)(\]|\))?!i', '', $title);
+				$title = preg_replace('!(\[|\()(stable)? ?(10|11|12|13|14|15|16|17)(\]|\))?!i', '', $title);
 				$title = trim($title);
 				$title = strtoupper(substr($title, 0, 1)) . substr($title, 1);
 				$id = '#' . $pr['number'];
