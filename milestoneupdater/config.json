@@ -28,6 +28,7 @@
     "serverinfo",
     "survey_client",
     "templateeditor",
+    "terms_of_service",
     "user_saml"
   ],
   "dueDates": {
@@ -63,6 +64,7 @@
     "quota_warning": "12",
     "ransomware_protection": "12",
     "serverinfo": "10",
-    "survey_client": "10"
+    "survey_client": "10",
+    "terms_of_service": "14"
   }
 }
