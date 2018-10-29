@@ -15,3 +15,14 @@ There is a format option to generate output for:
  * Github (default)
  * forum (`--format=forum` - Markdown with absolute links)
  * changelog page on our website (`--format=html` - HTML list with absolute links)
+
+
+ ### Android changelog
+
+ * there is also an android changelog in there:
+
+ ```
+ php index.php generate:changelog stable-3.3.0 stable-3.3.x
+ ```
+
+ 
