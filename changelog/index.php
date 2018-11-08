@@ -168,10 +168,10 @@ class GenerateChangelogCommand extends Command
 
 				$query = "query{
   repository(owner: \"$orgName\", name: \"$repoName\") {
-	milestones(first: 20, states: [OPEN]) {
+	milestones(first: 40, states: [OPEN]) {
       nodes {
         title
-        pullRequests(states: [OPEN], first: 20) {
+        pullRequests(states: [OPEN], first: 40) {
           nodes {
             number
           }
