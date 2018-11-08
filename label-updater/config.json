@@ -32,7 +32,9 @@
     "spreed",
     "survey_client",
     "templateeditor",
-    "user_saml"
+    "user_saml",
+    "workflow_pdf_converter",
+    "workflow_script"
   ],
   "exclude": [
     "/^feature:/"
