@@ -8,21 +8,21 @@ $branch = $argv[1];
 $repositories = [
 	'server',
 	'3rdparty',
+	'activity',
 	'apps',
+	'example-files',
 	'files_pdfviewer',
 	'files_texteditor',
 	'files_videoplayer',
-	'gallery',
 	'firstrunwizard',
-	'activity',
+	'gallery',
+	'logreader',
+	'nextcloud_announcements',
 	'notifications',
 	'password_policy',
 	'serverinfo',
 	'survey_client',
-	'example-files',
-	'logreader',
 	'updater',
-	'nextcloud_announcements',
 ];
 
 foreach($repositories as $repo) {
