@@ -4,7 +4,7 @@ This is a little collection of useful helper scripts.
 
 ## credentials.json
 
-All the scripts inside this repo need a `credentials.json` in their hoome folder (e.g. `brancher/` ). The content should be a JSON object with username (your github account name) and apikey (generate one in [Settings > Developer settings > Personal access tokens](https://github.com/settings/tokens), e.g.:
+All the scripts inside this repo need a `credentials.json` in their home folder (e.g. `brancher/` ). The content should be a JSON object with username (your github account name) and apikey (generate one in [Settings > Developer settings > Personal access tokens](https://github.com/settings/tokens)), e.g.:
 ```json
 {
   "username": "nickvergessen",
