@@ -2,6 +2,16 @@
 
 This is a little collection of useful helper scripts.
 
+## credentials.json
+
+All the scripts inside this repo need a `credentials.json` in their hoome folder (e.g. `brancher/` ). The content should be a JSON object with username (your github account name) and apikey (generate one in [Settings > Developer settings > Personal access tokens](https://github.com/settings/tokens), e.g.:
+```json
+{
+  "username": "nickvergessen",
+  "apikey": "1234567890abcdef1234567890abcdef12345678"
+}
+```
+
 ## Changelog generator
 
 * provide the credentials by placing a copy of `credentials.dist.json` as `credentials.json` in the root of this folder
