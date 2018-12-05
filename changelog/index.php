@@ -15,11 +15,13 @@ use Symfony\Component\Console\Helper\ProgressBar;
 
 class GenerateChangelogCommand extends Command
 {
+
 	protected function configure()
 	{
 		$this
 			->setName('generate:changelog')
 			->setDescription('Generates the changelog.')
+			->addArgument('repo', InputArgument::REQUIRED, 'The repo name, default is server. Other options e.g. desktop, android.')
 			->addArgument('base', InputArgument::REQUIRED, 'The base version.')
 			->addArgument('head', InputArgument::REQUIRED, 'The head version.')
 			->addOption(
@@ -37,10 +39,10 @@ class GenerateChangelogCommand extends Command
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
-		// TODO iterate over all repos
+		$server = 'server';
 		$orgName = 'nextcloud';
-		$repoName = 'server';
 
+		// TODO iterate over all repos
 		$reposToIterate = [
 			"server",
 			"3rdparty",
@@ -59,7 +61,6 @@ class GenerateChangelogCommand extends Command
 			"survey_client",
 		];
 
-
 		if (!file_exists(__DIR__ . '/../credentials.json')) {
 			throw new Exception('Credentials file is missing - please provide your credentials in credentials.json in the root folder.');
 		}
@@ -75,15 +76,26 @@ class GenerateChangelogCommand extends Command
 				"The provided format is invalid (should be one of markdown, forum, html but was '$format')"
 			);
 		}
+
+		$repoName = $input->getArgument('repo');
 		$base = $input->getArgument('base');
 		$head = $input->getArgument('head');
 
+		$output->writeln("repo: $repoName");
 		$output->writeln("base: $base");
 		$output->writeln("head: $head");
 
 		$milestoneToCheck = null;
-		if (substr($base, 0, 1) === 'v') {
-			$version = explode('.', substr($base, 1));
+		$substring = 'v';
+		$subStringNum = 1;
+		if($repoName !== $server){
+			$reposToIterate = [$repoName];
+			$substring = 'stable-';
+			$subStringNum = 7;
+		}
+
+		if (substr($base, 0, $subStringNum) === $substring) {
+			$version = explode('.', substr($base, $subStringNum));
 			if (count($version) !== 3) {
 				$output->writeln('<error>Detected version does not have exactly 3 numbers separated by a dot.</error>');
 			} else {
