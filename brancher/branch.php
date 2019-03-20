@@ -20,9 +20,12 @@ $repositories = [
 	'nextcloud_announcements',
 	'notifications',
 	'password_policy',
+	'privacy',
+	'recommendations',
 	'serverinfo',
 	'survey_client',
 	'updater',
+	'viewer',
 ];
 
 foreach($repositories as $repo) {

@@ -77,6 +77,28 @@ switch($branch) {
 	case 'stable13':
 	case 'stable14':
 	case 'stable15':
+		// keep them in sync with the ones from brancher/branch.php
+		$repositories = [
+			'server',
+			'3rdparty',
+			'apps',
+			'files_pdfviewer',
+			'files_texteditor',
+			'files_videoplayer',
+			'gallery',
+			'firstrunwizard',
+			'activity',
+			'notifications',
+			'password_policy',
+			'serverinfo',
+			'survey_client',
+			'example-files',
+			'logreader',
+			'updater',
+			'nextcloud_announcements',
+		];
+		break;
+	case 'stable16':
 	case 'master':
 		// keep them in sync with the ones from brancher/branch.php
 		$repositories = [
@@ -97,6 +119,9 @@ switch($branch) {
 			'logreader',
 			'updater',
 			'nextcloud_announcements',
+			'recommendations',
+			'viewer',
+			'privacy',
 		];
 		break;
 	default:
