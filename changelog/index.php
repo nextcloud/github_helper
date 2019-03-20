@@ -57,8 +57,11 @@ class GenerateChangelogCommand extends Command
 			"nextcloud_announcements",
 			"notifications",
 			"password_policy",
+			"privacy",
+			"recommendations",
 			"serverinfo",
 			"survey_client",
+			"viewer",
 		];
 
 		if (!file_exists(__DIR__ . '/../credentials.json')) {
