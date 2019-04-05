@@ -57,11 +57,8 @@ class GenerateChangelogCommand extends Command
 			"nextcloud_announcements",
 			"notifications",
 			"password_policy",
-			"privacy",
-			"recommendations",
 			"serverinfo",
 			"survey_client",
-			"viewer",
 		];
 
 		if (!file_exists(__DIR__ . '/../credentials.json')) {
@@ -83,6 +80,12 @@ class GenerateChangelogCommand extends Command
 		$repoName = $input->getArgument('repo');
 		$base = $input->getArgument('base');
 		$head = $input->getArgument('head');
+
+		if ($head !== 'stable14' && $head !== 'stable15') {
+			$reposToIterate[] = 'privacy';
+			$reposToIterate[] = 'recommendations';
+			$reposToIterate[] = 'viewer';
+		}
 
 		$output->writeln("repo: $repoName");
 		$output->writeln("base: $base");
