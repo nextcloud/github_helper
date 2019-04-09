@@ -81,7 +81,7 @@ class GenerateChangelogCommand extends Command
 		$base = $input->getArgument('base');
 		$head = $input->getArgument('head');
 
-		if ($head !== 'stable14' && $head !== 'stable15') {
+		if (!in_array($head, ['stable14', 'stable15']) && !in_array(substr($head, 0, 3), ['v14', 'v15'])) {
 			$reposToIterate[] = 'privacy';
 			$reposToIterate[] = 'recommendations';
 			$reposToIterate[] = 'viewer';
