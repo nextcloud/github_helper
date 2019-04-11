@@ -12,6 +12,7 @@ $repositories = [
 	'apps',
 	'example-files',
 	'files_pdfviewer',
+	'files_rightclick',
 	'files_texteditor',
 	'files_videoplayer',
 	'firstrunwizard',
