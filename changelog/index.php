@@ -262,12 +262,29 @@ QUERY;
 
 		switch($format) {
 			case 'html':
+				$version = $milestoneToCheck;
+				$versionDashed = str_replace('.', '-', $version);
+				$date = new \DateTime('now');
+				$date = $date->add(new \DateInterval('P1D'));
+				$date = $date->format('F j Y');
+
+				$output->writeln('<h3 id="' . $versionDashed . '">Version ' . $version . ' <small>' . $date . '</small></h3>');
+				$output->writeln('<p>Download: <a href="https://download.nextcloud.com/server/releases/nextcloud-' . $version . '.tar.bz2">nextcloud-' . $version . '.tar.bz2</a> or <a href="https://download.nextcloud.com/server/releases/nextcloud-' . $version . '.zip">nextcloud-' . $version . '.zip</a></br>');
+				$output->writeln('Check the file integrity with:</br>');
+				$output->writeln('MD5: <a href="https://download.nextcloud.com/server/releases/nextcloud-' . $version . '.tar.bz2.md5">nextcloud-' . $version . '.tar.bz2.md5</a> or <a href="https://download.nextcloud.com/server/releases/nextcloud-' . $version . '.zip.md5">nextcloud-' . $version . '.zip.md5</a></br>');
+				$output->writeln('SHA256: <a href="https://download.nextcloud.com/server/releases/nextcloud-' . $version . '.tar.bz2.sha256">nextcloud-' . $version . '.tar.bz2.sha256</a> or <a href="https://download.nextcloud.com/server/releases/nextcloud-' . $version . '.zip.sha256">nextcloud-' . $version . '.zip.sha256</a></br>');
+				$output->writeln('SHA512: <a href="https://download.nextcloud.com/server/releases/nextcloud-' . $version . '.tar.bz2.sha512">nextcloud-' . $version . '.tar.bz2.sha512</a> or <a href="https://download.nextcloud.com/server/releases/nextcloud-' . $version . '.zip.sha512">nextcloud-' . $version . '.zip.sha512</a></br>');
+				$output->writeln('PGP (<a href="https://nextcloud.com/nextcloud.asc">Key</a>): <a href="https://download.nextcloud.com/server/releases/nextcloud-' . $version . '.tar.bz2.asc">nextcloud-' . $version . '.tar.bz2.asc</a> or <a href="https://download.nextcloud.com/server/releases/nextcloud-' . $version . '.zip.asc">nextcloud-' . $version . '.zip.asc</a></p>');
+				$output->writeln("");
+				$output->writeln("<h4>Changes</h4>");
+				$output->writeln("<ul>");
 				foreach($prTitles['closed'] as $id => $data) {
 					$repoName = $data['repoName'];
 					$number = $data['number'];
 					$title = $data['title'];
-					$output->writeln("<li><a href=\"https://github.com/$orgName/$repoName/pull/$number\">$title ($repoName#$number)</a></li>");
+					$output->writeln("\t<li><a href=\"https://github.com/$orgName/$repoName/pull/$number\">$title ($repoName#$number)</a></li>");
 				}
+				$output->writeln("</ul>");
 				$count = count($prTitles['pending']);
 				if ($count > 0) {
 					$output->writeln("<error>$count pending PRs not printed - maybe the release is not ready yet</error>");
