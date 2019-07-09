@@ -36,23 +36,23 @@
   "dueDates": {
     "Nextcloud 14.0.14": "2019-08-15",
     "Nextcloud 14.0.15": "2019-09-26",
-    "Nextcloud 15.0.10": "2019-08-15",
-    "Nextcloud 15.0.11": "2019-09-26",
-    "Nextcloud 16.0.3": "2019-08-15",
-    "Nextcloud 16.0.4": "2019-09-26"
+    "Nextcloud 15.0.11": "2019-08-15",
+    "Nextcloud 15.0.12": "2019-09-26",
+    "Nextcloud 16.0.4": "2019-08-15",
+    "Nextcloud 16.0.5": "2019-09-26"
   },
   "closeMilestones": [
     "Nextcloud 14.0.13",
-    "Nextcloud 15.0.9",
-    "Nextcloud 16.0.2"
+    "Nextcloud 15.0.10",
+    "Nextcloud 16.0.3"
   ],
   "addMilestones": [
     "Nextcloud 14.0.14",
     "Nextcloud 14.0.15",
-    "Nextcloud 15.0.10",
     "Nextcloud 15.0.11",
-    "Nextcloud 16.0.3",
+    "Nextcloud 15.0.12",
     "Nextcloud 16.0.4",
+    "Nextcloud 16.0.5",
     "Nextcloud 17"
   ],
   "versionAdded": {
