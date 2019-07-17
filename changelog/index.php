@@ -214,6 +214,7 @@ class GenerateChangelogCommand extends Command
 		milestones(first: 40, states: [OPEN]) {
 			nodes {
 				title
+				number
 				pullRequests(states: [OPEN], first: 40) {
 					nodes {
 						number
@@ -221,6 +222,10 @@ class GenerateChangelogCommand extends Command
 						author {
 							login
 						}
+					}
+					pageInfo {
+						endCursor
+						hasNextPage
 					}
 				}
 			}
@@ -234,6 +239,38 @@ class GenerateChangelogCommand extends Command
 						foreach ($milestone['pullRequests']['nodes'] as $pr) {
 							list($id, $data) = $this->processPR($repoName, $pr);
 							$prTitles['pending'][$id] = $data;
+						}
+						while ($milestone['pullRequests']['pageInfo']['hasNextPage']) {
+							$query = "query{
+	repository(owner: \"$orgName\", name: \"$repoName\") {
+		milestone(number: {$milestone['number']}) {
+			title
+			number
+			pullRequests(states: [OPEN], first: 40, after: \"{$milestone['pullRequests']['pageInfo']['endCursor']}\") {
+				nodes {
+					number
+					title
+					author {
+						login
+					}
+				}
+				pageInfo {
+					endCursor
+					hasNextPage
+				}
+			}
+		}
+	}
+}";
+
+							$response = $client->api('graphql')->execute($query);
+
+							$milestone = $response['data']['repository']['milestone'];
+
+							foreach ($milestone['pullRequests']['nodes'] as $pr) {
+								list($id, $data) = $this->processPR($repoName, $pr);
+								$prTitles['pending'][$id] = $data;
+							}
 						}
 					}
 				}
