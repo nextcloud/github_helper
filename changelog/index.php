@@ -52,6 +52,10 @@ class GenerateChangelogCommand extends Command
 			'title' => $title,
 		];
 
+		if (isset($pr['author']['login'])) {
+			$data['author'] = $pr['author']['login'];
+		}
+
 		return [$id, $data];
 	}
 
@@ -214,6 +218,9 @@ class GenerateChangelogCommand extends Command
 					nodes {
 						number
 						title
+						author {
+							login
+						}
 					}
 				}
 			}
@@ -328,10 +335,11 @@ QUERY;
 					$repoName = $data['repoName'];
 					$number = $data['number'];
 					$title = $data['title'];
+					$author = $data['author'];
 					if ($repoName === 'server') {
-						$output->writeln("* [ ] #$number $title");
+						$output->writeln("* [ ] #$number $title @$author");
 					} else {
-						$output->writeln("* [ ] [$repoName#$number](https://github.com/$orgName/$repoName/pull/$number) $title");
+						$output->writeln("* [ ] [$repoName#$number](https://github.com/$orgName/$repoName/pull/$number) $title @$author");
 					}
 				}
 				break;
