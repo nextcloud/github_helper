@@ -34,6 +34,27 @@ class GenerateChangelogCommand extends Command
 		;
 	}
 
+	protected function cleanTitle($title) {
+		$title = preg_replace('!(\[|\()(stable)? ?(10|11|12|13|14|15|16|17)(\]|\))?\W*!i', '', $title);
+		$title = trim($title);
+		return strtoupper(substr($title, 0, 1)) . substr($title, 1);
+	}
+
+	protected function processPR($repoName, $pr) {
+		$title = $this->cleanTitle($pr['title']);
+		$id = '#' . $pr['number'];
+		if ($repoName !== 'server') {
+			$id = $repoName . $id;
+		}
+		$data = [
+			'repoName' => $repoName,
+			'number' => $pr['number'],
+			'title' => $title,
+		];
+
+		return [$id, $data];
+	}
+
 	/**
 	 * @throws Exception
 	 */
@@ -192,6 +213,7 @@ class GenerateChangelogCommand extends Command
 				pullRequests(states: [OPEN], first: 40) {
 					nodes {
 						number
+						title
 					}
 				}
 			}
@@ -203,7 +225,8 @@ class GenerateChangelogCommand extends Command
 				foreach ($response['data']['repository']['milestones']['nodes'] as $milestone) {
 					if (strpos($milestone['title'], $milestoneToCheck) !== false) {
 						foreach ($milestone['pullRequests']['nodes'] as $pr) {
-							$pullRequests[] = $pr['number'];
+							list($id, $data) = $this->processPR($repoName, $pr);
+							$prTitles['pending'][$id] = $data;
 						}
 					}
 				}
@@ -216,7 +239,7 @@ QUERY;
 			$query .= '		repository(owner: "' . $orgName . '", name: "' . $repoName . '") {';
 
 			foreach ($pullRequests as $pullRequest) {
-				$query .= "pr$pullRequest: pullRequest(number: $pullRequest) { number, title, state },";
+				$query .= "pr$pullRequest: pullRequest(number: $pullRequest) { number, title },";
 			}
 
 			$query .= <<<'QUERY'
@@ -232,24 +255,8 @@ QUERY;
 				continue;
 			}
 			foreach ($response['data']['repository'] as $pr) {
-				$title = $pr['title'];
-				$title = preg_replace('!(\[|\()(stable)? ?(10|11|12|13|14|15|16|17)(\]|\))?\W*!i', '', $title);
-				$title = trim($title);
-				$title = strtoupper(substr($title, 0, 1)) . substr($title, 1);
-				$id = '#' . $pr['number'];
-				if ($repoName !== 'server') {
-					$id = $repoName . $id;
-				}
-				$data = [
-					'repoName' => $repoName,
-					'number' => $pr['number'],
-					'title' => $title,
-				];
-				if ($pr['state'] === 'MERGED') {
-					$prTitles['closed'][$id] = $data;
-				} else {
-					$prTitles['pending'][$id] = $data;
-				}
+				list($id, $data) = $this->processPR($repoName, $pr);
+				$prTitles['closed'][$id] = $data;
 			}
 			$progressBar->advance();
 		}
