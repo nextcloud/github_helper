@@ -60,6 +60,13 @@ class GenerateChangelogCommand extends Command
 		return [$id, $data];
 	}
 
+	protected function shouldPRBeSkipped($title) {
+		if (preg_match('!^\d+(\.\d+(\.\d+))? ?(rc|beta|alpha)? ?(\d+)?$!i', $title)) {
+			return true;
+		}
+		return false;
+	}
+
 	/**
 	 * @throws Exception
 	 */
@@ -238,6 +245,9 @@ class GenerateChangelogCommand extends Command
 				foreach ($response['data']['repository']['milestones']['nodes'] as $milestone) {
 					if (strpos($milestone['title'], $milestoneToCheck) !== false) {
 						foreach ($milestone['pullRequests']['nodes'] as $pr) {
+							if ($this->shouldPRBeSkipped($pr['title'])) {
+								continue;
+							}
 							list($id, $data) = $this->processPR($repoName, $pr);
 							$prTitles['pending'][$id] = $data;
 						}
@@ -269,6 +279,9 @@ class GenerateChangelogCommand extends Command
 							$milestone = $response['data']['repository']['milestone'];
 
 							foreach ($milestone['pullRequests']['nodes'] as $pr) {
+								if ($this->shouldPRBeSkipped($pr['title'])) {
+									continue;
+								}
 								list($id, $data) = $this->processPR($repoName, $pr);
 								$prTitles['pending'][$id] = $data;
 							}
@@ -300,6 +313,9 @@ QUERY;
 				continue;
 			}
 			foreach ($response['data']['repository'] as $pr) {
+				if ($this->shouldPRBeSkipped($pr['title'])) {
+					continue;
+				}
 				list($id, $data) = $this->processPR($repoName, $pr);
 				$prTitles['closed'][$id] = $data;
 			}
