@@ -185,18 +185,18 @@ class GenerateChangelogCommand extends Command
 				$progressBar->setMessage("Fetching pending PRs for $repoName $milestoneToCheck ...");
 
 				$query = "query{
-  repository(owner: \"$orgName\", name: \"$repoName\") {
-	milestones(first: 40, states: [OPEN]) {
-      nodes {
-        title
-        pullRequests(states: [OPEN], first: 40) {
-          nodes {
-            number
-          }
-        }
-      }
-    }
-  }
+	repository(owner: \"$orgName\", name: \"$repoName\") {
+		milestones(first: 40, states: [OPEN]) {
+			nodes {
+				title
+				pullRequests(states: [OPEN], first: 40) {
+					nodes {
+						number
+					}
+				}
+			}
+		}
+	}
 }";
 
 				$response = $client->api('graphql')->execute($query);
@@ -213,14 +213,14 @@ class GenerateChangelogCommand extends Command
 			$query = <<<'QUERY'
 query {
 QUERY;
-			$query .= '    repository(owner: "' . $orgName . '", name: "' . $repoName . '") {';
+			$query .= '		repository(owner: "' . $orgName . '", name: "' . $repoName . '") {';
 
 			foreach ($pullRequests as $pullRequest) {
 				$query .= "pr$pullRequest: pullRequest(number: $pullRequest) { number, title, state },";
 			}
 
 			$query .= <<<'QUERY'
-    }
+		}
 }
 QUERY;
 
