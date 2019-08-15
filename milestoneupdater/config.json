@@ -34,8 +34,6 @@
     "viewer"
   ],
   "dueDates": {
-    "Nextcloud 14.0.15": "2019-09-26",
-    "Nextcloud 14.0.16": "2019-11-07",
     "Nextcloud 15.0.12": "2019-09-26",
     "Nextcloud 15.0.13": "2019-11-07",
     "Nextcloud 16.0.5": "2019-09-26",
@@ -43,6 +41,8 @@
   },
   "closeMilestones": [
     "Nextcloud 14.0.14",
+    "Nextcloud 14.0.15",
+    "Nextcloud 14.0.16",
     "Nextcloud 15.0.11",
     "Nextcloud 16.0.4"
   ],
