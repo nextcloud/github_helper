@@ -35,12 +35,14 @@
     "spreed",
     "survey_client",
     "templateeditor",
+    "user_retention",
     "user_saml",
     "viewer",
     "workflow_pdf_converter",
     "workflow_script"
   ],
   "exclude": [
-    "/^feature:/"
+    "/^feature:/",
+    "/-feedback$/"
   ]
 }
