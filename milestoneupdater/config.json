@@ -6,7 +6,6 @@
     "activity",
     "apps",
     "documentation",
-    "external",
     "end_to_end_encryption",
     "files_accesscontrol",
     "files_antivirus",
@@ -57,7 +56,6 @@
   ],
   "versionAdded": {
     "end_to_end_encryption": "13",
-    "external": "12",
     "files_accesscontrol": "10",
     "files_automatedtagging": "10",
     "files_downloadactivity": "11",
