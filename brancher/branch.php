@@ -27,6 +27,7 @@ $repositories = [
 	'survey_client',
 	'updater',
 	'viewer',
+	'photos',
 ];
 
 foreach($repositories as $repo) {
