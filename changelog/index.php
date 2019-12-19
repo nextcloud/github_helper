@@ -197,7 +197,7 @@ class GenerateChangelogCommand extends Command
 				$diff = $repo->commits()->compare($orgName, $repoName, $base, $head);
 			} catch (\Github\Exception\RuntimeException $e) {
 				if ($e->getMessage() === 'Not Found') {
-					$output->writeln('<error>Could not find base or head reference.</error>');
+					$output->writeln('<error>Could not find base or head reference on ' . $repoName. '.</error>');
 					return;
 				}
 				throw $e;
