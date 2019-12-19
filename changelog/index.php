@@ -80,7 +80,6 @@ class GenerateChangelogCommand extends Command
 			"server",
 			"3rdparty",
 			"activity",
-			"apps",
 			"files_pdfviewer",
 			"files_texteditor",
 			"files_videoplayer",
