@@ -84,7 +84,6 @@ class GenerateChangelogCommand extends Command
 			"files_texteditor",
 			"files_videoplayer",
 			"firstrunwizard",
-			"gallery",
 			"logreader",
 			"nextcloud_announcements",
 			"notifications",
@@ -117,6 +116,9 @@ class GenerateChangelogCommand extends Command
 			$reposToIterate[] = 'privacy';
 			$reposToIterate[] = 'recommendations';
 			$reposToIterate[] = 'viewer';
+		}
+		if (in_array($head, ['stable16', 'stable17']) || in_array(substr($head, 0, 3), ['v16', 'v17'])) {
+			$reposToIterate[] = 'gallery';
 		}
 
 		$output->writeln("repo: $repoName");
