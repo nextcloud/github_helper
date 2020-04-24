@@ -34,7 +34,6 @@
   ],
   "dueDates": {
     "Nextcloud 16.0.11": "2020-06-04",
-    "Nextcloud 16.0.12": "2020-07-16",
     "Nextcloud 17.0.7": "2020-06-04",
     "Nextcloud 17.0.8": "2020-07-16",
     "Nextcloud 18.0.5": "2020-06-04",
@@ -47,7 +46,6 @@
   ],
   "addMilestones": [
     "Nextcloud 16.0.11",
-    "Nextcloud 16.0.12",
     "Nextcloud 17.0.7",
     "Nextcloud 17.0.8",
     "Nextcloud 18.0.5",
