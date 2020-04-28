@@ -3,7 +3,6 @@
   "repos": [
     "3rdparty",
     "activity",
-    "apps",
     "documentation",
     "end_to_end_encryption",
     "files_accesscontrol",
@@ -29,7 +28,6 @@
     "survey_client",
     "templateeditor",
     "terms_of_service",
-    "user_saml",
     "viewer"
   ],
   "dueDates": {
