@@ -35,7 +35,8 @@
     "Nextcloud 17.0.7": "2020-06-04",
     "Nextcloud 17.0.8": "2020-07-16",
     "Nextcloud 18.0.5": "2020-06-04",
-    "Nextcloud 18.0.6": "2020-07-16"
+    "Nextcloud 18.0.6": "2020-07-16",
+    "Nextcloud 19": "2020-05-26"
   },
   "closeMilestones": [
     "Nextcloud 16.0.10",
@@ -48,7 +49,8 @@
     "Nextcloud 17.0.8",
     "Nextcloud 18.0.5",
     "Nextcloud 18.0.6",
-    "Nextcloud 19"
+    "Nextcloud 19",
+    "Nextcloud 20"
   ],
   "versionAdded": {
     "end_to_end_encryption": "13",
