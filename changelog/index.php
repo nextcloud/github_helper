@@ -81,7 +81,6 @@ class GenerateChangelogCommand extends Command
 			"3rdparty",
 			"activity",
 			"files_pdfviewer",
-			"files_texteditor",
 			"files_videoplayer",
 			"firstrunwizard",
 			"logreader",
@@ -90,6 +89,8 @@ class GenerateChangelogCommand extends Command
 			"password_policy",
 			"serverinfo",
 			"survey_client",
+			"text",
+			"viewer",
 		];
 
 		if (!file_exists(__DIR__ . '/../credentials.json')) {
