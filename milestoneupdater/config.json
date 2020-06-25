@@ -28,6 +28,7 @@
     "survey_client",
     "templateeditor",
     "terms_of_service",
+    "text",
     "viewer"
   ],
   "dueDates": {
@@ -74,6 +75,7 @@
     "serverinfo": "10",
     "survey_client": "10",
     "terms_of_service": "14",
-    "viewer": "16"
+    "viewer": "16",
+    "text": "17",
   }
 }
