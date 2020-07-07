@@ -14,8 +14,8 @@ $client = new \Github\Client(
 	])
 );
 
-if(!file_exists('credentials.json')) {
-	print 'Please create the file credentials.json and provide your apikey.' . PHP_EOL;
+if(!file_exists(__DIR__ . '/../credentials.json')) {
+	print 'Please create the file ../credentials.json and provide your apikey.' . PHP_EOL;
 	print '  cp credentials.dist.json credentials.json' . PHP_EOL;
 	exit(1);
 }
@@ -35,7 +35,7 @@ function getDateTime($date) {
 	return $dateObject->format('Y-m-d\TH:i:s\Z');
 }
 
-$authentication = json_decode(file_get_contents('credentials.json'));
+$authentication = json_decode(file_get_contents(__DIR__ . '/../credentials.json'));
 
 $client->authenticate($authentication->apikey, Github\Client::AUTH_HTTP_TOKEN);
 $paginator = new Github\ResultPager($client);
