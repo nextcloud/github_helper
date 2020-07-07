@@ -35,7 +35,7 @@ class GenerateChangelogCommand extends Command
 	}
 
 	protected function cleanTitle($title) {
-		$title = preg_replace('!(\[|\()(stable)? ?(10|11|12|13|14|15|16|17)(\]|\))?\W*!i', '', $title);
+		$title = preg_replace('!(\[|\()(stable)? ?\d\d(\]|\))?\W*!i', '', $title);
 		$title = preg_replace('!^\[security\]!i', '', $title);
 		$title = trim($title);
 		return strtoupper(substr($title, 0, 1)) . substr($title, 1);
@@ -200,7 +200,11 @@ class GenerateChangelogCommand extends Command
 			} catch (\Github\Exception\RuntimeException $e) {
 				if ($e->getMessage() === 'Not Found') {
 					$output->writeln('<error>Could not find base or head reference on ' . $repoName. '.</error>');
-					return;
+					// print 3 empty lines to not overwrite the error message with the progress bar
+					$output->writeln('');
+					$output->writeln('');
+					$output->writeln('');
+					continue;
 				}
 				throw $e;
 			}
@@ -391,11 +395,14 @@ QUERY;
 					$repoName = $data['repoName'];
 					$number = $data['number'];
 					$title = $data['title'];
-					$author = $data['author'];
+					$author = '@' . $data['author'];
+					if ($author === '@backportbot-nextcloud') {
+						$author = '';
+					}
 					if ($repoName === 'server') {
-						$output->writeln("* [ ] #$number $title @$author");
+						$output->writeln("* [ ] #$number $title $author");
 					} else {
-						$output->writeln("* [ ] [$repoName#$number](https://github.com/$orgName/$repoName/pull/$number) $title @$author");
+						$output->writeln("* [ ] [$repoName#$number](https://github.com/$orgName/$repoName/pull/$number) $title $author");
 					}
 				}
 				break;
