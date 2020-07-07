@@ -28,6 +28,7 @@ $repositories = [
 	'updater',
 	'viewer',
 	'photos',
+	'text',
 ];
 
 foreach($repositories as $repo) {
