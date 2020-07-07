@@ -168,7 +168,7 @@ class GenerateChangelogCommand extends Command
 		$client = new \Github\Client();
 		# TODO
 		#$client->addCache($pool);
-		$client->authenticate($credentialsData['apikey'], Github\Client::AUTH_URL_TOKEN);
+		$client->authenticate($credentialsData['apikey'], Github\Client::AUTH_HTTP_TOKEN);
 
 		$factor = 2;
 		if ($milestoneToCheck !== null) {
