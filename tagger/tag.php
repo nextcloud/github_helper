@@ -6,98 +6,6 @@ $branch = $argv[1];
 $tag = $argv[2];
 
 switch($branch) {
-	case 'stable9':
-		$repositories = [
-			'server',
-			'3rdparty',
-			'apps',
-			'files_pdfviewer',
-			'files_texteditor',
-			'files_videoplayer',
-			'gallery',
-			'firstrunwizard',
-			'activity',
-			'templateeditor',
-			'notifications',
-			'password_policy',
-			'user_saml',
-			'example-files',
-		];
-		break;
-	case 'stable10':
-		$repositories = [
-			'server',
-			'3rdparty',
-			'apps',
-			'files_pdfviewer',
-			'files_texteditor',
-			'files_videoplayer',
-			'gallery',
-			'firstrunwizard',
-			'activity',
-			'templateeditor',
-			'notifications',
-			'password_policy',
-			'user_saml',
-			'files_accesscontrol',
-			'files_automatedtagging',
-			'files_retention',
-			'serverinfo',
-			'survey_client',
-			'example-files',
-		];
-		break;
-	case 'stable11':
-		$repositories = [
-			'server',
-			'3rdparty',
-			'apps',
-			'files_pdfviewer',
-			'files_texteditor',
-			'files_videoplayer',
-			'gallery',
-			'firstrunwizard',
-			'activity',
-			'templateeditor',
-			'notifications',
-			'password_policy',
-			'user_saml',
-			'files_accesscontrol',
-			'files_automatedtagging',
-			'files_retention',
-			'serverinfo',
-			'survey_client',
-			'example-files',
-			'logreader',
-			'updater',
-			'nextcloud_announcements',
-		];
-		break;
-	case 'stable12':
-	case 'stable13':
-	case 'stable14':
-	case 'stable15':
-		// keep them in sync with the ones from brancher/branch.php
-		$repositories = [
-			'server',
-			'3rdparty',
-			'apps',
-			'files_pdfviewer',
-			'files_texteditor',
-			'files_videoplayer',
-			'gallery',
-			'firstrunwizard',
-			'activity',
-			'notifications',
-			'password_policy',
-			'serverinfo',
-			'survey_client',
-			'example-files',
-			'logreader',
-			'updater',
-			'nextcloud_announcements',
-		];
-		break;
 	case 'stable16':
 	case 'stable17':
 		// keep them in sync with the ones from brancher/branch.php
@@ -124,6 +32,8 @@ switch($branch) {
 			'privacy',
 		];
 		break;
+	case 'stable18':
+	case 'stable19':
 	case 'master':
 		// keep them in sync with the ones from brancher/branch.php
 		$repositories = [
@@ -147,6 +57,7 @@ switch($branch) {
 			'viewer',
 			'privacy',
 			'photos',
+			'text',
 		];
 		break;
 	default:
