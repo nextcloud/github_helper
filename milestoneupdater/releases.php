@@ -37,7 +37,7 @@ function getDateTime($date) {
 
 $authentication = json_decode(file_get_contents('credentials.json'));
 
-$client->authenticate($authentication->apikey, Github\Client::AUTH_URL_TOKEN);
+$client->authenticate($authentication->apikey, Github\Client::AUTH_HTTP_TOKEN);
 $paginator = new Github\ResultPager($client);
 
 $config = json_decode(file_get_contents('config.json'), true);

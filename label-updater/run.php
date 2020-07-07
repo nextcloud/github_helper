@@ -22,7 +22,7 @@ if(!file_exists('credentials.json')) {
 
 $authentication = json_decode(file_get_contents('credentials.json'));
 
-$client->authenticate($authentication->apikey, Github\Client::AUTH_URL_TOKEN);
+$client->authenticate($authentication->apikey, Github\Client::AUTH_HTTP_TOKEN);
 $paginator = new Github\ResultPager($client);
 
 $response = $client->getHttpClient()->get("rate_limit");
