@@ -399,6 +399,9 @@ QUERY;
 					if ($author === '@backportbot-nextcloud') {
 						$author = '';
 					}
+					if ($author === '@dependabot-preview') {
+						$author = '';
+					}
 					if ($repoName === 'server') {
 						$output->writeln("* [ ] #$number $title $author");
 					} else {
