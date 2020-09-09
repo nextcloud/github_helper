@@ -26,8 +26,10 @@ switch($branch) {
 			'nextcloud/recommendations',
 			'nextcloud/serverinfo',
 			'nextcloud/survey_client',
+			'nextcloud/text',
 			'nextcloud/updater',
 			'nextcloud/viewer',
+			'nextcloud-gmbh/support',
 		];
 		break;
 	case 'stable18':
