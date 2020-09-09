@@ -106,7 +106,7 @@ foreach($repositories as $name => $repository) {
 			if(array_key_exists($milestone, $config['dueDates'])) {
 				$data['due_on'] = getDateTime($config['dueDates'][$milestone]);
 			}
-			continue; // comment this to CLOSE MILESTONES
+			//continue; // comment this to CLOSE MILESTONES
 			// TODO ask for the update
 			$client->api('issue')->milestones()->update($config['org'], $name, $info['number'], $data);
 		}
@@ -126,7 +126,7 @@ foreach($repositories as $name => $repository) {
 			if(array_key_exists($milestone, $config['dueDates'])) {
 				$data['due_on'] = getDateTime($config['dueDates'][$milestone]);
 			}
-			continue; // comment this to ADD MILESTONES
+			//continue; // comment this to ADD MILESTONES
 			// TODO ask for the update
 			$client->api('issue')->milestones()->create($config['org'], $name, $data);
 
@@ -142,7 +142,7 @@ if(count($updateDueDate)) {
 		if(in_array($date['title'], $config['closeMilestones'])) {
 			continue; // no need to change the due date of a milestone that is meant to be closed
 		}
-		continue; // comment this to UPDATE DUE DATES
+		//continue; // comment this to UPDATE DUE DATES
 		// TODO ask for the update
 		$client->api('issue')->milestones()->update($date['org'], $date['repo'], $date['number'], [
 			'title' => $date['title'],
