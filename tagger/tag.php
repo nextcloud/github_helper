@@ -66,14 +66,18 @@ switch($branch) {
 
 foreach($repositories as $repo) {
 	$name = explode('/', $repo)[1];
+	$SSH_OPTIONS = '';
+	if ($name === 'support' && gethostname() === 'client-builder') {
+		$SSH_OPTIONS = "GIT_SSH_COMMAND='ssh -i ~/.ssh/id_rsa.support-app -o IdentitiesOnly=yes'";
+	}
 	// Clone the repository
-	shell_exec('cd ' . __DIR__ . ' && git clone git@github.com:' . $repo . '.git');
+	shell_exec('cd ' . __DIR__ . ' && ' . $SSH_OPTIONS . ' git clone git@github.com:' . $repo . '.git');
 	// Checkout the required branch
 	shell_exec('cd ' . __DIR__ . '/'. $name . ' && git checkout ' . $branch);
 	// Create a signed tag
 	shell_exec('cd ' . __DIR__ . '/' . $name . ' && git tag -s ' . $tag . ' -m \'' . $tag . '\'');
 	// Push the signed tag
-	shell_exec('cd ' . __DIR__ . '/' . $name . ' && git push origin ' . $tag);
+	shell_exec('cd ' . __DIR__ . '/' . $name . ' && ' . $SSH_OPTIONS . ' git push origin ' . $tag);
 	// Delete repository
 	shell_exec('cd ' . __DIR__ . ' && rm -rf ' . $name);
 }

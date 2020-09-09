@@ -31,12 +31,16 @@ $repositories = [
 
 foreach($repositories as $repo) {
 	$name = explode('/', $repo)[1];
+	$SSH_OPTIONS = '';
+	if ($name === 'support' && gethostname() === 'client-builder') {
+		$SSH_OPTIONS = "GIT_SSH_COMMAND='ssh -i ~/.ssh/id_rsa.support-app -o IdentitiesOnly=yes'";
+	}
 	// Clone the repository
-	shell_exec('cd ' . __DIR__ . ' && git clone git@github.com:' . $repo);
+	shell_exec('cd ' . __DIR__ . ' && ' . $SSH_OPTIONS . ' git clone git@github.com:' . $repo);
 	// Checkout the new branch
 	shell_exec('cd ' . __DIR__ . '/'. $name . ' && git checkout -b ' . $branch);
 	// Push the branch
-	shell_exec('cd ' . __DIR__ . '/' . $name . ' && git push origin ' . $branch);
+	shell_exec('cd ' . __DIR__ . '/' . $name . ' && ' . $SSH_OPTIONS . ' git push origin ' . $branch);
 	// Delete repository
 	shell_exec('cd ' . __DIR__ . ' && rm -rf ' . $name);
 }
