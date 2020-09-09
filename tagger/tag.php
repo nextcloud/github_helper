@@ -6,30 +6,28 @@ $branch = $argv[1];
 $tag = $argv[2];
 
 switch($branch) {
-	case 'stable16':
 	case 'stable17':
 		// keep them in sync with the ones from brancher/branch.php
 		$repositories = [
-			'server',
-			'3rdparty',
-			'apps',
-			'files_pdfviewer',
-			'files_texteditor',
-			'files_videoplayer',
-			'gallery',
-			'firstrunwizard',
-			'activity',
-			'notifications',
-			'password_policy',
-			'serverinfo',
-			'survey_client',
-			'example-files',
-			'logreader',
-			'updater',
-			'nextcloud_announcements',
-			'recommendations',
-			'viewer',
-			'privacy',
+			'nextcloud/server',
+			'nextcloud/3rdparty',
+			'nextcloud/activity',
+			'nextcloud/example-files',
+			'nextcloud/files_pdfviewer',
+			'nextcloud/files_rightclick',
+			'nextcloud/files_videoplayer',
+			'nextcloud/firstrunwizard',
+			'nextcloud/gallery',
+			'nextcloud/logreader',
+			'nextcloud/nextcloud_announcements',
+			'nextcloud/notifications',
+			'nextcloud/password_policy',
+			'nextcloud/privacy',
+			'nextcloud/recommendations',
+			'nextcloud/serverinfo',
+			'nextcloud/survey_client',
+			'nextcloud/updater',
+			'nextcloud/viewer',
 		];
 		break;
 	case 'stable18':
@@ -37,27 +35,27 @@ switch($branch) {
 	case 'master':
 		// keep them in sync with the ones from brancher/branch.php
 		$repositories = [
-			'server',
-			'3rdparty',
-			'apps',
-			'files_pdfviewer',
-			'files_texteditor',
-			'files_videoplayer',
-			'firstrunwizard',
-			'activity',
-			'notifications',
-			'password_policy',
-			'serverinfo',
-			'survey_client',
-			'example-files',
-			'logreader',
-			'updater',
-			'nextcloud_announcements',
-			'recommendations',
-			'viewer',
-			'privacy',
-			'photos',
-			'text',
+			'nextcloud/server',
+			'nextcloud/3rdparty',
+			'nextcloud/activity',
+			'nextcloud/example-files',
+			'nextcloud/files_pdfviewer',
+			'nextcloud/files_rightclick',
+			'nextcloud/files_videoplayer',
+			'nextcloud/firstrunwizard',
+			'nextcloud/logreader',
+			'nextcloud/nextcloud_announcements',
+			'nextcloud/notifications',
+			'nextcloud/password_policy',
+			'nextcloud/photos',
+			'nextcloud/privacy',
+			'nextcloud/recommendations',
+			'nextcloud/serverinfo',
+			'nextcloud/survey_client',
+			'nextcloud/text',
+			'nextcloud/updater',
+			'nextcloud/viewer',
+			'nextcloud-gmbh/support',
 		];
 		break;
 	default:
@@ -66,7 +64,7 @@ switch($branch) {
 
 foreach($repositories as $repo) {
 	// Clone the repository
-	shell_exec('cd ' . __DIR__ . ' && git clone git@github.com:nextcloud/' . $repo . '.git');
+	shell_exec('cd ' . __DIR__ . ' && git clone git@github.com:' . $repo . '.git');
 	// Checkout the required branch
 	shell_exec('cd ' . __DIR__ . '/'. $repo . ' && git checkout ' . $branch);
 	// Create a signed tag
@@ -74,5 +72,5 @@ foreach($repositories as $repo) {
 	// Push the signed tag
 	shell_exec('cd ' . __DIR__ . '/' . $repo . ' && git push origin ' . $tag);
 	// Delete repository
-	shell_exec('cd ' . __DIR__ . ' && rm -rf ' . $repo);
+	shell_exec('cd ' . __DIR__ . ' && rm -rf ' . explode('/', $repo)[1]);
 }

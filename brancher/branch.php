@@ -6,38 +6,36 @@ $branch = $argv[1];
 
 // keep them in sync with the ones from tagger/tag.php
 $repositories = [
-	'server',
-	'3rdparty',
-	'activity',
-	'apps',
-	'example-files',
-	'files_pdfviewer',
-	'files_rightclick',
-	'files_texteditor',
-	'files_videoplayer',
-	'firstrunwizard',
-	'gallery',
-	'logreader',
-	'nextcloud_announcements',
-	'notifications',
-	'password_policy',
-	'privacy',
-	'recommendations',
-	'serverinfo',
-	'survey_client',
-	'updater',
-	'viewer',
-	'photos',
-	'text',
+	'nextcloud/server',
+	'nextcloud/3rdparty',
+	'nextcloud/activity',
+	'nextcloud/example-files',
+	'nextcloud/files_pdfviewer',
+	'nextcloud/files_rightclick',
+	'nextcloud/files_videoplayer',
+	'nextcloud/firstrunwizard',
+	'nextcloud/logreader',
+	'nextcloud/nextcloud_announcements',
+	'nextcloud/notifications',
+	'nextcloud/password_policy',
+	'nextcloud/photos',
+	'nextcloud/privacy',
+	'nextcloud/recommendations',
+	'nextcloud/serverinfo',
+	'nextcloud/survey_client',
+	'nextcloud/text',
+	'nextcloud/updater',
+	'nextcloud/viewer',
+	'nextcloud-gmbh/support',
 ];
 
 foreach($repositories as $repo) {
 	// Clone the repository
-	shell_exec('cd ' . __DIR__ . ' && git clone git@github.com:nextcloud/' . $repo);
+	shell_exec('cd ' . __DIR__ . ' && git clone git@github.com:' . $repo);
 	// Checkout the new branch
 	shell_exec('cd ' . __DIR__ . '/'. $repo . ' && git checkout -b ' . $branch);
 	// Push the branch
 	shell_exec('cd ' . __DIR__ . '/' . $repo . ' && git push origin ' . $branch);
 	// Delete repository
-	shell_exec('cd ' . __DIR__ . ' && rm -rf ' . $repo);
+	shell_exec('cd ' . __DIR__ . ' && rm -rf ' . explode('/', $repo)[1]);
 }
