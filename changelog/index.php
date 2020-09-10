@@ -408,6 +408,9 @@ QUERY;
 					if ($author === '@dependabot-preview') {
 						$author = '';
 					}
+					if ($author === '@dependabot') {
+						$author = '';
+					}
 					if ($repoName === 'server') {
 						$output->writeln("* [ ] #$number $title $author");
 					} else {
