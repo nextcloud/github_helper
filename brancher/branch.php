@@ -9,6 +9,7 @@ $repositories = [
 	'nextcloud/server',
 	'nextcloud/3rdparty',
 	'nextcloud/activity',
+	'nextcloud/documentation',
 	'nextcloud/example-files',
 	'nextcloud/files_pdfviewer',
 	'nextcloud/files_rightclick',
