@@ -41,7 +41,8 @@
     "Nextcloud 18.0.11",
     "Nextcloud 19.0.4",
     "Nextcloud 19.0.5",
-    "Nextcloud 20"
+    "Nextcloud 20",
+    "Nextcloud 21"
   ],
   "versionAdded": {
     "photos": "18",
