@@ -8,11 +8,10 @@ $NO_COLOR = "\033[0m";
 $STRIKE_THROUGH = "\033[9m";
 $BOLD = "\033[1m";
 
-$client = new \Github\Client(
-	new \Github\HttpClient\CachedHttpClient([
-		'cache_dir' => '/tmp/github-api-cache'
-	])
-);
+$client = new \Github\Client();
+$cache = new Stash\Pool();
+
+$client->addCache($cache);
 
 if(!file_exists(__DIR__ . '/../credentials.json')) {
 	print 'Please create the file ../credentials.json and provide your apikey.' . PHP_EOL;
@@ -37,7 +36,7 @@ function getDateTime($date) {
 
 $authentication = json_decode(file_get_contents(__DIR__ . '/../credentials.json'));
 
-$client->authenticate($authentication->apikey, Github\Client::AUTH_HTTP_TOKEN);
+$client->authenticate($authentication->apikey, Github\Client::AUTH_ACCESS_TOKEN);
 $paginator = new Github\ResultPager($client);
 
 $config = json_decode(file_get_contents('config.json'), true);
