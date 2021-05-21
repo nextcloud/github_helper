@@ -6,33 +6,6 @@ $branch = $argv[1];
 $tag = $argv[2];
 
 switch($branch) {
-	case 'stable17':
-		// keep them in sync with the ones from brancher/branch.php
-		$repositories = [
-			'nextcloud/server',
-			'nextcloud/3rdparty',
-			'nextcloud/activity',
-			'nextcloud/example-files',
-			'nextcloud/files_pdfviewer',
-			'nextcloud/files_rightclick',
-			'nextcloud/files_videoplayer',
-			'nextcloud/firstrunwizard',
-			'nextcloud/gallery',
-			'nextcloud/logreader',
-			'nextcloud/nextcloud_announcements',
-			'nextcloud/notifications',
-			'nextcloud/password_policy',
-			'nextcloud/privacy',
-			'nextcloud/recommendations',
-			'nextcloud/serverinfo',
-			'nextcloud/survey_client',
-			'nextcloud/text',
-			'nextcloud/updater',
-			'nextcloud/viewer',
-			'nextcloud-gmbh/support',
-		];
-		break;
-	case 'stable18':
 	case 'stable19':
 	case 'stable20':
 	case 'stable21':
