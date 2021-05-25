@@ -80,6 +80,7 @@ class GenerateChangelogCommand extends Command
 			"server",
 			"3rdparty",
 			"activity",
+			"circles",
 			"example-files",
 			"files_pdfviewer",
 			"files_rightclick",

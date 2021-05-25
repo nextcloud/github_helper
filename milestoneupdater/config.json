@@ -3,6 +3,7 @@
   "repos": [
     "3rdparty",
     "activity",
+    "circles",
     "documentation",
     "example-files",
     "files_pdfviewer",
@@ -43,5 +44,6 @@
     "Nextcloud 23"
   ],
   "versionAdded": {
+    "circles": "22"
   }
 }
