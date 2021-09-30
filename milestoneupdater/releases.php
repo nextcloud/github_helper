@@ -83,7 +83,7 @@ foreach($config['repos'] as $repo) {
 	}
 }
 
-$response = $client->getHttpClient()->get("rate_limit");
+$response = $client->getHttpClient()->get("/rate_limit");
 print("Remaining requests to GitHub this hour: " . \Github\HttpClient\Message\ResponseMediator::getContent($response)['rate']['remaining'] . PHP_EOL);
 
 foreach($repositories as $name => $repository) {
