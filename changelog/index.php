@@ -196,33 +196,36 @@ class GenerateChangelogCommand extends Command
 		$progressBar->setMessage('Starting ...');
 		$progressBar->start();
 
-		foreach ($reposToIterate as $repoName) {
+		$isBetaNull = strpos($base, 'beta0') !== false;
 
+		foreach ($reposToIterate as $repoName) {
 			$pullRequests = [];
 			/** @var \Github\Api\Repo $repo */
 			$repo = $client->api('repo');
-			try {
-				$progressBar->setMessage("Fetching git history for $repoName...");
-				$diff = $repo->commits()->compare($orgName, $repoName, $base, $head);
-			} catch (\Github\Exception\RuntimeException $e) {
-				if ($e->getMessage() === 'Not Found') {
-					$output->writeln('<error>Could not find base or head reference on ' . $repoName. '.</error>');
-					// print 3 empty lines to not overwrite the error message with the progress bar
-					$output->writeln('');
-					$output->writeln('');
-					$output->writeln('');
-					continue;
+			if (!$isBetaNull) {
+				try {
+					$progressBar->setMessage("Fetching git history for $repoName...");
+					$diff = $repo->commits()->compare($orgName, $repoName, $base, $head);
+				} catch (\Github\Exception\RuntimeException $e) {
+					if ($e->getMessage() === 'Not Found') {
+						$output->writeln('<error>Could not find base or head reference on ' . $repoName . '.</error>');
+						// print 3 empty lines to not overwrite the error message with the progress bar
+						$output->writeln('');
+						$output->writeln('');
+						$output->writeln('');
+						continue;
+					}
+					throw $e;
 				}
-				throw $e;
-			}
 
-			foreach ($diff['commits'] as $commit) {
-				$fullMessage = $commit['commit']['message'];
-				list($firstLine,) = explode("\n", $fullMessage, 2);
-				if (substr($firstLine, 0, 20) === 'Merge pull request #') {
-					$firstLine = substr($firstLine, 20);
-					list($number,) = explode(" ", $firstLine, 2);
-					$pullRequests[] = $number;
+				foreach ($diff['commits'] as $commit) {
+					$fullMessage = $commit['commit']['message'];
+					list($firstLine,) = explode("\n", $fullMessage, 2);
+					if (substr($firstLine, 0, 20) === 'Merge pull request #') {
+						$firstLine = substr($firstLine, 20);
+						list($number,) = explode(" ", $firstLine, 2);
+						$pullRequests[] = $number;
+					}
 				}
 			}
 			$progressBar->advance();
