@@ -43,4 +43,11 @@ E.g. generate the changelog for the upcoming 3.3.0 Android release:
 php index.php generate:changelog android stable-3.3.0 stable-3.3.x
 ```
 
+E.g. to generate the pending PRs for a very first beta of a major release run (mind, the vxx.0.0beta0 tag is expected NOT to exist)):
+
+```
+php index.php generate:changelog server v42.0.0beta0 master
+```
+
+
 
