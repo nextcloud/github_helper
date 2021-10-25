@@ -393,7 +393,7 @@ QUERY;
 					$number = $data['number'];
 					$title = $data['title'];
 					if ($repoName === 'server') {
-						$output->writeln("* #$number $title");
+						$output->writeln("* #$number");
 					} else {
 						$output->writeln("* [$repoName#$number](https://github.com/$orgName/$repoName/pull/$number) $title");
 					}
@@ -416,7 +416,7 @@ QUERY;
 						$author = '';
 					}
 					if ($repoName === 'server') {
-						$output->writeln("* [ ] #$number $title $author");
+						$output->writeln("* [ ] #$number $author");
 					} else {
 						$output->writeln("* [ ] [$repoName#$number](https://github.com/$orgName/$repoName/pull/$number) $title $author");
 					}
