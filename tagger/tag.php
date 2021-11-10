@@ -35,6 +35,7 @@ switch($branch) {
 		];
 		break;
 	case 'stable22':
+	case 'stable23':
 	case 'master':
 		// keep them in sync with the ones from brancher/branch.php
 		$repositories = [
