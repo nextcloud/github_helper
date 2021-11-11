@@ -1,0 +1,78 @@
+# This workflow needs to be run on demand
+# It will search for all repositories containing a package.json
+# Then open a pull request to update the Node and Npm engines versions.
+
+name: Update npm engines versions
+
+on:
+  workflow_dispatch:
+
+jobs:
+  repositories:
+    runs-on: ubuntu-latest
+
+    outputs:
+      matrix: ${{ steps.search-repos.outputs.matrix }}
+
+    steps:
+      - name: Check actor permission
+        uses: skjnldsv/check-actor-permission@v2
+        with:
+          require: admin
+
+      - name: Search repositories using a package.json
+        id: search-repos
+        # This is a simple curl to fetch the list of repos containing a file and extracting the repo names
+        # We check if the file is <50KB to ignore the lockfile
+        run: |
+          echo '' > repos.json
+          # Retrieve first 10 potential results pages
+          for i in {0..10}; do
+            RESULTS=$(curl -H "Accept: application/vnd.github.v3+json" "https://api.github.com/search/code?q=org%3A${{ github.repository_owner }}+size%3A<50000+filename%3Apackage.json&per_page=100&page=$i" | jq -c '.items')
+            if [ "$RESULTS" = "null" ]; then
+              echo "Stopped on page $i"
+              break
+            fi
+            echo "$RESULTS" >> repos.json
+          done
+          # Pipe all results arrays and filter duplicate 
+          REPOS=$(cat repos.json | jq '.[]' | jq -sc 'map(.repository.name) | unique')
+          echo "::set-output name=matrix::$REPOS"
+
+  dispatch:
+    runs-on: ubuntu-latest
+    needs: repositories
+
+    strategy:
+      fail-fast: false
+      matrix:
+        repositories: ${{ fromJSON(needs.repositories.outputs.matrix) }}
+
+    env:
+      NODE_VERSION: "^14.0.0"
+      NPM_VERSION: "^7.0.0"
+
+    steps:
+      - name: Checkout target repository
+        uses: actions/checkout@v2
+        with:
+          repository: ${{ github.repository_owner }}/${{ matrix.repositories }}
+
+      - name: Set node version to ${{ env.NODE_VERSION }}
+        run: jq --tab '.engines.node = "${{ env.NODE_VERSION }}"' package.json > package-new.json && mv package-new.json package.json
+
+      - name: Set npm version to ${{ env.NPM_VERSION }}
+        run: jq --tab '.engines.npm = "${{ env.NPM_VERSION }}"' package.json > package-new.json && mv package-new.json package.json
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          body: Automated update of the npm and node engines versions
+          branch: feat/package-node-npm-engines-update
+          commit-message: Update npm and node engines versions
+          committer: Nextcloud bot <bot@nextcloud.com>
+          author: Nextcloud bot <bot@nextcloud.com>
+          signoff: true
+          title: Update npm and node engines versions 
+          labels: dependencies
+          token: ${{ secrets.COMMAND_BOT_PAT }}
