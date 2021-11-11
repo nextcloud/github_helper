@@ -25,21 +25,15 @@
     "viewer"
   ],
   "dueDates": {
-    "Nextcloud 20.0.14": "2021-11-11",
-    "Nextcloud 21.0.6": "2021-11-11",
-    "Nextcloud 22.2.1": "2021-11-11"
   },
   "closeMilestones": [
-    "Nextcloud 20.0.13",
-    "Nextcloud 21.0.5",
-    "Nextcloud 22.1.1",
-    "Nextcloud 22.1.2",
-    "Nextcloud 22.2.0"
+    "Nextcloud 20.0.14",
+    "Nextcloud 21.0.6",
+    "Nextcloud 22.2.1"
   ],
   "addMilestones": [
-    "Nextcloud 21.0.7",
-    "Nextcloud 22.2.1",
-    "Nextcloud 22.2.2"
+    "Nextcloud 21.0.8",
+    "Nextcloud 22.2.3"
   ],
   "versionAdded": {}
 }
