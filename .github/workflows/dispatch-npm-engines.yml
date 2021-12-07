@@ -59,10 +59,10 @@ jobs:
           repository: ${{ github.repository_owner }}/${{ matrix.repositories }}
 
       - name: Set node version to ${{ env.NODE_VERSION }}
-        run: jq --tab '.engines.node = "${{ env.NODE_VERSION }}"' package.json > package-new.json && mv package-new.json package.json
+        run: jq '.engines.node = "${{ env.NODE_VERSION }}"' package.json > package-new.json && mv package-new.json package.json
 
       - name: Set npm version to ${{ env.NPM_VERSION }}
-        run: jq --tab '.engines.npm = "${{ env.NPM_VERSION }}"' package.json > package-new.json && mv package-new.json package.json
+        run: jq '.engines.npm = "${{ env.NPM_VERSION }}"' package.json > package-new.json && mv package-new.json package.json
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
