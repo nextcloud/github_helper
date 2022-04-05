@@ -1,0 +1,7 @@
+{
+    "require": {
+        "knplabs/github-api": "^3.6",
+        "guzzlehttp/guzzle": "^7.4",
+        "ext-json": "*"
+    }
+}
