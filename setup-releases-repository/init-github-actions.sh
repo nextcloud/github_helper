@@ -13,10 +13,7 @@ fi
 GITHUB_CLI=$(which "gh")
 
 if [ -x "$GITHUB_CLI" ]; then
-	echo "Using GitHub CLI executable $GITHUB_CLI"
-else
-	echo "Could not find GitHub CLI executable $GITHUB_CLI" >&2
-	exit 1
+	echo "Using Microsoft GitHub CLI executable $GITHUB_CLI"
 fi
 
 APP_ID=$1
@@ -26,6 +23,10 @@ else
 	echo "Missing app id" >&2
 	exit 1
 fi
+
+ORIGINAL_DIR=$(pwd)
+WORK_DIR=$(mktemp -d)
+cd "${WORK_DIR}"
 
 $GIT clone https://github.com/nextcloud-releases/$APP_ID.git
 
@@ -98,6 +99,12 @@ $GIT add .github/workflows/blank.yml
 $GIT commit -m "Activate github actions with a trick"
 $GIT push --set-upstream origin $($GIT symbolic-ref --short HEAD)
 
-$GITHUB_CLI pr create --base main --fill
-$GIT push --delete origin activate-actions
+if [ -x "$GITHUB_CLI" ]; then
+  $GITHUB_CLI pr create --base main --fill
+  $GIT push --delete origin activate-actions
+else
+  xdg-open "https://github.com/nextcloud-releases/${APP_ID}/pull/new/activate-actions" 2>/dev/null
+fi
 
+cd "${ORIGINAL_DIR}"
+rm -Rf "${WORK_DIR}"
