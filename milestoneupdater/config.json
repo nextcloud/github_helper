@@ -29,14 +29,14 @@
     "Nextcloud 22.2.9": "2022-06-16",
     "Nextcloud 23.0.5": "2022-05-19",
     "Nextcloud 23.0.6": "2022-06-16",
-    "Nextcloud 24": "2022-04-26"
+    "Nextcloud 24.0.1": "2022-05-19",
+    "Nextcloud 24.0.2": "2022-06-16"
   },
   "closeMilestones": [
-    "Nextcloud 22.2.7",
-    "Nextcloud 23.0.4"
+    "Nextcloud 24"
   ],
   "addMilestones": [
-    "Nextcloud 24.0.1",
+    "Nextcloud 24.0.2",
     "Nextcloud 23.0.6",
     "Nextcloud 22.2.9"
   ],
