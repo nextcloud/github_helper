@@ -26,11 +26,11 @@
   ],
   "dueDates": {
     "Nextcloud 22.2.10": "2022-07-14",
-    "Nextcloud 22.2.9": "2022-06-16",
+    "Nextcloud 22.2.9": "2022-06-20",
     "Nextcloud 23.0.7": "2022-07-14",
-    "Nextcloud 23.0.6": "2022-06-16",
+    "Nextcloud 23.0.6": "2022-06-20",
     "Nextcloud 24.0.3": "2022-07-14",
-    "Nextcloud 24.0.2": "2022-06-16"
+    "Nextcloud 24.0.2": "2022-06-20"
   },
   "closeMilestones": [
     "Nextcloud 22.2.8",
