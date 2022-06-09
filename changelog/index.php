@@ -129,9 +129,11 @@ class GenerateChangelogCommand extends Command
 			$reposToIterate[] = 'gallery';
 		}
 
-		$output->writeln("repo: $repoName");
-		$output->writeln("base: $base");
-		$output->writeln("head: $head");
+		if ($output->isVerbose()) {
+			$output->writeln("repo: $repoName");
+			$output->writeln("base: $base");
+			$output->writeln("head: $head");
+		}
 
 		$milestoneToCheck = null;
 		$substring = 'v';
@@ -158,7 +160,9 @@ class GenerateChangelogCommand extends Command
 					$version[2] = (string)((int)$version[2] + 1);
 					$milestoneToCheck = join('.', $version);
 				}
-				$output->writeln("Checking milestone $milestoneToCheck for pending PRs ...");
+				if ($output->isVerbose()) {
+					$output->writeln("Checking milestone $milestoneToCheck for pending PRs ...");
+				}
 			}
 		} else {
 			$output->writeln('<error>No version detected - the output will not contain any pending PRs. Use a git tag starting with "v" like "v13.0.5".</error>');
