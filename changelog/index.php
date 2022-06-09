@@ -395,7 +395,7 @@ QUERY;
 					if ($repoName === 'server') {
 						$output->writeln("* #$number");
 					} else {
-						$output->writeln("* [$repoName#$number](https://github.com/$orgName/$repoName/pull/$number) $title");
+						$output->writeln("* $orgName/$repoName#$number");
 					}
 				}
 				if (count($prTitles['pending'])) {
@@ -418,7 +418,7 @@ QUERY;
 					if ($repoName === 'server') {
 						$output->writeln("* [ ] #$number $author");
 					} else {
-						$output->writeln("* [ ] [$repoName#$number](https://github.com/$orgName/$repoName/pull/$number) $title $author");
+						$output->writeln("* [ ] $orgName/$repoName#$number $author");
 					}
 				}
 				break;
