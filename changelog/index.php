@@ -145,11 +145,11 @@ class GenerateChangelogCommand extends Command
 		}
 
 		if (substr($base, 0, $subStringNum) === $substring) {
-			$version = explode('.', substr($base, $subStringNum));
+			$version = explode('.', strtolower(substr($base, $subStringNum)));
 			if (count($version) !== 3) {
 				$output->writeln('<error>Detected version does not have exactly 3 numbers separated by a dot.</error>');
 			} else {
-				if (strpos($version[2], 'RC') !== false || strpos($version[2], 'beta') !== false) {
+				if (strpos($version[2], 'rc') !== false || strpos($version[2], 'beta') !== false) {
 					$version[2] = (string)((int)$version[2]); // this basically removes the beta/RC part
 					$milestoneToCheck = join('.', $version);
 
