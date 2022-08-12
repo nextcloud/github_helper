@@ -179,7 +179,7 @@ class GenerateChangelogCommand extends Command
 		$client = new \Github\Client();
 		# TODO
 		#$client->addCache($pool);
-		$client->authenticate($credentialsData['apikey'], Github\Client::AUTH_HTTP_TOKEN);
+		$client->authenticate($credentialsData['apikey'], Github\Client::AUTH_ACCESS_TOKEN);
 
 		$factor = 2;
 		if ($milestoneToCheck !== null) {
@@ -208,8 +208,14 @@ class GenerateChangelogCommand extends Command
 			$repo = $client->api('repo');
 			if (!$isBetaNull) {
 				try {
-					$progressBar->setMessage("Fetching git history for $repoName...");
-					$diff = $repo->commits()->compare($orgName, $repoName, $base, $head);
+					$progressBar->setMessage("Fetching git history for $repoName between $base and $head...");
+					$paginator = new Github\ResultPager($client);
+					$parameters = array($orgName, $repoName, $base, $head);
+					$commitsApi = $repo->commits();
+					$commits = $paginator->fetch($commitsApi, 'compare', $parameters)['commits'];
+					while($paginator->hasNext()) {
+						$commits = array_merge($commits, $paginator->fetchNext()['commits']);
+					}
 				} catch (\Github\Exception\RuntimeException $e) {
 					if ($e->getMessage() === 'Not Found') {
 						$output->writeln('<error>Could not find base or head reference on ' . $repoName . '.</error>');
@@ -222,7 +228,7 @@ class GenerateChangelogCommand extends Command
 					throw $e;
 				}
 
-				foreach ($diff['commits'] as $commit) {
+				foreach ($commits as $commit) {
 					$fullMessage = $commit['commit']['message'];
 					list($firstLine,) = explode("\n", $fullMessage, 2);
 					if (substr($firstLine, 0, 20) === 'Merge pull request #') {
@@ -310,6 +316,7 @@ class GenerateChangelogCommand extends Command
 				}
 				$progressBar->advance();
 			}
+
 
 			$query = <<<'QUERY'
 query {
@@ -409,7 +416,7 @@ QUERY;
 					$repoName = $data['repoName'];
 					$number = $data['number'];
 					$title = $data['title'];
-					$author = '@' . $data['author'];
+					$author = array_key_exists('author', $data) ? '@' . $data['author'] : '';
 					if ($author === '@backportbot-nextcloud') {
 						$author = '';
 					}
@@ -417,6 +424,9 @@ QUERY;
 						$author = '';
 					}
 					if ($author === '@dependabot') {
+						$author = '';
+					}
+					if ($author === '@dependabot[bot]') {
 						$author = '';
 					}
 					if ($repoName === 'server') {
