@@ -333,12 +333,18 @@ QUERY;
 QUERY;
 
 			$progressBar->setMessage("Fetching PR titles for $repoName ...");
-			$response = $client->api('graphql')->execute($query);
 
+			if (count($pullRequests) === 0) {
+				$progressBar->advance();
+				continue;
+			}
+
+			$response = $client->api('graphql')->execute($query);
 			if (!isset($response['data']['repository'])) {
 				$progressBar->advance();
 				continue;
 			}
+
 			foreach ($response['data']['repository'] as $pr) {
 				if ($this->shouldPRBeSkipped($pr['title'])) {
 					continue;
