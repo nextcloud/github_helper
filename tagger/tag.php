@@ -74,10 +74,8 @@ foreach($repositories as $repo) {
 	if ($name === 'support' && gethostname() === 'client-builder') {
 		$SSH_OPTIONS = "GIT_SSH_COMMAND='ssh -i ~/.ssh/id_rsa.support-app -o IdentitiesOnly=yes'";
 	}
-	// Clone the repository
-	shell_exec('cd ' . __DIR__ . ' && ' . $SSH_OPTIONS . ' git clone git@github.com:' . $repo . '.git');
-	// Checkout the required branch
-	shell_exec('cd ' . __DIR__ . '/'. $name . ' && git checkout ' . $branch);
+	// Clone the repository and checkout the required branch
+	shell_exec('cd ' . __DIR__ . ' && ' . $SSH_OPTIONS . ' git clone --depth=1 --branch="' . $branch . '" https://github.com/' . $repo);
 	// Create a signed tag
 	shell_exec('cd ' . __DIR__ . '/' . $name . ' && git tag -s ' . $tag . ' -m \'' . $tag . '\'');
 	// Push the signed tag
