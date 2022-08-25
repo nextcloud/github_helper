@@ -1,4 +1,4 @@
-<?php 
+<?php
 if(count($argv) !== 3) {
 	die("tag.php \$branchname \$tag\n");
 }
@@ -75,7 +75,7 @@ foreach($repositories as $repo) {
 		$SSH_OPTIONS = "GIT_SSH_COMMAND='ssh -i ~/.ssh/id_rsa.support-app -o IdentitiesOnly=yes'";
 	}
 	// Clone the repository and checkout the required branch
-	shell_exec('cd ' . __DIR__ . ' && ' . $SSH_OPTIONS . ' git clone --depth=1 --branch="' . $branch . '" https://github.com/' . $repo);
+	shell_exec('cd ' . __DIR__ . ' && ' . $SSH_OPTIONS . ' git clone --depth=1 --branch="' . $branch . '" git@github.com:' . $repo);
 	// Create a signed tag
 	shell_exec('cd ' . __DIR__ . '/' . $name . ' && git tag -s ' . $tag . ' -m \'' . $tag . '\'');
 	// Push the signed tag
