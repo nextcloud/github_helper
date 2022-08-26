@@ -55,19 +55,25 @@ function getAllLabels($client, $owner, $repo) {
 $masterLabels = getAllLabels($client, $config['org'], $config['master']);
 
 foreach ($repos as $repo) {
-	$labels = getAllLabels($client, $config['org'], $repo);
+	$org = $config['org'];
+
+	if (strpos($repo, '/') !== false) {
+		[$org, $repo] = explode('/', $repo);
+	}
+
+	$labels = getAllLabels($client, $org, $repo);
 	if ($init) {
 		foreach ($labels as $label) {
-			$api->deleteLabel($config['org'], $repo, $label['name']);
+			$api->deleteLabel($org, $repo, $label['name']);
 		}
 		$labels = [];
 	}
-	print($BOLD . $config['org'] . '/' . $repo . $NO_COLOR . PHP_EOL);
+	print($BOLD . $org . '/' . $repo . $NO_COLOR . PHP_EOL);
 
 	foreach ($masterLabels as $masterLabel) {
 		foreach ($config['exclude'] as $exclude) {
 			if (preg_match($exclude, $masterLabel['name'])) {
-				print(' - ' . $config['org'] . '/' . $repo . ': ' . $STRIKE_THROUGH . $masterLabel['name'] . $NO_COLOR . ' ignoring because of patter ' . $exclude . PHP_EOL);
+				print(' - ' . $org . '/' . $repo . ': ' . $STRIKE_THROUGH . $masterLabel['name'] . $NO_COLOR . ' ignoring because of patter ' . $exclude . PHP_EOL);
 				continue 2;
 			}
 		}
@@ -75,17 +81,18 @@ foreach ($repos as $repo) {
 		foreach ($labels as $label) {
 			if ($label['name'] === $masterLabel['name']) {
 				if ($label['color'] !== $masterLabel['color']) {
-					print(' - ' . $config['org'] . '/' . $repo . ': Updating color of ' . $masterLabel['name'] . $NO_COLOR . PHP_EOL);
-					$api->update($config['org'], $repo, $label['name'], $label['name'], $masterLabel['color']);
+					print(' - ' . $org . '/' . $repo . ': Updating color of ' . $masterLabel['name'] . $NO_COLOR . PHP_EOL);
+					$api->update($org, $repo, $label['name'], $masterLabel['name'], $masterLabel['color']);
 				} else {
-					print(' - ' . $config['org'] . '/' . $repo . ': Skipping ' . $masterLabel['name'] . $NO_COLOR . PHP_EOL);
+					print(' - ' . $org . '/' . $repo . ': Skipping ' . $masterLabel['name'] . $NO_COLOR . PHP_EOL);
 				}
 				continue 2;
 			}
 		}
 
-		print(' - ' . $config['org'] . '/' . $repo . ': Adding ' . $masterLabel['name'] . $NO_COLOR . PHP_EOL);
-		$api->create($config['org'], $repo, [
+
+		print(' - ' . $org . '/' . $repo . ': Adding ' . $masterLabel['name'] . $NO_COLOR . PHP_EOL);
+		$api->create($org, $repo, [
 			'name' => $masterLabel['name'],
 			'color' => $masterLabel['color'],
 		]);
