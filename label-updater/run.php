@@ -79,7 +79,7 @@ foreach ($repos as $repo) {
 		}
 
 		foreach ($labels as $label) {
-			if ($label['name'] === $masterLabel['name']) {
+			if (mb_strtolower($label['name']) === mb_strtolower($masterLabel['name'])) {
 				if ($label['color'] !== $masterLabel['color']) {
 					print(' - ' . $org . '/' . $repo . ': Updating color of ' . $masterLabel['name'] . $NO_COLOR . PHP_EOL);
 					$api->update($org, $repo, $label['name'], $masterLabel['name'], $masterLabel['color']);
