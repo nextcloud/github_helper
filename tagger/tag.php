@@ -37,7 +37,6 @@ switch($branch) {
 	case 'stable22':
 	case 'stable23':
 	case 'stable24':
-	case 'master':
 		// keep them in sync with the ones from brancher/branch.php
 		$repositories = [
 			'nextcloud/server',
@@ -59,6 +58,37 @@ switch($branch) {
 			'nextcloud/serverinfo',
 			'nextcloud/survey_client',
 			'nextcloud/text',
+			'nextcloud/updater',
+			'nextcloud/viewer',
+			'nextcloud-gmbh/support',
+		];
+		break;
+	case 'stable25':
+	case 'master':
+		$repositories = [
+			'nextcloud/server',
+			'nextcloud/3rdparty',
+			'nextcloud/activity',
+			'nextcloud/bruteforcesettings',
+			'nextcloud/circles',
+			'nextcloud/example-files',
+			'nextcloud/files_pdfviewer',
+			'nextcloud/files_rightclick',
+			'nextcloud/files_videoplayer',
+			'nextcloud/firstrunwizard',
+			'nextcloud/logreader',
+			'nextcloud/nextcloud_announcements',
+			'nextcloud/notifications',
+			'nextcloud/password_policy',
+			'nextcloud/photos',
+			'nextcloud/privacy',
+			'nextcloud/recommendations',
+			'nextcloud/related_resources',
+			'nextcloud/serverinfo',
+			'nextcloud/survey_client',
+			'nextcloud/suspicious_login',
+			'nextcloud/text',
+			'nextcloud/twofactor_totp',
 			'nextcloud/updater',
 			'nextcloud/viewer',
 			'nextcloud-gmbh/support',
