@@ -3,6 +3,7 @@
   "repos": [
     "3rdparty",
     "activity",
+    "bruteforcesettings",
     "circles",
     "documentation",
     "example-files",
@@ -17,10 +18,13 @@
     "photos",
     "privacy",
     "recommendations",
+    "related_resources",
     "server",
     "serverinfo",
     "survey_client",
+    "suspicious_login",
     "text",
+    "twofactor_totp",
     "updater",
     "viewer"
   ],
@@ -35,6 +39,7 @@
     "Nextcloud 24.0.5"
   ],
   "addMilestones": [
+    "Nextcloud 25.0.1",
     "Nextcloud 24.0.7",
     "Nextcloud 23.0.11"
   ],

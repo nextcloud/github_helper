@@ -84,7 +84,6 @@ class GenerateChangelogCommand extends Command
 			"example-files",
 			"files_pdfviewer",
 			"files_rightclick",
-			"files_videoplayer",
 			"firstrunwizard",
 			"logreader",
 			"nextcloud_announcements",
@@ -120,13 +119,15 @@ class GenerateChangelogCommand extends Command
 		$base = $input->getArgument('base');
 		$head = $input->getArgument('head');
 
-		if (!in_array($head, ['stable14', 'stable15']) && !in_array(substr($head, 0, 3), ['v14', 'v15'])) {
-			$reposToIterate[] = 'privacy';
-			$reposToIterate[] = 'recommendations';
-			$reposToIterate[] = 'viewer';
+		if (!in_array($head, ['stable25']) && !in_array(substr($head, 0, 3), ['v25'])) {
+			$reposToIterate[] = 'files_videoplayer';
 		}
-		if (in_array($head, ['stable16', 'stable17']) || in_array(substr($head, 0, 3), ['v16', 'v17'])) {
-			$reposToIterate[] = 'gallery';
+
+		if (in_array($head, ['stable25']) && !in_array(substr($head, 0, 3), ['v25'])) {
+			$reposToIterate[] = 'bruteforcesettings';
+			$reposToIterate[] = 'related_resources';
+			$reposToIterate[] = 'suspicious_login';
+			$reposToIterate[] = 'twofactor_totp';
 		}
 
 		if ($output->isVerbose()) {
