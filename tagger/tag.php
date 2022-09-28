@@ -74,7 +74,6 @@ switch($branch) {
 			'nextcloud/example-files',
 			'nextcloud/files_pdfviewer',
 			'nextcloud/files_rightclick',
-			'nextcloud/files_videoplayer',
 			'nextcloud/firstrunwizard',
 			'nextcloud/logreader',
 			'nextcloud/nextcloud_announcements',
