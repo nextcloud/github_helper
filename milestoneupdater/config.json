@@ -38,7 +38,8 @@
   },
   "closeMilestones": [
     "Nextcloud 23.0.10",
-    "Nextcloud 24.0.6"
+    "Nextcloud 24.0.6",
+    "Nextcloud 25"
   ],
   "addMilestones": [
     "Nextcloud 25.0.2",
