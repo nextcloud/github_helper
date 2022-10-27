@@ -105,7 +105,15 @@ class GenerateChangelogCommand extends Command
 			$paginator = new Github\ResultPager($ghClient, 50);
 			$parameters = array(self::ORG_NAME);
 			$repos = $paginator->fetchAll($organizationApi, 'repositories', $parameters);
-			$orgRepositories = array_map(fn($repo): string => $repo['name'], $repos);
+
+			// Filter out archived and disabled repos
+			$results = array_filter($repos, function($repo): bool {
+				return $repo['archived'] === false
+					&& $repo['disabled'] === false;
+			});
+
+			// Return repos names
+			$orgRepositories = array_map(fn($repo): string => $repo['name'], $results);
 		} catch (\Exception $e) {
 			throw new Exception('Unable to fetch the github repositories list.');
 		}
