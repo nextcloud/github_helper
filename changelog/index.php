@@ -156,7 +156,6 @@ class GenerateChangelogCommand extends Command
 		} else {
 			// else we are checking the server changelog
 			$reposToIterate = $this->getReposToIterate($head);
-			var_dump($reposToIterate);
 		}
 
 		if (substr($base, 0, $subStringNum) === $substring) {
