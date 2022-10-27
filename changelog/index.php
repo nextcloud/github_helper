@@ -15,6 +15,8 @@ use Symfony\Component\Console\Helper\ProgressBar;
 
 class GenerateChangelogCommand extends Command
 {
+	const ORG_NAME = 'nextcloud';
+	const REPO_SERVER = 'server';
 
 	protected function configure()
 	{
@@ -31,17 +33,18 @@ class GenerateChangelogCommand extends Command
 				'What format should the output have? (markdown, forum, html)',
 				'markdown'
 			);
-		;
 	}
 
-	protected function cleanTitle($title) {
+	protected function cleanTitle($title)
+	{
 		$title = preg_replace('!(\[|\()(stable)? ?\d\d(\]|\))?\W*!i', '', $title);
 		$title = preg_replace('!^\[security\]!i', '', $title);
 		$title = trim($title);
 		return strtoupper(substr($title, 0, 1)) . substr($title, 1);
 	}
 
-	protected function processPR($repoName, $pr) {
+	protected function processPR($repoName, $pr)
+	{
 		$title = $this->cleanTitle($pr['title']);
 		$id = '#' . $pr['number'];
 		if ($repoName !== 'server') {
@@ -60,7 +63,8 @@ class GenerateChangelogCommand extends Command
 		return [$id, $data];
 	}
 
-	protected function shouldPRBeSkipped($title) {
+	protected function shouldPRBeSkipped($title)
+	{
 		if (preg_match('!^\d+(\.\d+(\.\d+))? ?(rc|beta|alpha)? ?(\d+)?$!i', $title)) {
 			return true;
 		}
@@ -68,36 +72,56 @@ class GenerateChangelogCommand extends Command
 	}
 
 	/**
+	 * Get the list of shipped apps from server head
+	 * Then compare for existing repos to check against
+	 * 
+	 * @param string $head the server head, master, stable25, stable19...
+	 * @return string[]
+	 */
+	protected function getReposToIterate($head = 'master')
+	{
+		$client = new \GuzzleHttp\Client();
+		$ghClient = new \Github\Client();
+
+		// TODO iterate over all repos
+		$shippedApps = [];
+		$orgRepositories = [];
+		$reposToIterate = [
+			"server",
+			"3rdparty",
+		];
+
+		try {
+			$res = $client->request('GET', "https://raw.githubusercontent.com/nextcloud/server/$head/core/shipped.json");
+			$shippedApps = json_decode($res->getBody()->getContents(), true)['shippedApps'] ?? [];
+		} catch (\Exception $e) {
+			throw new Exception('Unable to fetch the shipped apps list.');
+		}
+
+		try {
+			/** @var \Github\Api\Organization $organizationApi */
+			$organizationApi = $ghClient->api('organization');
+			$paginator = new Github\ResultPager($ghClient, 50);
+			$parameters = array(self::ORG_NAME);
+			$repos = $paginator->fetchAll($organizationApi, 'repositories', $parameters);
+			$orgRepositories = array_map(fn($repo): string => $repo['name'], $repos);
+		} catch (\Exception $e) {
+			throw new Exception('Unable to fetch the github repositories list.');
+		}
+
+		return [...$reposToIterate, ...array_intersect($orgRepositories, $shippedApps)];
+	}
+
+	/**
 	 * @throws Exception
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output)
 	{
-		$server = 'server';
-		$orgName = 'nextcloud';
+		$repoName = $input->getArgument('repo');
+		$base = $input->getArgument('base');
+		$head = $input->getArgument('head');
 
-		// TODO iterate over all repos
-		$reposToIterate = [
-			"server",
-			"3rdparty",
-			"activity",
-			"circles",
-			"example-files",
-			"files_pdfviewer",
-			"files_rightclick",
-			"firstrunwizard",
-			"logreader",
-			"nextcloud_announcements",
-			"notifications",
-			"password_policy",
-			"photos",
-			"privacy",
-			"recommendations",
-			"serverinfo",
-			"survey_client",
-			"text",
-			"updater",
-			"viewer",
-		];
+		$orgName = self::ORG_NAME;
 
 		if (!file_exists(__DIR__ . '/../credentials.json')) {
 			throw new Exception('Credentials file is missing - please provide your credentials in credentials.json in the root folder.');
@@ -115,34 +139,24 @@ class GenerateChangelogCommand extends Command
 			);
 		}
 
-		$repoName = $input->getArgument('repo');
-		$base = $input->getArgument('base');
-		$head = $input->getArgument('head');
-
-		if (!in_array($head, ['stable25']) && !in_array(substr($head, 0, 3), ['v25'])) {
-			$reposToIterate[] = 'files_videoplayer';
-		}
-
-		if (in_array($head, ['stable25']) && !in_array(substr($head, 0, 3), ['v25'])) {
-			$reposToIterate[] = 'bruteforcesettings';
-			$reposToIterate[] = 'related_resources';
-			$reposToIterate[] = 'suspicious_login';
-			$reposToIterate[] = 'twofactor_totp';
-		}
-
 		if ($output->isVerbose()) {
 			$output->writeln("repo: $repoName");
 			$output->writeln("base: $base");
 			$output->writeln("head: $head");
 		}
 
+		// Android overriding
 		$milestoneToCheck = null;
 		$substring = 'v';
 		$subStringNum = 1;
-		if($repoName !== $server){
+		if ($repoName !== self::REPO_SERVER) {
 			$reposToIterate = [$repoName];
 			$substring = 'stable-';
 			$subStringNum = 7;
+		} else {
+			// else we are checking the server changelog
+			$reposToIterate = $this->getReposToIterate($head);
+			var_dump($reposToIterate);
 		}
 
 		if (substr($base, 0, $subStringNum) === $substring) {
@@ -211,10 +225,10 @@ class GenerateChangelogCommand extends Command
 				try {
 					$progressBar->setMessage("Fetching git history for $repoName between $base and $head...");
 					$paginator = new Github\ResultPager($client);
-					$parameters = array($orgName, $repoName, $base, $head);
+					$parameters = array(self::ORG_NAME, $repoName, $base, $head);
 					$commitsApi = $repo->commits();
 					$commits = $paginator->fetch($commitsApi, 'compare', $parameters)['commits'];
-					while($paginator->hasNext()) {
+					while ($paginator->hasNext()) {
 						$commits = array_merge($commits, $paginator->fetchNext()['commits']);
 					}
 				} catch (\Github\Exception\RuntimeException $e) {
@@ -362,7 +376,7 @@ QUERY;
 		ksort($prTitles['closed']);
 		ksort($prTitles['pending']);
 
-		switch($format) {
+		switch ($format) {
 			case 'html':
 				$version = $milestoneToCheck;
 				$versionDashed = str_replace('.', '-', $version);
@@ -380,7 +394,7 @@ QUERY;
 				$output->writeln("");
 				$output->writeln("<h4>Changes</h4>");
 				$output->writeln("<ul>");
-				foreach($prTitles['closed'] as $id => $data) {
+				foreach ($prTitles['closed'] as $id => $data) {
 					$repoName = $data['repoName'];
 					$number = $data['number'];
 					$title = $data['title'];
@@ -393,7 +407,7 @@ QUERY;
 				}
 				break;
 			case 'forum':
-				foreach($prTitles['closed'] as $id => $data) {
+				foreach ($prTitles['closed'] as $id => $data) {
 					$repoName = $data['repoName'];
 					$number = $data['number'];
 					$title = $data['title'];
@@ -406,7 +420,7 @@ QUERY;
 				break;
 			case 'markdown':
 			default:
-				foreach($prTitles['closed'] as $id => $data) {
+				foreach ($prTitles['closed'] as $id => $data) {
 					$repoName = $data['repoName'];
 					$number = $data['number'];
 					$title = $data['title'];
@@ -419,7 +433,7 @@ QUERY;
 				if (count($prTitles['pending'])) {
 					$output->writeln("\n\nPending PRs:\n");
 				}
-				foreach($prTitles['pending'] as $id => $data) {
+				foreach ($prTitles['pending'] as $id => $data) {
 					$repoName = $data['repoName'];
 					$number = $data['number'];
 					$title = $data['title'];
