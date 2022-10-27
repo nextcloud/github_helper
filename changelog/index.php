@@ -82,6 +82,7 @@ class GenerateChangelogCommand extends Command
 	{
 		$client = new \GuzzleHttp\Client();
 		$ghClient = new \Github\Client();
+		$this->authenticateGithubClient($ghClient);
 
 		// TODO iterate over all repos
 		$shippedApps = [];
@@ -104,12 +105,33 @@ class GenerateChangelogCommand extends Command
 			$paginator = new Github\ResultPager($ghClient, 50);
 			$parameters = array(self::ORG_NAME);
 			$repos = $paginator->fetchAll($organizationApi, 'repositories', $parameters);
-			$orgRepositories = array_map(fn($repo): string => $repo['name'], $repos);
+
+			// Filter out archived and disabled repos
+			$results = array_filter($repos, function($repo): bool {
+				return $repo['archived'] === false
+					&& $repo['disabled'] === false;
+			});
+
+			// Return repos names
+			$orgRepositories = array_map(fn($repo): string => $repo['name'], $results);
 		} catch (\Exception $e) {
 			throw new Exception('Unable to fetch the github repositories list.');
 		}
 
 		return [...$reposToIterate, ...array_intersect($orgRepositories, $shippedApps)];
+	}
+
+	protected function authenticateGithubClient(\Github\Client $client) {
+		if (!file_exists(__DIR__ . '/../credentials.json')) {
+			throw new Exception('Credentials file is missing - please provide your credentials in credentials.json in the root folder.');
+		}
+
+		$credentialsData = json_decode(file_get_contents(__DIR__ . '/../credentials.json'), true);
+		if (!is_array($credentialsData) || !isset($credentialsData['apikey'])) {
+			throw new Exception('Credentials file can not be read or does not provide "apikey".');
+		}
+
+		$client->authenticate($credentialsData['apikey'], Github\Client::AUTH_ACCESS_TOKEN);
 	}
 
 	/**
@@ -193,7 +215,7 @@ class GenerateChangelogCommand extends Command
 		$client = new \Github\Client();
 		# TODO
 		#$client->addCache($pool);
-		$client->authenticate($credentialsData['apikey'], Github\Client::AUTH_ACCESS_TOKEN);
+		$this->authenticateGithubClient($client);
 
 		$factor = 2;
 		if ($milestoneToCheck !== null) {
