@@ -32,6 +32,12 @@ class GenerateChangelogCommand extends Command
 				InputOption::VALUE_REQUIRED,
 				'What format should the output have? (markdown, forum, html)',
 				'markdown'
+			)
+			->addOption(
+				'no-bots',
+				null,
+				InputOption::VALUE_NONE,
+				'Remove automated PRs and commits from all results'
 			);
 	}
 
@@ -265,6 +271,12 @@ class GenerateChangelogCommand extends Command
 				}
 
 				foreach ($commits as $commit) {
+					$noBots = $input->getOption('no-bots');
+					$name = $commit['commit']['author']['name'];
+					if ($noBots && (str_contains($name, '[bot]') || str_contains($name, 'nextcloud-'))) {
+						// ignore this bot-created commit
+						continue;
+					}
 					$fullMessage = $commit['commit']['message'];
 					list($firstLine,) = explode("\n", $fullMessage, 2);
 					if (substr($firstLine, 0, 20) === 'Merge pull request #') {
