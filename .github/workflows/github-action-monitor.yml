@@ -9,6 +9,8 @@ on:
 jobs:
   monitoring:
     runs-on: ubuntu-latest
+    container:
+      image: debian
 
     steps:
       - name: Ping
