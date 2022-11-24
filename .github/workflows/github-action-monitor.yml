@@ -1,0 +1,15 @@
+# This workflow is monitoring the time-to-wait for 
+name: Github action monitoring
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '*/15 * * * *'
+
+jobs:
+  monitoring:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Ping
+        run: echo 'ping'
