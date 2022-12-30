@@ -9,9 +9,9 @@ if(count($argv) < 2) {
 require_once 'vendor/autoload.php';
 
 $isVerbose = $argv[1] === '--verbose';
-$githubUser = $isVerbose ? $argv[2] : $argv[1];;
+$githubUser = $isVerbose ? $argv[2] : $argv[1];
 
-const ORGANIZATIONS = ['nextcloud', 'nextcloud-releases', 'nextcloud-gmbh'];
+const ORGANIZATIONS = ['nextcloud', 'nextcloud-releases', 'nextcloud-gmbh', 'nextcloud-deps'];
 $ghClient = initGithubClient();
 
 $results = [];
