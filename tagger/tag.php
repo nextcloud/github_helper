@@ -1,5 +1,5 @@
 <?php
-if(count($argv) <= 3) {
+if(count($argv) < 3) {
 	die("tag.php \$branchname \$tag [\$historic_date]\n");
 }
 $branch = $argv[1];
@@ -132,11 +132,25 @@ foreach($repositories as $repo) {
 		$SSH_OPTIONS = "GIT_SSH_COMMAND='ssh -i ~/.ssh/id_rsa.support-app -o IdentitiesOnly=yes'";
 	}
 	// Clone the repository and checkout the required branch
+	fwrite(STDERR, '[Debug] cd ' . $workDir . ' && ' . $SSH_OPTIONS . ' git clone ' . $depthMode . ' --branch="' . $branch . '" git@github.com:' . $repo . PHP_EOL);
 	shell_exec('cd ' . $workDir . ' && ' . $SSH_OPTIONS . ' git clone ' . $depthMode . ' --branch="' . $branch . '" git@github.com:' . $repo);
 
 	// checkout historic commit if applicable
 	if ($historic) {
+		if (!is_dir($workDir . '/' . $name)) {
+			// we end up here, with a failed clone, when there were no commits in our time range. We redo with depth=42.
+			// 42 for good luck. 1 Might bring too new commits.
+			shell_exec('cd ' . $workDir . ' && ' . $SSH_OPTIONS . ' git clone --depth=42 --branch="' . $branch . '" git@github.com:' . $repo);
+		}
+
 		$commitHash = trim(shell_exec('cd ' . $workDir . '/' . $name . ' && git log -n1 --format=%H --until="' . $historic . '"'));
+		if ($commitHash === "") {
+			shell_exec('cd ' . $workDir . ' && rm -rf ' . $name);
+			// we end up here, when there were no old enough commits in our time range! We redo with depth=42.
+			// 42 for good luck.
+			shell_exec('cd ' . $workDir . ' && ' . $SSH_OPTIONS . ' git clone --depth=42 --branch="' . $branch . '" git@github.com:' . $repo);
+			$commitHash = trim(shell_exec('cd ' . $workDir . '/' . $name . ' && git log -n1 --format=%H --until="' . $historic . '"'));
+		}
 		if (strlen($commitHash) !== 40) {
 			fwrite(STDERR, '[Error] unexpected commit length, aborting. Hash was ' . $commitHash . PHP_EOL);
 			exit(1);
