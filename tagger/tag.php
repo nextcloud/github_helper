@@ -1,9 +1,21 @@
 <?php
-if(count($argv) !== 3) {
-	die("tag.php \$branchname \$tag\n");
+if(count($argv) <= 3) {
+	die("tag.php \$branchname \$tag [\$historic_date]\n");
 }
 $branch = $argv[1];
 $tag = $argv[2];
+
+// to the rescue, when tagging a release was forgotten
+// call it with the date of the release tar ball. This can be received from the download server via, e.g.
+//   ls --full-time /var/www/html/server/prereleases | grep 25.0.3rc1
+// or use the datetime of the merge commit of the version bump PR
+$historic = null;
+if (isset($argv[3])) {
+	if (1 !== preg_match('/^[0-9]{4}-[0-1][0-9]-[0-3][0-9] [0-2][0-9]:[0-5][0-9]:[0-5][0-9] UTC$/', $argv[3])) {
+		die("Invalid historic date $argv[3], expected format: '2023-01-21 09:42:23 UTC', UTC is required");
+	}
+	$historic = $argv[3];
+}
 
 switch($branch) {
 	case 'stable19':
@@ -97,6 +109,22 @@ switch($branch) {
 		die("Branch not found :(\n");
 }
 
+// use proper temp location on dev machines, assuming it's memdisc, to not wear out physical storage
+$workDir = gethostname() === 'client-builder' ? __DIR__ : trim(shell_exec('mktemp -d'));
+fwrite(STDERR, '[Debug] Work dir is: ' . $workDir . PHP_EOL);
+
+// for historic commits we need to pull some more history to be able to find the relevant commit
+$depthMode = '--depth=1';
+$committerDate = '';
+if ($historic) {
+	$historicDateTime = new DateTime($historic);
+	$sixWeeks = new DateInterval('P6W');
+	$historicDateTime->sub($sixWeeks);
+	$depthMode = sprintf('--shallow-since="%s"', $historicDateTime->format('Y-m-d H:i:s e'));
+	unset($historicDateTime);
+	unset($sixWeeks);
+}
+
 foreach($repositories as $repo) {
 	$name = explode('/', $repo)[1];
 	$SSH_OPTIONS = '';
@@ -104,11 +132,29 @@ foreach($repositories as $repo) {
 		$SSH_OPTIONS = "GIT_SSH_COMMAND='ssh -i ~/.ssh/id_rsa.support-app -o IdentitiesOnly=yes'";
 	}
 	// Clone the repository and checkout the required branch
-	shell_exec('cd ' . __DIR__ . ' && ' . $SSH_OPTIONS . ' git clone --depth=1 --branch="' . $branch . '" git@github.com:' . $repo);
+	shell_exec('cd ' . $workDir . ' && ' . $SSH_OPTIONS . ' git clone ' . $depthMode . ' --branch="' . $branch . '" git@github.com:' . $repo);
+
+	// checkout historic commit if applicable
+	if ($historic) {
+		$commitHash = trim(shell_exec('cd ' . $workDir . '/' . $name . ' && git log -n1 --format=%H --until="' . $historic . '"'));
+		if (strlen($commitHash) !== 40) {
+			fwrite(STDERR, '[Error] unexpected commit length, aborting. Hash was ' . $commitHash . PHP_EOL);
+			exit(1);
+		}
+		shell_exec('cd ' . $workDir . '/' . $name . '/$repo && git checkout ' . $commitHash);
+
+		// use the date of the commit
+		if ($committerDate === '') {
+			// utilize commit date of the latest server commit, which should be the merge commit of the version bump.
+			// Requires that server repo is always tagged first!
+			$commitDate = trim(shell_exec('cd ' . $workDir . '/' . $name . ' && git show --format=%aD | head -1'));
+			$committerDate = sprintf('GIT_COMMITTER_DATE="%s"', $commitDate);
+		}
+	}
 	// Create a signed tag
-	shell_exec('cd ' . __DIR__ . '/' . $name . ' && git tag -s ' . $tag . ' -m \'' . $tag . '\'');
+	shell_exec('cd ' . $workDir . '/' . $name . ' && ' . $committerDate . ' git tag -s ' . $tag . ' -m \'' . $tag . '\'');
 	// Push the signed tag
-	shell_exec('cd ' . __DIR__ . '/' . $name . ' && ' . $SSH_OPTIONS . ' git push origin ' . $tag);
+	shell_exec('cd ' . $workDir . '/' . $name . ' && ' . $SSH_OPTIONS . ' git push origin ' . $tag);
 	// Delete repository
-	shell_exec('cd ' . __DIR__ . ' && rm -rf ' . $name);
+	shell_exec('cd ' . $workDir . ' && rm -rf ' . $name);
 }
