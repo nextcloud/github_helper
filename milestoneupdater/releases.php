@@ -9,7 +9,7 @@ $STRIKE_THROUGH = "\033[9m";
 $BOLD = "\033[1m";
 
 $client = new \Github\Client();
-$cache = new Stash\Pool();
+$cache = new \Stash\Pool();
 
 $client->addCache($cache);
 
@@ -36,7 +36,7 @@ function getDateTime($date) {
 
 $authentication = json_decode(file_get_contents(__DIR__ . '/../credentials.json'));
 
-$client->authenticate($authentication->apikey, Github\Client::AUTH_ACCESS_TOKEN);
+$client->authenticate($authentication->apikey, \Github\AuthMethod::ACCESS_TOKEN);
 $paginator = new Github\ResultPager($client);
 
 $config = json_decode(file_get_contents('config.json'), true);

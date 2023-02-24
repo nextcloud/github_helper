@@ -8,21 +8,20 @@ $NO_COLOR = "\033[0m";
 $STRIKE_THROUGH = "\033[9m";
 $BOLD = "\033[1m";
 
-$client = new \Github\Client(
-	new \Github\HttpClient\CachedHttpClient([
-		'cache_dir' => '/tmp/github-api-cache'
-	])
-);
+$client = new \Github\Client();
+$cache = new \Stash\Pool();
 
-if(!file_exists('credentials.json')) {
-	print 'Please create the file credentials.json and provide your apikey.' . PHP_EOL;
-	print '  cp credentials.dist.json credentials.json' . PHP_EOL;
-	exit(1);
+$client->addCache($cache);
+
+if(!file_exists(__DIR__ . '/../credentials.json')) {
+    print 'Please create the file ../credentials.json and provide your apikey.' . PHP_EOL;
+    print '  cp credentials.dist.json credentials.json' . PHP_EOL;
+    exit(1);
 }
 
-$authentication = json_decode(file_get_contents('credentials.json'));
+$authentication = json_decode(file_get_contents(__DIR__ . '/../credentials.json'));
 
-$client->authenticate($authentication->apikey, Github\Client::AUTH_HTTP_TOKEN);
+$client->authenticate($authentication->apikey, \Github\AuthMethod::ACCESS_TOKEN);
 $paginator = new Github\ResultPager($client);
 
 $response = $client->getHttpClient()->get("rate_limit");

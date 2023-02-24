@@ -1,5 +1,8 @@
 {
 	"require": {
-		"knplabs/github-api": "~1.4"
+		"knplabs/github-api": "^3.9.0",
+		"guzzlehttp/guzzle": "^7.5.0",
+		"http-interop/http-factory-guzzle": "^1.2.0",
+		"tedivm/stash": "^0.16.0"
 	}
 }

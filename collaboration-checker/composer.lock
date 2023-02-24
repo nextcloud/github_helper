@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bd450dbca1dd00cc4852a266569057fe",
+    "content-hash": "843f0c1f30074fb113f6b6f0f2ebc68c",
     "packages": [
         {
             "name": "clue/stream-filter",
@@ -402,64 +402,6 @@
                 }
             ],
             "time": "2022-10-26T14:07:24+00:00"
-        },
-        {
-            "name": "http-interop/http-factory-guzzle",
-            "version": "1.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/http-interop/http-factory-guzzle.git",
-                "reference": "8f06e92b95405216b237521cc64c804dd44c4a81"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/http-interop/http-factory-guzzle/zipball/8f06e92b95405216b237521cc64c804dd44c4a81",
-                "reference": "8f06e92b95405216b237521cc64c804dd44c4a81",
-                "shasum": ""
-            },
-            "require": {
-                "guzzlehttp/psr7": "^1.7||^2.0",
-                "php": ">=7.3",
-                "psr/http-factory": "^1.0"
-            },
-            "provide": {
-                "psr/http-factory-implementation": "^1.0"
-            },
-            "require-dev": {
-                "http-interop/http-factory-tests": "^0.9",
-                "phpunit/phpunit": "^9.5"
-            },
-            "suggest": {
-                "guzzlehttp/psr7": "Includes an HTTP factory starting in version 2.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Http\\Factory\\Guzzle\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "PHP-FIG",
-                    "homepage": "http://www.php-fig.org/"
-                }
-            ],
-            "description": "An HTTP Factory using Guzzle PSR7",
-            "keywords": [
-                "factory",
-                "http",
-                "psr-17",
-                "psr-7"
-            ],
-            "support": {
-                "issues": "https://github.com/http-interop/http-factory-guzzle/issues",
-                "source": "https://github.com/http-interop/http-factory-guzzle/tree/1.2.0"
-            },
-            "time": "2021-07-21T13:50:14+00:00"
         },
         {
             "name": "knplabs/github-api",
@@ -1068,20 +1010,20 @@
         },
         {
             "name": "psr/cache",
-            "version": "1.0.1",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/cache.git",
-                "reference": "d11b50ad223250cf17b86e38383413f5a6764bf8"
+                "reference": "aa5030cfa5405eccfdcb1083ce040c2cb8d253bf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/cache/zipball/d11b50ad223250cf17b86e38383413f5a6764bf8",
-                "reference": "d11b50ad223250cf17b86e38383413f5a6764bf8",
+                "url": "https://api.github.com/repos/php-fig/cache/zipball/aa5030cfa5405eccfdcb1083ce040c2cb8d253bf",
+                "reference": "aa5030cfa5405eccfdcb1083ce040c2cb8d253bf",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0"
+                "php": ">=8.0.0"
             },
             "type": "library",
             "extra": {
@@ -1101,7 +1043,7 @@
             "authors": [
                 {
                     "name": "PHP-FIG",
-                    "homepage": "http://www.php-fig.org/"
+                    "homepage": "https://www.php-fig.org/"
                 }
             ],
             "description": "Common interface for caching libraries",
@@ -1111,9 +1053,9 @@
                 "psr-6"
             ],
             "support": {
-                "source": "https://github.com/php-fig/cache/tree/master"
+                "source": "https://github.com/php-fig/cache/tree/3.0.0"
             },
-            "time": "2016-08-06T20:24:11+00:00"
+            "time": "2021-02-03T23:26:27+00:00"
         },
         {
             "name": "psr/http-client",
@@ -1535,76 +1477,6 @@
                 }
             ],
             "time": "2022-11-03T14:55:06+00:00"
-        },
-        {
-            "name": "tedivm/stash",
-            "version": "v0.16.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/tedious/Stash.git",
-                "reference": "7d42f58e4f395397d7c76d4eff55eb56aacadc34"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/tedious/Stash/zipball/7d42f58e4f395397d7c76d4eff55eb56aacadc34",
-                "reference": "7d42f58e4f395397d7c76d4eff55eb56aacadc34",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">7.0",
-                "psr/cache": "~1.0"
-            },
-            "provide": {
-                "psr/cache-implementation": "1.0.0"
-            },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "^2.8",
-                "phpunit/phpunit": "^6",
-                "satooshi/php-coveralls": "1.0.*"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Stash\\": "src/Stash/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Robert Hafner",
-                    "email": "tedivm@tedivm.com"
-                },
-                {
-                    "name": "Josh Hall-Bachner",
-                    "email": "charlequin@gmail.com"
-                }
-            ],
-            "description": "The place to keep your cache.",
-            "homepage": "http://github.com/tedious/Stash",
-            "keywords": [
-                "apc",
-                "cache",
-                "caching",
-                "memcached",
-                "psr-6",
-                "psr6",
-                "redis",
-                "sessions"
-            ],
-            "support": {
-                "issues": "https://github.com/tedious/Stash/issues",
-                "source": "https://github.com/tedious/Stash/tree/v0.16.0"
-            },
-            "funding": [
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/tedivm/stash",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2021-01-18T04:06:48+00:00"
         }
     ],
     "packages-dev": [],
@@ -1613,7 +1485,9 @@
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "ext-json": "*"
+    },
     "platform-dev": [],
     "plugin-api-version": "2.3.0"
 }
