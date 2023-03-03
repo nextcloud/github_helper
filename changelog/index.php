@@ -80,8 +80,8 @@ class GenerateChangelogCommand extends Command
 	/**
 	 * Get the list of shipped apps from server head
 	 * Then compare for existing repos to check against
-	 * 
-	 * @param string $head the server head, master, stable25, stable19...
+	 *
+	 * @param string $head the server head, master, stable26, stable19...
 	 * @return string[]
 	 */
 	protected function getReposToIterate($head = 'master')
