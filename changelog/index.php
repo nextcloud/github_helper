@@ -463,30 +463,45 @@ QUERY;
 						$output->writeln("* $orgName/$repoName#$number");
 					}
 				}
+
+				// Do we have pending PRs?
 				if (count($prTitles['pending'])) {
-					$output->writeln("\n\nPending PRs:\n");
-				}
-				foreach ($prTitles['pending'] as $id => $data) {
-					$repoName = $data['repoName'];
-					$number = $data['number'];
-					$title = $data['title'];
-					$author = array_key_exists('author', $data) ? '@' . $data['author'] : '';
-					if ($author === '@backportbot-nextcloud') {
-						$author = '';
+					$output->writeln("\n\n## Pending PRs:");
+
+					// Group PR by authors
+					$pendingPRs = $prTitles['pending'];
+					function cmp($a, $b) {
+						return strnatcasecmp($a['author'], $b['author']);
 					}
-					if ($author === '@dependabot-preview') {
-						$author = '';
-					}
-					if ($author === '@dependabot') {
-						$author = '';
-					}
-					if ($author === '@dependabot[bot]') {
-						$author = '';
-					}
-					if ($repoName === 'server') {
-						$output->writeln("* [ ] #$number $author");
-					} else {
-						$output->writeln("* [ ] $orgName/$repoName#$number $author");
+					usort($pendingPRs, "cmp");
+
+					$prevAuthor = '';
+					foreach ($pendingPRs as $id => $data) {
+						$repoName = $data['repoName'];
+						$number = $data['number'];
+						$title = $data['title'];
+						$author = array_key_exists('author', $data) ? '@' . $data['author'] : '';
+						if ($author === '@backportbot-nextcloud') {
+							$author = '';
+						}
+						if ($author === '@dependabot-preview') {
+							$author = '';
+						}
+						if ($author === '@dependabot') {
+							$author = '';
+						}
+						if ($author === '@dependabot[bot]') {
+							$author = '';
+						}
+						if ($prevAuthor !== $author) {
+							$output->writeln("* $author");
+							$prevAuthor = $author;
+						}
+						if ($repoName === 'server') {
+							$output->writeln("  * [ ] #$number");
+						} else {
+							$output->writeln("  * [ ] $orgName/$repoName#$number");
+						}
 					}
 				}
 				break;
