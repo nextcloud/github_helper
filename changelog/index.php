@@ -18,6 +18,8 @@ class GenerateChangelogCommand extends Command
 	const ORG_NAME = 'nextcloud';
 	const REPO_SERVER = 'server';
 
+    private $skipLabels = [];
+
 	protected function configure()
 	{
 		$this
@@ -38,6 +40,12 @@ class GenerateChangelogCommand extends Command
 				null,
 				InputOption::VALUE_NONE,
 				'Remove automated PRs and commits from all results'
+			)
+			->addOption(
+				'skip-label',
+				null,
+				InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
+				'Skip pull requests with the given label'
 			);
 	}
 
@@ -69,11 +77,18 @@ class GenerateChangelogCommand extends Command
 		return [$id, $data];
 	}
 
-	protected function shouldPRBeSkipped($title)
+	protected function shouldPRBeSkipped(array $pr)
 	{
-		if (preg_match('!^\d+(\.\d+(\.\d+))? ?(rc|beta|alpha)? ?(\d+)?$!i', $title)) {
+		if (preg_match('!^\d+(\.\d+(\.\d+))? ?(rc|beta|alpha)? ?(\d+)?$!i', $pr['title'])) {
 			return true;
 		}
+        if (isset($pr['labels'], $pr['labels']['nodes'])) {
+            foreach ($pr['labels']['nodes'] as $label) {
+                if (in_array($label['id'], $this->skipLabels, false) || in_array(strtolower($label['name']), $this->skipLabels, false) ) {
+                    return true;
+                }
+            }
+        }
 		return false;
 	}
 
@@ -166,6 +181,8 @@ class GenerateChangelogCommand extends Command
 				"The provided format is invalid (should be one of markdown, forum, html but was '$format')"
 			);
 		}
+
+        $this->skipLabels = array_map('strtolower', $input->getOption('skip-label'));
 
 		if ($output->isVerbose()) {
 			$output->writeln("repo: $repoName");
@@ -319,7 +336,7 @@ class GenerateChangelogCommand extends Command
 				foreach ($response['data']['repository']['milestones']['nodes'] as $milestone) {
 					if (strpos($milestone['title'], $milestoneToCheck) !== false) {
 						foreach ($milestone['pullRequests']['nodes'] as $pr) {
-							if ($this->shouldPRBeSkipped($pr['title'])) {
+							if ($this->shouldPRBeSkipped($pr)) {
 								continue;
 							}
 							list($id, $data) = $this->processPR($repoName, $pr);
@@ -353,7 +370,7 @@ class GenerateChangelogCommand extends Command
 							$milestone = $response['data']['repository']['milestone'];
 
 							foreach ($milestone['pullRequests']['nodes'] as $pr) {
-								if ($this->shouldPRBeSkipped($pr['title'])) {
+								if ($this->shouldPRBeSkipped($pr)) {
 									continue;
 								}
 								list($id, $data) = $this->processPR($repoName, $pr);
@@ -372,7 +389,7 @@ QUERY;
 			$query .= '		repository(owner: "' . $orgName . '", name: "' . $repoName . '") {';
 
 			foreach ($pullRequests as $pullRequest) {
-				$query .= "pr$pullRequest: pullRequest(number: $pullRequest) { number, title },";
+				$query .= "pr$pullRequest: pullRequest(number: $pullRequest) { number, title, labels(first: 10) { nodes { id, name } } },";
 			}
 
 			$query .= <<<'QUERY'
@@ -394,7 +411,7 @@ QUERY;
 			}
 
 			foreach ($response['data']['repository'] as $pr) {
-				if ($this->shouldPRBeSkipped($pr['title'])) {
+				if ($this->shouldPRBeSkipped($pr)) {
 					continue;
 				}
 				list($id, $data) = $this->processPR($repoName, $pr);
