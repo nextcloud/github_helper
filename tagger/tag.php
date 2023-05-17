@@ -77,6 +77,7 @@ switch($branch) {
 		break;
 	case 'stable25':
 	case 'stable26':
+	case 'stable27':
 	case 'master':
 		$repositories = [
 			'nextcloud/server',
