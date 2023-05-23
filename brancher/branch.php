@@ -8,6 +8,7 @@ $branch = $argv[1];
 $repositories = [
 	'nextcloud/server',
 	'nextcloud/3rdparty',
+	'nextcloud-deps/ocp',
 	'nextcloud/activity',
 	'nextcloud/bruteforcesettings',
 	'nextcloud/circles',
