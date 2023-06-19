@@ -334,7 +334,7 @@ class GenerateChangelogCommand extends Command
 
 				$response = $client->api('graphql')->execute($query);
 				foreach ($response['data']['repository']['milestones']['nodes'] as $milestone) {
-					if (strpos($milestone['title'], $milestoneToCheck) !== false) {
+					if ($milestone['title'] === \sprintf('Nextcloud %s', $milestoneToCheck)) {
 						foreach ($milestone['pullRequests']['nodes'] as $pr) {
 							if ($this->shouldPRBeSkipped($pr)) {
 								continue;
