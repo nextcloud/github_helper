@@ -11,5 +11,4 @@ updates:
       timezone: Europe/Paris
     open-pull-requests-limit: 10
     labels:
-      - 3. to review
       - dependencies
