@@ -49,8 +49,8 @@ jobs:
         repositories: ${{ fromJSON(needs.repositories.outputs.matrix) }}
 
     env:
-      NODE_VERSION: "^16.0.0"
-      NPM_VERSION: "^7.0.0 || ^8.0.0"
+      NODE_VERSION: "^20.0.0"
+      NPM_VERSION: "^9.0.0"
 
     steps:
       - name: Checkout target repository
