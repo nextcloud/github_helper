@@ -65,7 +65,7 @@ jobs:
         run: jq --tab '.engines.npm = "${{ env.NPM_VERSION }}"' package.json > package-new.json && mv package-new.json package.json
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v3
+        uses: peter-evans/create-pull-request@v5
         with:
           body: Automated update of the npm and node engines versions
           branch: feat/package-node-npm-engines-update
