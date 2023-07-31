@@ -11,7 +11,7 @@ require_once 'vendor/autoload.php';
 $isVerbose = $argv[1] === '--verbose';
 $githubUser = $isVerbose ? $argv[2] : $argv[1];
 
-const ORGANIZATIONS = ['nextcloud', 'nextcloud-releases', 'nextcloud-gmbh', 'nextcloud-deps'];
+const ORGANIZATIONS = ['nextcloud', 'nextcloud-releases', 'nextcloud-gmbh', 'nextcloud-deps', 'nextcloud-libraries'];
 $ghClient = initGithubClient();
 
 $results = [];
