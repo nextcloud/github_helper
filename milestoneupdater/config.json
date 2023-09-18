@@ -41,7 +41,8 @@
     "Nextcloud 26.0.5",
     "Nextcloud 26.0.6",
     "Nextcloud 27.0.2",
-    "Nextcloud 27.0.3"
+    "Nextcloud 27.0.3",
+    "Nextcloud 27.1.0"
   ],
   "addMilestones": [
     "Nextcloud 27.1.1",
