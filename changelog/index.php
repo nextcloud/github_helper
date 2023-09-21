@@ -111,6 +111,7 @@ class GenerateChangelogCommand extends Command
 		$reposToIterate = [
 			"server",
 			"3rdparty",
+			"updater"
 		];
 
 		try {
