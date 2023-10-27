@@ -77,7 +77,7 @@ class GenerateChangelogCommand extends Command
 		return [$id, $data];
 	}
 
-	protected function shouldPRBeSkipped(array $pr)
+	protected function shouldPRBeSkipped(array $pr, $noBots = false)
 	{
 		if (preg_match('!^\d+(\.\d+(\.\d+))? ?(rc|beta|alpha)? ?(\d+)?$!i', $pr['title'])) {
 			return true;
@@ -89,6 +89,15 @@ class GenerateChangelogCommand extends Command
                 }
             }
         }
+
+		$prAuthor = $pr['author']['login'] ?? '';
+		if ($noBots && (str_contains($prAuthor, '[bot]')
+			|| str_contains($prAuthor, 'nextcloud-')
+			|| str_contains($prAuthor, 'dependabot')
+			|| str_contains($prAuthor, 'renovate'))) {
+			// ignore this bot-created PR
+			return true;
+		}
 		return false;
 	}
 
@@ -164,6 +173,7 @@ class GenerateChangelogCommand extends Command
 		$repoName = $input->getArgument('repo');
 		$base = $input->getArgument('base');
 		$head = $input->getArgument('head');
+		$noBots = $input->getOption('no-bots');
 
 		$orgName = self::ORG_NAME;
 
@@ -289,15 +299,15 @@ class GenerateChangelogCommand extends Command
 				}
 
 				foreach ($commits as $commit) {
-					$noBots = $input->getOption('no-bots');
-					$name = $commit['commit']['author']['name'];
-					if ($noBots && (str_contains($name, '[bot]') || str_contains($name, 'nextcloud-'))) {
-						// ignore this bot-created commit
-						continue;
-					}
+					$login = $commit['author']['login'];
 					$fullMessage = $commit['commit']['message'];
 					list($firstLine,) = explode("\n", $fullMessage, 2);
 					if (substr($firstLine, 0, 20) === 'Merge pull request #') {
+						if ($noBots && (str_contains($login, '[bot]') || str_contains($login, 'nextcloud-'))) {
+							// ignore this bot-created commit
+							continue;
+						}
+						
 						$firstLine = substr($firstLine, 20);
 						list($number,) = explode(" ", $firstLine, 2);
 						$pullRequests[] = $number;
@@ -337,7 +347,7 @@ class GenerateChangelogCommand extends Command
 				foreach ($response['data']['repository']['milestones']['nodes'] as $milestone) {
 					if ($milestone['title'] === \sprintf('Nextcloud %s', $milestoneToCheck)) {
 						foreach ($milestone['pullRequests']['nodes'] as $pr) {
-							if ($this->shouldPRBeSkipped($pr)) {
+							if ($this->shouldPRBeSkipped($pr, $noBots)) {
 								continue;
 							}
 							list($id, $data) = $this->processPR($repoName, $pr);
@@ -371,7 +381,7 @@ class GenerateChangelogCommand extends Command
 							$milestone = $response['data']['repository']['milestone'];
 
 							foreach ($milestone['pullRequests']['nodes'] as $pr) {
-								if ($this->shouldPRBeSkipped($pr)) {
+								if ($this->shouldPRBeSkipped($pr, $noBots)) {
 									continue;
 								}
 								list($id, $data) = $this->processPR($repoName, $pr);
@@ -390,7 +400,7 @@ QUERY;
 			$query .= '		repository(owner: "' . $orgName . '", name: "' . $repoName . '") {';
 
 			foreach ($pullRequests as $pullRequest) {
-				$query .= "pr$pullRequest: pullRequest(number: $pullRequest) { number, title, labels(first: 10) { nodes { id, name } } },";
+				$query .= "pr$pullRequest: pullRequest(number: $pullRequest) { number, author {	login }, title, labels(first: 10) { nodes { id, name } } },";
 			}
 
 			$query .= <<<'QUERY'
@@ -412,7 +422,7 @@ QUERY;
 			}
 
 			foreach ($response['data']['repository'] as $pr) {
-				if ($this->shouldPRBeSkipped($pr)) {
+				if ($this->shouldPRBeSkipped($pr, $noBots)) {
 					continue;
 				}
 				list($id, $data) = $this->processPR($repoName, $pr);
@@ -499,16 +509,11 @@ QUERY;
 						$number = $data['number'];
 						$title = $data['title'];
 						$author = array_key_exists('author', $data) ? '@' . $data['author'] : '';
-						if ($author === '@backportbot-nextcloud') {
-							$author = '';
-						}
-						if ($author === '@dependabot-preview') {
-							$author = '';
-						}
-						if ($author === '@dependabot') {
-							$author = '';
-						}
-						if ($author === '@dependabot[bot]') {
+						if (str_contains($author, 'bot-nextcloud')
+							|| str_contains($author, 'nextcloud-')
+							|| str_contains($author, 'dependabot')
+							|| str_contains($author, 'renovate')
+							|| str_contains($author, '[bot]')) {
 							$author = '';
 						}
 						if ($prevAuthor !== $author) {
