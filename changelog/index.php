@@ -165,6 +165,17 @@ class GenerateChangelogCommand extends Command
 		$client->authenticate($credentialsData['apikey'], Github\Client::AUTH_ACCESS_TOKEN);
 	}
 
+	protected function isAuthorBot(string $author): bool
+	{
+		return (
+			str_contains($author, 'bot-nextcloud')
+			|| str_contains($author, 'nextcloud-')
+			|| str_contains($author, 'dependabot')
+			|| str_contains($author, 'renovate')
+			|| str_contains($author, '[bot]')
+		);
+	}
+
 	/**
 	 * @throws Exception
 	 */
@@ -498,10 +509,20 @@ QUERY;
 
 					// Group PR by authors
 					$pendingPRs = $prTitles['pending'];
-					function cmp($a, $b) {
-						return strnatcasecmp($a['author'], $b['author']);
-					}
-					usort($pendingPRs, "cmp");
+					usort(
+						$pendingPRs,
+						function ($a, $b) {
+							$isAaBot = $this->isAuthorBot($a['author']);
+							$isBaBot = $this->isAuthorBot($b['author']);
+							if ($isAaBot || $isBaBot) {
+								if ($isAaBot && $isBaBot) {
+									return 0;
+								}
+								return $isAaBot ? 1 : -1;
+							}
+							return strnatcasecmp($a['author'], $b['author']);
+						}
+					);
 
 					$prevAuthor = '';
 					foreach ($pendingPRs as $id => $data) {
@@ -509,12 +530,8 @@ QUERY;
 						$number = $data['number'];
 						$title = $data['title'];
 						$author = array_key_exists('author', $data) ? '@' . $data['author'] : '';
-						if (str_contains($author, 'bot-nextcloud')
-							|| str_contains($author, 'nextcloud-')
-							|| str_contains($author, 'dependabot')
-							|| str_contains($author, 'renovate')
-							|| str_contains($author, '[bot]')) {
-							$author = '';
+						if ($this->isAuthorBot($author)) {
+							$author = '(generated)';
 						}
 						if ($prevAuthor !== $author) {
 							$output->writeln("* $author");
