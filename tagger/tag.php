@@ -78,7 +78,6 @@ switch($branch) {
 	case 'stable25':
 	case 'stable26':
 	case 'stable27':
-	case 'master':
 		$repositories = [
 			'nextcloud/server',
 			'nextcloud/3rdparty',
@@ -88,6 +87,34 @@ switch($branch) {
 			'nextcloud/example-files',
 			'nextcloud/files_pdfviewer',
 			'nextcloud/files_rightclick',
+			'nextcloud/firstrunwizard',
+			'nextcloud/logreader',
+			'nextcloud/nextcloud_announcements',
+			'nextcloud/notifications',
+			'nextcloud/password_policy',
+			'nextcloud/photos',
+			'nextcloud/privacy',
+			'nextcloud/recommendations',
+			'nextcloud/related_resources',
+			'nextcloud/serverinfo',
+			'nextcloud/survey_client',
+			'nextcloud/suspicious_login',
+			'nextcloud/text',
+			'nextcloud/twofactor_totp',
+			'nextcloud/updater',
+			'nextcloud/viewer',
+			'nextcloud-gmbh/support',
+		];
+	case 'stable28':
+	case 'master':
+		$repositories = [
+			'nextcloud/server',
+			'nextcloud/3rdparty',
+			'nextcloud/activity',
+			'nextcloud/bruteforcesettings',
+			'nextcloud/circles',
+			'nextcloud/example-files',
+			'nextcloud/files_pdfviewer',
 			'nextcloud/firstrunwizard',
 			'nextcloud/logreader',
 			'nextcloud/nextcloud_announcements',
