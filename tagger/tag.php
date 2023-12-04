@@ -105,6 +105,7 @@ switch($branch) {
 			'nextcloud/viewer',
 			'nextcloud-gmbh/support',
 		];
+		break;
 	case 'stable28':
 	case 'master':
 		$repositories = [
