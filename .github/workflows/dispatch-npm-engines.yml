@@ -39,7 +39,7 @@ jobs:
           done
           # Pipe all results arrays and filter duplicate 
           REPOS=$(cat repos.json | jq '.[]' | jq -sc 'map(.repository.name) | unique')
-          echo "::set-output name=matrix::$REPOS"
+          echo "matrix=$REPOS" >> $GITHUB_OUTPUT
 
   dispatch:
     runs-on: ubuntu-latest
