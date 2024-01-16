@@ -68,11 +68,11 @@ jobs:
 
       - name: Set node version to ${{ env.NODE_VERSION }}
         if: steps.check_file_existence.outputs.files_exists == 'true'
-        run: jq --tab '.engines.node = "${{ env.NODE_VERSION }}"' package.json > package-new.json && mv package-new.json package.json
+        run: jq '.engines.node = "${{ env.NODE_VERSION }}"' package.json > package-new.json && mv package-new.json package.json
 
       - name: Set npm version to ${{ env.NPM_VERSION }}
         if: steps.check_file_existence.outputs.files_exists == 'true'
-        run: jq --tab '.engines.npm = "${{ env.NPM_VERSION }}"' package.json > package-new.json && mv package-new.json package.json
+        run: jq '.engines.npm = "${{ env.NPM_VERSION }}"' package.json > package-new.json && mv package-new.json package.json
 
       - name: Create Pull Request
         if: steps.check_file_existence.outputs.files_exists == 'true'
