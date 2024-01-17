@@ -53,6 +53,7 @@ jobs:
     env:
       NODE_VERSION: "^20.0.0"
       NPM_VERSION: "^10.0.0"
+      BRANCH_NAME: "feat/package-node-npm-engines-update"
 
     steps:
       - name: Checkout target repository
@@ -67,9 +68,14 @@ jobs:
         with:
           files: package.json
 
+      - name: Keeping default branch
+        id: extract_base
+        if: steps.check_file_existence.outputs.files_exists == 'true'
+        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+
       - name: Check out new branch
         if: steps.check_file_existence.outputs.files_exists == 'true'
-        run: git checkout -b feat/package-node-npm-engines-update
+        run: git checkout -b ${{ env.BRANCH_NAME }}
 
       - name: Set node version to ${{ env.NODE_VERSION }}
         if: steps.check_file_existence.outputs.files_exists == 'true'
@@ -89,15 +95,24 @@ jobs:
         run: |
           git add .
           git commit --signoff -m 'Update npm and node engines versions'
-          git push --force origin feat/package-node-npm-engines-update
+          git push --force origin ${{ env.BRANCH_NAME }}
 
       - name: Create Pull Request
+        id: create_pull_request
         if: steps.check_file_existence.outputs.files_exists == 'true'
         uses: peter-evans/create-pull-request@v5
         with:
           body: Automated update of the npm and node engines versions
-          branch: feat/package-node-npm-engines-update
+          base: ${{ steps.extract_base.outputs.branch }}
+          branch: ${{ env.BRANCH_NAME }}
           author: Nextcloud bot <bot@nextcloud.com>
           title: Update npm and node engines versions 
           labels: dependencies
           token: ${{ secrets.COMMAND_BOT_PAT }}
+
+      - name: The pull request already exists
+        if: failure() && steps.create_pull_request.outputs.pull-request-number
+        run: |
+          echo "Pull Request Number - ${{ steps.create_pull_request.outputs.pull-request-number }}"
+          echo "Pull Request URL - ${{ steps.create_pull_request.outputs.pull-request-url }}"
+          exit 0
