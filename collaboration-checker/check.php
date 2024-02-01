@@ -52,11 +52,11 @@ foreach (ORGANIZATIONS as $organization) {
 				continue;
 			}
 			// ignore read access on public organizations
-			if ($collaborator['permission'] === 'read' && $repo['private'] === false) {
+			if (!in_array($collaborator['role_name'], ['admin', 'maintain'], true) && $collaborator['permission'] === 'read' && $repo['private'] === false) {
 				continue;
 			}
 			// ignore simple write access on public main organization
-			if ($collaborator['permission'] === 'write' && $organization === 'nextcloud') {
+			if (!in_array($collaborator['role_name'], ['admin', 'maintain'], true) && $collaborator['permission'] === 'write' && $organization === 'nextcloud') {
 				continue;
 			}
 			$results[$organization][] = [ 'repo' => $repo['name'], 'permissions' => $collaborator['permission'], 'role' => $collaborator['role_name'] ] ;
