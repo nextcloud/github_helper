@@ -33,6 +33,11 @@ foreach (ORGANIZATIONS as $organization) {
 		}
 		$page++;
 		foreach ($repos as $repo) {
+			if (preg_match('/.*-ghsa(-[0-9a-z]{4}){3}$/', $repo['name'])) {
+				// Can not report permissions on GitHub Security Advisory forks
+				printVerbose('S');
+				continue;
+			}
 			printVerbose('.');
 			try {
 				$collaborator = $ghClient->repository()->collaborators()->permission($organization, $repo['name'], $githubUser);
