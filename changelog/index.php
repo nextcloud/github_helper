@@ -287,11 +287,16 @@ class GenerateChangelogCommand extends Command
 			$pullRequests = [];
 			/** @var \Github\Api\Repo $repo */
 			$repo = $client->api('repo');
+			$effectiveHead = $head;
+			if ($head === 'master') {
+				$info = $repo->show(self::ORG_NAME, $repoName);
+				$effectiveHead = $info['default_branch'];
+			}
 			if (!$isBetaNull) {
 				try {
-					$progressBar->setMessage("Fetching git history for $repoName between $base and $head...");
+					$progressBar->setMessage("Fetching git history for $repoName between $base and $effectiveHead...");
 					$paginator = new Github\ResultPager($client);
-					$parameters = array(self::ORG_NAME, $repoName, $base, $head);
+					$parameters = array(self::ORG_NAME, $repoName, $base, $effectiveHead);
 					$commitsApi = $repo->commits();
 					$commits = $paginator->fetch($commitsApi, 'compare', $parameters)['commits'];
 					while ($paginator->hasNext()) {
