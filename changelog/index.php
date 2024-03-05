@@ -310,7 +310,7 @@ class GenerateChangelogCommand extends Command
 				}
 
 				foreach ($commits as $commit) {
-					$login = $commit['author']['login'];
+					$login = $commit['author']['login'] ?? $commit['committer']['login'] ?? $commit['commit']['author']['name'];
 					$fullMessage = $commit['commit']['message'];
 					list($firstLine,) = explode("\n", $fullMessage, 2);
 					if (substr($firstLine, 0, 20) === 'Merge pull request #') {
