@@ -16,6 +16,7 @@
     "files_antivirus",
     "files_automatedtagging",
     "files_downloadactivity",
+    "files_downloadlimit",
     "files_pdfviewer",
     "files_retention",
     "files_texteditor",
