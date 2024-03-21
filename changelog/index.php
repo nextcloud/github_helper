@@ -18,7 +18,8 @@ class GenerateChangelogCommand extends Command
 	const ORG_NAME = 'nextcloud';
 	const REPO_SERVER = 'server';
 
-    private $skipLabels = [];
+	private $skipLabels = [];
+	private bool $skipDrafts;
 
 	protected function configure()
 	{
@@ -46,6 +47,12 @@ class GenerateChangelogCommand extends Command
 				null,
 				InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
 				'Skip pull requests with the given label'
+			)
+			->addOption(
+				'skip-drafts',
+				null,
+				InputOption::VALUE_NONE,
+				'Skip pull requests with draft status'
 			);
 	}
 
@@ -79,16 +86,19 @@ class GenerateChangelogCommand extends Command
 
 	protected function shouldPRBeSkipped(array $pr, $noBots = false)
 	{
+		if ($this->skipDrafts && $pr['isDraft'] ?? false) {
+			return true;
+		}
 		if (preg_match('!^\d+(\.\d+(\.\d+))? ?(rc|beta|alpha)? ?(\d+)?$!i', $pr['title'])) {
 			return true;
 		}
-        if (isset($pr['labels'], $pr['labels']['nodes'])) {
-            foreach ($pr['labels']['nodes'] as $label) {
-                if (in_array($label['id'], $this->skipLabels, false) || in_array(strtolower($label['name']), $this->skipLabels, false) ) {
-                    return true;
-                }
-            }
-        }
+		if (isset($pr['labels'], $pr['labels']['nodes'])) {
+			foreach ($pr['labels']['nodes'] as $label) {
+				if (in_array($label['id'], $this->skipLabels, false) || in_array(strtolower($label['name']), $this->skipLabels, false) ) {
+					return true;
+				}
+			}
+		}
 
 		$prAuthor = $pr['author']['login'] ?? '';
 		if ($noBots && (str_contains($prAuthor, '[bot]')
@@ -204,7 +214,8 @@ class GenerateChangelogCommand extends Command
 			);
 		}
 
-        $this->skipLabels = array_map('strtolower', $input->getOption('skip-label'));
+		$this->skipLabels = array_map('strtolower', $input->getOption('skip-label'));
+		$this->skipDrafts = (bool) $input->getOption('skip-drafts');
 
 		if ($output->isVerbose()) {
 			$output->writeln("repo: $repoName");
@@ -348,6 +359,7 @@ class GenerateChangelogCommand extends Command
 						author {
 							login
 						}
+						isDraft
 					}
 					pageInfo {
 						endCursor
@@ -382,6 +394,7 @@ class GenerateChangelogCommand extends Command
 					author {
 						login
 					}
+					isDraft
 				}
 				pageInfo {
 					endCursor
