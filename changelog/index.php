@@ -86,7 +86,8 @@ class GenerateChangelogCommand extends Command
 
 	protected function shouldPRBeSkipped(array $pr, $noBots = false)
 	{
-		if ($this->skipDrafts && $pr['isDraft'] ?? false) {
+		$isDraft = $pr['isDraft'] ?? false;
+		if ($this->skipDrafts && $isDraft) {
 			return true;
 		}
 		if (preg_match('!^\d+(\.\d+(\.\d+))? ?(rc|beta|alpha)? ?(\d+)?$!i', $pr['title'])) {
