@@ -9,11 +9,33 @@ declare(strict_types=1);
 require_once __DIR__ . '/vendor/autoload.php';
 
 if ($argc < 2 || in_array('--help', $argv) || in_array('-h', $argv)) {
-	die("convert.php [--dry-run] <path>\n");
+	die("convert.php [--dry-run] [--ignore-js-dir] <path>\n");
 }
 
-$isDryRun = $argv[1] === '--dry-run';
-$path = rtrim($isDryRun ? $argv[2] : $argv[1], '/') . '/';
+$args = $argv;
+// Remove script
+array_shift($args);
+
+$isDryRun = $args[0] === '--dry-run';
+if ($isDryRun) {
+	// Remove option
+	array_shift($args);
+}
+$ignoreJSDir = $args[0] === '--ignore-js-dir';
+if ($ignoreJSDir) {
+	// Remove option
+	array_shift($args);
+
+	// Maybe wrong order?
+	if (!$isDryRun) {
+		$isDryRun = $args[0] === '--dry-run';
+		if ($isDryRun) {
+			// Remove option
+			array_shift($args);
+		}
+	}
+}
+$path = rtrim($args[0], '/') . '/';
 
 function generateSpdxContent(string $originalHeader, string $file): array {
 	$nextcloudersCopyrightYear = 3000;
@@ -120,7 +142,7 @@ function replacePhpOrCSSCopyright(string $file, bool $isDryRun): array {
 
 	$originalHeader = substr($content, $headerStart, $headerEnd - $headerStart + strlen('*/'));
 	if (str_contains($originalHeader, 'SPDX')) {
-		echo ' ├─ 🔸 ' . $file . ' skipped' . "\n";
+		echo ' ├─ ☑️ ' . $file . ' SPDX' . "\n";
 		return [];
 	}
 
@@ -156,7 +178,7 @@ function replaceJavaScriptCopyright(string $file, bool $isDryRun): array {
 
 	$originalHeader = substr($content, $headerStart, $headerEnd - $headerStart + strlen('*/'));
 	if (str_contains($originalHeader, 'SPDX')) {
-		echo ' ├─ 🔸 ' . $file . ' skipped' . "\n";
+		echo ' ├─ ☑️  ' . $file . ' SPDX' . "\n";
 		return [];
 	}
 
@@ -192,7 +214,7 @@ function replaceVueCopyright(string $file, bool $isDryRun): array {
 
 	$originalHeader = substr($content, $headerStart, $headerEnd - $headerStart + strlen('-->'));
 	if (str_contains($originalHeader, 'SPDX')) {
-		echo ' ├─ 🔸 ' . $file . ' skipped' . "\n";
+		echo ' ├─ ☑️ ' . $file . ' SPDX' . "\n";
 		return [];
 	}
 
@@ -239,27 +261,53 @@ $finder->in($path);
 $notHandled = '';
 $authors = [];
 foreach ($finder->getIterator() as $file) {
+	if ($ignoreJSDir && str_starts_with($file->getRealPath(), $path . 'js/')) {
+		echo ' ├─ ◽ ' . $file->getRealPath() . ' skipped' . "\n";
+		continue;
+	}
+	if (str_starts_with($file->getRealPath(), $path . 'l10n/')) {
+		echo ' ├─ ◽ ' . $file->getRealPath() . ' skipped' . "\n";
+		continue;
+	}
+
 	if ($file->getExtension() === 'php' || $file->getExtension() === 'css' || $file->getExtension() === 'scss') {
 		if (!str_contains($file->getRealPath(), '/lib/Vendor/')
 			&& !str_contains($file->getRealPath(), '/vendor/')
 			&& !str_contains($file->getRealPath(), '/tests/stubs/')) {
 			$authors[] = replacePhpOrCSSCopyright($file->getRealPath(), $isDryRun);
+		} else {
+			echo ' ├─ 🔶 ' . $file->getRealPath() . ' skipped' . "\n";
 		}
 	} elseif ($file->getExtension() === 'js' || $file->getExtension() === 'ts') {
 		if (
 			!str_contains($file->getRealPath(), '/vendor/')
 		) {
 			$authors[] = replaceJavaScriptCopyright($file->getRealPath(), $isDryRun);
+		} else {
+			echo ' ├─ 🔶 ' . $file->getRealPath() . ' skipped' . "\n";
 		}
 	} elseif ($file->getExtension() === 'vue') {
 		if (
 			!str_contains($file->getRealPath(), '/vendor/')
 		) {
 			$authors[] = replaceVueCopyright($file->getRealPath(), $isDryRun);
+		} else {
+			echo ' ├─ 🔶 ' . $file->getRealPath() . ' skipped' . "\n";
 		}
 	} elseif (!$file->isDir()) {
 		if (
+			str_ends_with($file->getRealPath(), 'composer.json')
+			|| str_ends_with($file->getRealPath(), 'composer.lock')
+			|| str_ends_with($file->getRealPath(), '.md')
+			|| str_ends_with($file->getRealPath(), '.png')
+			|| str_ends_with($file->getRealPath(), '.svg')
+			|| str_ends_with($file->getRealPath(), '.xml')
+			|| str_ends_with($file->getRealPath(), '.json')
+		) {
+			echo ' ├─ ◽ ' . $file->getRealPath() . ' skipped' . "\n";
+		} elseif (
 			!str_contains($file->getRealPath(), '/tests/integration/vendor/')
+			&& !(str_starts_with($file->getRealPath(), $path . 'l10n/') && str_ends_with($file->getRealPath(), '.json'))
 			&& !str_contains($file->getRealPath(), '/tests/integration/phpserver.log')
 			&& !str_contains($file->getRealPath(), '/tests/integration/phpserver_fed.log')
 		) {
