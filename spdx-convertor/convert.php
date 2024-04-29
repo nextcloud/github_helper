@@ -16,6 +16,7 @@ $isDryRun = $argv[1] === '--dry-run';
 $path = rtrim($isDryRun ? $argv[2] : $argv[1], '/') . '/';
 
 function generateSpdxContent(string $originalHeader, string $file): array {
+	$nextcloudersCopyrightYear = 3000;
 	$newHeaderLines = [];
 	$authors = [];
 	$license = null;
@@ -25,8 +26,8 @@ function generateSpdxContent(string $originalHeader, string $file): array {
 		if (preg_match('/@copyright Copyright \(c\) (\d+),? ([^<]+) <([^>]+)>/', $line, $m)) {
 			if (str_contains(strtolower($m[2]), 'owncloud')) {
 				$newHeaderLines[] = "SPDX-FileCopyrightText: {$m[1]} {$m[2]} <{$m[3]}>";
-			} else {
-				$newHeaderLines[] = "SPDX-FileCopyrightText: {$m[1]} Nextcloud GmbH and Nextcloud contributors";
+			} elseif ($nextcloudersCopyrightYear > $m[1]) {
+				$nextcloudersCopyrightYear = (int) $m[1];
 			}
 			$authors[] = "{$m[2]} <{$m[3]}>";
 
@@ -34,8 +35,8 @@ function generateSpdxContent(string $originalHeader, string $file): array {
 		} elseif (preg_match('/@copyright (\d+),? ([^<]+) <([^>]+)>/', $line, $m)) {
 			if (str_contains(strtolower($m[2]), 'owncloud')) {
 				$newHeaderLines[] = "SPDX-FileCopyrightText: {$m[1]} {$m[2]} <{$m[3]}>";
-			} else {
-				$newHeaderLines[] = "SPDX-FileCopyrightText: {$m[1]} Nextcloud GmbH and Nextcloud contributors";
+			} elseif ($nextcloudersCopyrightYear > $m[1]) {
+				$nextcloudersCopyrightYear = (int) $m[1];
 			}
 			$authors[] = "{$m[2]} <{$m[3]}>";
 
@@ -43,8 +44,8 @@ function generateSpdxContent(string $originalHeader, string $file): array {
 		} elseif (preg_match('/@copyright Copyright \(c\) (\d+),? ([^<]+) \(([^>]+)\)/', $line, $m)) {
 			if (str_contains(strtolower($m[2]), 'owncloud')) {
 				$newHeaderLines[] = "SPDX-FileCopyrightText: {$m[1]} {$m[2]} <{$m[3]}>";
-			} else {
-				$newHeaderLines[] = "SPDX-FileCopyrightText: {$m[1]} Nextcloud GmbH and Nextcloud contributors";
+			} elseif ($nextcloudersCopyrightYear > $m[1]) {
+				$nextcloudersCopyrightYear = (int) $m[1];
 			}
 			$authors[] = "{$m[2]} <{$m[3]}>";
 
@@ -52,8 +53,8 @@ function generateSpdxContent(string $originalHeader, string $file): array {
 		} elseif (preg_match('/@copyright Copyright \(c\) (\d+),? ([^\n]+)/', $line, $m)) {
 			if (str_contains(strtolower($m[2]), 'owncloud')) {
 				$newHeaderLines[] = "SPDX-FileCopyrightText: {$m[1]} {$m[2]}";
-			} else {
-				$newHeaderLines[] = "SPDX-FileCopyrightText: {$m[1]} Nextcloud GmbH and Nextcloud contributors";
+			} elseif ($nextcloudersCopyrightYear > $m[1]) {
+				$nextcloudersCopyrightYear = (int) $m[1];
 			}
 			$authors[] = $m[2];
 
@@ -85,6 +86,10 @@ function generateSpdxContent(string $originalHeader, string $file): array {
 			echo '    └─ ' . $line . "\n";
 			exit(1);
 		}
+	}
+
+	if ($nextcloudersCopyrightYear !== 3000) {
+		array_unshift($newHeaderLines, "SPDX-FileCopyrightText: $nextcloudersCopyrightYear Nextcloud GmbH and Nextcloud contributors");
 	}
 
 	if ($license === null) {
