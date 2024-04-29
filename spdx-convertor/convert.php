@@ -13,7 +13,7 @@ if ($argc < 2 || in_array('--help', $argv) || in_array('-h', $argv)) {
 }
 
 $isDryRun = $argv[1] === '--dry-run';
-$path = $isDryRun ? $argv[2] : $argv[1];
+$path = rtrim($isDryRun ? $argv[2] : $argv[1], '/') . '/';
 
 function generateSpdxContent(string $originalHeader, string $file): array {
 	$newHeaderLines = [];
