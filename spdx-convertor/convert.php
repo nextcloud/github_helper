@@ -274,6 +274,7 @@ if (file_exists($path . '.reuse/dep5')) {
 	$lines = array_filter($lines, static fn(string $line) => str_starts_with($line, 'Files: '));
 
 	foreach ($lines as $line) {
+		$line = preg_replace('/\s+/', ' ', trim($line));
 		$files = explode(' ', $line);
 		array_shift($files);
 
