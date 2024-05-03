@@ -9,8 +9,11 @@ declare(strict_types=1);
 require_once __DIR__ . '/vendor/autoload.php';
 
 if ($argc < 2 || in_array('--help', $argv) || in_array('-h', $argv)) {
-	echo "\033[0;30m\033[43mRun the script with --dry-run until all files can be converted.\033[0m\n";
-	echo "\033[0;30m\033[43mOtherwise the author list can not be generated correctly.\033[0m\n\n";
+	echo "\033[0;30m\033[43m                                                                 \033[0m\n";
+	echo "\033[0;30m\033[43m Run the script with --dry-run until all files can be converted. \033[0m\n";
+	echo "\033[0;30m\033[43m Otherwise the author list can not be generated correctly.       \033[0m\n";
+	echo "\033[0;30m\033[43m                                                                 \033[0m\n";
+	echo "\n";
 	die("convert.php [--dry-run] [--ignore-js-dir] <path>\n");
 }
 
@@ -39,13 +42,24 @@ if ($ignoreJSDir) {
 }
 $path = realpath($args[0]) . '/';
 
-function abortFurtherAnalysing() {
+function abortFurtherAnalysing(): void {
+	global $isDryRun;
+
 	echo "\n\n\n";
 	echo "\033[0;37m\033[41m                                                                       \033[0m\n";
 	echo "\033[0;37m\033[41m                            ❌ ABORTING ❌                             \033[0m\n";
 	echo "\033[0;37m\033[41m Please manually fix the error pointed out above and rerun the script. \033[0m\n";
 	echo "\033[0;37m\033[41m                                                                       \033[0m\n";
 	echo "\n\n\n";
+
+	if (!$isDryRun) {
+		echo "\033[0;30m\033[43m                                                                 \033[0m\n";
+		echo "\033[0;30m\033[43m Run the script with --dry-run until all files can be converted. \033[0m\n";
+		echo "\033[0;30m\033[43m Otherwise the author list can not be generated correctly.       \033[0m\n";
+		echo "\033[0;30m\033[43m                                                                 \033[0m\n";
+		echo "\n\n\n";
+	}
+
 	exit(1);
 }
 
