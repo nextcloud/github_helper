@@ -9,6 +9,8 @@ declare(strict_types=1);
 require_once __DIR__ . '/vendor/autoload.php';
 
 if ($argc < 2 || in_array('--help', $argv) || in_array('-h', $argv)) {
+	echo "\033[0;30m\033[43mRun the script with --dry-run until all files can be converted.\033[0m\n";
+	echo "\033[0;30m\033[43mOtherwise the author list can not be generated correctly.\033[0m\n\n";
 	die("convert.php [--dry-run] [--ignore-js-dir] <path>\n");
 }
 
@@ -37,6 +39,16 @@ if ($ignoreJSDir) {
 }
 $path = realpath($args[0]) . '/';
 
+function abortFurtherAnalysing() {
+	echo "\n\n\n";
+	echo "\033[0;37m\033[41m                                                                       \033[0m\n";
+	echo "\033[0;37m\033[41m                            ❌ ABORTING ❌                             \033[0m\n";
+	echo "\033[0;37m\033[41m Please manually fix the error pointed out above and rerun the script. \033[0m\n";
+	echo "\033[0;37m\033[41m                                                                       \033[0m\n";
+	echo "\n\n\n";
+	exit(1);
+}
+
 function generateSpdxContent(string $originalHeader, string $file): array {
 	$nextcloudersCopyrightYear = 3000;
 	$newHeaderLines = [];
@@ -45,7 +57,7 @@ function generateSpdxContent(string $originalHeader, string $file): array {
 
 	foreach (explode("\n", $originalHeader) as $line) {
 		// @copyright Copyright (c) 2023 Joas Schilling <coding@schilljs.com>
-		if (preg_match('/@copyright Copyright \(c\) (\d+),? ([^<]+) <([^>]+)>/', $line, $m)) {
+		if (preg_match('/@copyright Copyright \(c\) (\d{4}),? ([^<]+) <([^>]+)>/', $line, $m)) {
 			if (str_contains(strtolower($m[2]), 'owncloud')) {
 				$newHeaderLines[] = "SPDX-FileCopyrightText: {$m[1]} {$m[2]} <{$m[3]}>";
 			} elseif ($nextcloudersCopyrightYear > $m[1]) {
@@ -54,7 +66,7 @@ function generateSpdxContent(string $originalHeader, string $file): array {
 			$authors[] = "{$m[2]} <{$m[3]}>";
 
 		// @copyright 2023 Joas Schilling <coding@schilljs.com>
-		} elseif (preg_match('/@copyright (\d+),? ([^<]+) <([^>]+)>/', $line, $m)) {
+		} elseif (preg_match('/@copyright (\d{4}),? ([^<]+) <([^>]+)>/', $line, $m)) {
 			if (str_contains(strtolower($m[2]), 'owncloud')) {
 				$newHeaderLines[] = "SPDX-FileCopyrightText: {$m[1]} {$m[2]} <{$m[3]}>";
 			} elseif ($nextcloudersCopyrightYear > $m[1]) {
@@ -63,7 +75,7 @@ function generateSpdxContent(string $originalHeader, string $file): array {
 			$authors[] = "{$m[2]} <{$m[3]}>";
 
 		// @copyright Copyright (c) 2023 Joas Schilling (coding@schilljs.com)
-		} elseif (preg_match('/@copyright Copyright \(c\) (\d+),? ([^<]+) \(([^>]+)\)/', $line, $m)) {
+		} elseif (preg_match('/@copyright Copyright \(c\) (\d{4}),? ([^<]+) \(([^>]+)\)/', $line, $m)) {
 			if (str_contains(strtolower($m[2]), 'owncloud')) {
 				$newHeaderLines[] = "SPDX-FileCopyrightText: {$m[1]} {$m[2]} <{$m[3]}>";
 			} elseif ($nextcloudersCopyrightYear > $m[1]) {
@@ -72,7 +84,7 @@ function generateSpdxContent(string $originalHeader, string $file): array {
 			$authors[] = "{$m[2]} <{$m[3]}>";
 
 		// @copyright Copyright (c) 2023 Joas Schilling Nextcloud GmbH, https://nextcloud.com
-		} elseif (preg_match('/@copyright Copyright \(c\) (\d+),? ([^\n]+)/', $line, $m)) {
+		} elseif (preg_match('/@copyright Copyright \(c\) (\d{4}),? ([^\n]+)/', $line, $m)) {
 			if (str_contains(strtolower($m[2]), 'owncloud')) {
 				$newHeaderLines[] = "SPDX-FileCopyrightText: {$m[1]} {$m[2]}";
 			} elseif ($nextcloudersCopyrightYear > $m[1]) {
@@ -80,6 +92,8 @@ function generateSpdxContent(string $originalHeader, string $file): array {
 			}
 			$authors[] = $m[2];
 
+		// @copyright 2023
+		} elseif (preg_match('/@copyright (\d{4})/', $line, $m)) {
 		} elseif (preg_match('/@author ([^\n]+)/', $line, $m)) {
 			$authors[] = $m[1];
 		} elseif (str_contains($line, '@license AGPL-3.0-or-later')) {
@@ -90,6 +104,8 @@ function generateSpdxContent(string $originalHeader, string $file): array {
 			$license = 'SPDX-License-Identifier: AGPL-3.0-or-later';
 		} elseif (str_contains($line, '@license AGPL-3.0')) {
 			$license = 'SPDX-License-Identifier: AGPL-3.0-only';
+		} elseif (str_contains($line, 'This file is licensed under the Affero General Public License version 3 or')) {
+			$license = 'SPDX-License-Identifier: AGPL-3.0-or-later';
 		} elseif (str_contains($line, 'it under the terms of the GNU Affero General Public License as')) {
 		} elseif (str_contains($line, 'it under the terms of the GNU Afferoq General Public License as')) {
 		} elseif (str_contains($line, 'it under the terms of the GNU Affero General Public License, version 3,')) {
@@ -100,13 +116,13 @@ function generateSpdxContent(string $originalHeader, string $file): array {
 		} elseif (str_contains($line, 'along with this program.  If not, see <http://www.gnu.org/licenses/>')) {
 		} elseif (str_contains($line, 'along with this program. If not, see <http://www.gnu.org/licenses/>')) {
 		} elseif (str_contains(strtolower($line), 'license')) {
-			echo ' ├─ ❌ ' . $file . ' Unrecognized license:' . "\n";
+			echo " ├─ ❌ \033[0;31m" . $file . ' Unrecognized license:' . "\033[0m\n";
 			echo '    └─ ' . $line . "\n";
-			exit(1);
+			abortFurtherAnalysing();
 		} elseif (str_contains(strtolower($line), 'copyright')) {
-			echo ' ├─ ❌ ' . $file . ' Unrecognized copyright:' . "\n";
+			echo " ├─ ❌ \033[0;31m" . $file . ' Unrecognized copyright:' . "\033[0m\n";
 			echo '    └─ ' . $line . "\n";
-			exit(1);
+			abortFurtherAnalysing();
 		}
 	}
 
@@ -115,8 +131,8 @@ function generateSpdxContent(string $originalHeader, string $file): array {
 	}
 
 	if ($license === null) {
-		echo ' ├─ ❌ ' . $file . ' No license found' . "\n";
-		exit(1);
+		echo " ├─ ❌ \033[0;31m" . $file . ' No license found' . "\033[0m\n";
+		abortFurtherAnalysing();
 	}
 
 	$newHeaderLines = array_unique($newHeaderLines);
@@ -130,19 +146,19 @@ function replacePhpOrCSSCopyright(string $file, bool $isDryRun): array {
 
 	$headerStart = str_starts_with($content, '/*') ? 0 : strpos($content, "\n/*");
 	if ($headerStart === false) {
-		echo ' ├─ ❌ ' . $file . ' No header comment found' . "\n";
-		exit(1);
+		echo " ├─ ❌ \033[0;31m" . $file . ' No header comment found' . "\033[0m\n";
+		abortFurtherAnalysing();
 	}
 
 	$headerEnd = strpos($content, '*/', $headerStart);
 	if ($headerEnd === false) {
-		echo ' ├─ ❌ ' . $file . ' No header comment END found' . "\n";
-		exit(1);
+		echo " ├─ ❌ \033[0;31m" . $file . ' No header comment END found' . "\033[0m\n";
+		abortFurtherAnalysing();
 	}
 
 	$originalHeader = substr($content, $headerStart, $headerEnd - $headerStart + strlen('*/'));
 	if (str_contains($originalHeader, 'SPDX')) {
-		echo ' ├─ ☑️ ' . $file . ' SPDX' . "\n";
+		echo " ├─ ✅ \033[0;32m" . $file . ' SPDX' . "\033[0m\n";
 		return [];
 	}
 
@@ -150,13 +166,13 @@ function replacePhpOrCSSCopyright(string $file, bool $isDryRun): array {
 	$newHeader = (($headerStart === 0) ? '' : "\n") . "/**\n * " . implode("\n * ", $newHeaderLines) . "\n */";
 
 	if ($isDryRun) {
-		echo ' ├─ ✅ ' . $file . ' OK' . "\n";
+		echo " ├─ ☑️  \033[0;36m" . $file . ' would replace' . "\033[0m\n";
 	} else {
 		file_put_contents(
 			$file,
 			str_replace($originalHeader, $newHeader, $content)
 		);
-		echo ' ├─ ✅ ' . $file . ' replaced' . "\n";
+		echo " ├─ ☑️  \033[0;36m" . $file . ' replaced' . "\033[0m\n";
 	}
 	return $authors;
 }
@@ -166,19 +182,19 @@ function replaceJavaScriptCopyright(string $file, bool $isDryRun): array {
 
 	$headerStart = str_starts_with($content, '/*') ? 0 : strpos($content, "\n/*");
 	if ($headerStart === false) {
-		echo ' ├─ ❌ ' . $file . ' No header comment found' . "\n";
-		exit(1);
+		echo " ├─ ❌ \033[0;31m" . $file . ' No header comment found' . "\033[0m\n";
+		abortFurtherAnalysing();
 	}
 
 	$headerEnd = strpos($content, '*/', $headerStart);
 	if ($headerEnd === false) {
-		echo ' ├─ ❌ ' . $file . ' No header comment END found' . "\n";
-		exit(1);
+		echo " ├─ ❌ \033[0;31m" . $file . ' No header comment END found' . "\033[0m\n";
+		abortFurtherAnalysing();
 	}
 
 	$originalHeader = substr($content, $headerStart, $headerEnd - $headerStart + strlen('*/'));
 	if (str_contains($originalHeader, 'SPDX')) {
-		echo ' ├─ ☑️  ' . $file . ' SPDX' . "\n";
+		echo " ├─ ✅ \033[0;32m" . $file . ' SPDX' . "\033[0m\n";
 		return [];
 	}
 
@@ -186,13 +202,13 @@ function replaceJavaScriptCopyright(string $file, bool $isDryRun): array {
 	$newHeader = (($headerStart === 0) ? '' : "\n") . "/**\n * " . implode("\n * ", $newHeaderLines) . "\n */";
 
 	if ($isDryRun) {
-		echo ' ├─ ✅ ' . $file . ' OK' . "\n";
+		echo " ├─ ☑️  \033[0;36m" . $file . ' would replace' . "\033[0m\n";
 	} else {
 		file_put_contents(
 			$file,
 			str_replace($originalHeader, $newHeader, $content)
 		);
-		echo ' ├─ ✅ ' . $file . ' replaced' . "\n";
+		echo " ├─ ☑️  \033[0;36m" . $file . ' replaced' . "\033[0m\n";
 	}
 	return $authors;
 }
@@ -202,19 +218,19 @@ function replaceVueCopyright(string $file, bool $isDryRun): array {
 
 	$headerStart = str_starts_with($content, '<!--') ? 0 : strpos($content, "\n<!--");
 	if ($headerStart === false) {
-		echo ' ├─ ❌ ' . $file . ' No header comment found' . "\n";
-		exit(1);
+		echo " ├─ ❌ \033[0;31m" . $file . ' No header comment found' . "\033[0m\n";
+		abortFurtherAnalysing();
 	}
 
 	$headerEnd = strpos($content, '-->', $headerStart);
 	if ($headerEnd === false) {
-		echo ' ├─ ❌ ' . $file . ' No header comment END found' . "\n";
-		exit(1);
+		echo " ├─ ❌ \033[0;31m" . $file . ' No header comment END found' . "\033[0m\n";
+		abortFurtherAnalysing();
 	}
 
 	$originalHeader = substr($content, $headerStart, $headerEnd - $headerStart + strlen('-->'));
 	if (str_contains($originalHeader, 'SPDX')) {
-		echo ' ├─ ☑️ ' . $file . ' SPDX' . "\n";
+		echo " ├─ ✅ \033[0;32m" . $file . ' SPDX' . "\033[0m\n";
 		return [];
 	}
 
@@ -222,13 +238,13 @@ function replaceVueCopyright(string $file, bool $isDryRun): array {
 	$newHeader = (($headerStart === 0) ? '' : "\n") . "<!--\n  - " . implode("\n  - ", $newHeaderLines) . "\n-->";
 
 	if ($isDryRun) {
-		echo ' ├─ ✅ ' . $file . ' OK' . "\n";
+		echo " ├─ ☑️  \033[0;36m" . $file . ' would replace' . "\033[0m\n";
 	} else {
 		file_put_contents(
 			$file,
 			str_replace($originalHeader, $newHeader, $content)
 		);
-		echo ' ├─ ✅ ' . $file . ' replaced' . "\n";
+		echo " ├─ ☑️  \033[0;36m" . $file . ' replaced' . "\033[0m\n";
 	}
 	return $authors;
 }
@@ -276,7 +292,7 @@ foreach ($finder->getIterator() as $file) {
 			&& !str_contains($file->getRealPath(), '/tests/stubs/')) {
 			$authors[] = replacePhpOrCSSCopyright($file->getRealPath(), $isDryRun);
 		} else {
-			echo ' ├─ 🔶 ' . $file->getRealPath() . ' skipped' . "\n";
+			echo " ├─ 🔶 \033[0;33m" . $file->getRealPath() . ' skipped' . "\033[0m\n";
 		}
 	} elseif ($file->getExtension() === 'js' || $file->getExtension() === 'ts') {
 		if (
@@ -284,7 +300,7 @@ foreach ($finder->getIterator() as $file) {
 		) {
 			$authors[] = replaceJavaScriptCopyright($file->getRealPath(), $isDryRun);
 		} else {
-			echo ' ├─ 🔶 ' . $file->getRealPath() . ' skipped' . "\n";
+			echo " ├─ 🔶 \033[0;33m" . $file->getRealPath() . ' skipped' . "\033[0m\n";
 		}
 	} elseif ($file->getExtension() === 'vue') {
 		if (
@@ -292,7 +308,7 @@ foreach ($finder->getIterator() as $file) {
 		) {
 			$authors[] = replaceVueCopyright($file->getRealPath(), $isDryRun);
 		} else {
-			echo ' ├─ 🔶 ' . $file->getRealPath() . ' skipped' . "\n";
+			echo " ├─ 🔶 \033[0;33m" . $file->getRealPath() . ' skipped' . "\033[0m\n";
 		}
 	} elseif (!$file->isDir()) {
 		if (
@@ -311,7 +327,7 @@ foreach ($finder->getIterator() as $file) {
 			&& !str_contains($file->getRealPath(), '/tests/integration/phpserver.log')
 			&& !str_contains($file->getRealPath(), '/tests/integration/phpserver_fed.log')
 		) {
-			$notHandled .= ' ├─ ❌ ' . $file . ' Not handled' . "\n";
+			$notHandled .= " ├─ ❌ \033[0;31m" . $file . ' Not handled' . "\033[0m\n";
 		}
 	}
 }
@@ -323,5 +339,10 @@ sort($authorList);
 $authorList = array_unique($authorList);
 
 $authorsContent = "# Authors\n\n- " . implode("\n- ", $authorList) . "\n";
-file_put_contents($path . 'AUTHORS.md', $authorsContent, FILE_APPEND);
-echo ' └─ ✅ Appended AUTHORS.md' . "\n";
+if ($isDryRun) {
+	echo " └─ ✅ \033[0;32mCan generate AUTHORS.md" . "\033[0m\n\n";
+	echo $authorsContent;
+} else {
+	file_put_contents($path . 'AUTHORS.md', $authorsContent, FILE_APPEND);
+	echo " └─ ✅ \033[0;32mAppended AUTHORS.md" . "\033[0m\n";
+}
