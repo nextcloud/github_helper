@@ -268,8 +268,8 @@ $finder->ignoreVCSIgnored(true)
 	->sortByName();
 
 $exclude = [];
-if (file_exists($path . '/.reuse/dep5')) {
-	$dep5 = file_get_contents($path . '/.reuse/dep5');
+if (file_exists($path . '.reuse/dep5')) {
+	$dep5 = file_get_contents($path . '.reuse/dep5');
 	$lines = explode("\n", $dep5);
 	$lines = array_filter($lines, static fn(string $line) => str_starts_with($line, 'Files: '));
 
