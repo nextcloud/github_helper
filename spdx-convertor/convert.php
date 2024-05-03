@@ -35,7 +35,7 @@ if ($ignoreJSDir) {
 		}
 	}
 }
-$path = rtrim($args[0], '/') . '/';
+$path = realpath($args[0]) . '/';
 
 function generateSpdxContent(string $originalHeader, string $file): array {
 	$nextcloudersCopyrightYear = 3000;
