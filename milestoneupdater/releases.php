@@ -102,6 +102,11 @@ foreach($repositories as $name => $repository) {
 			$textColor = $data['state'] === 'open' ? $COLOR_RED : '';
 			print($textColor . $config['org'] . '/' . $name . ': close milestone ' . $milestone . ' - state: ' . $textStyle . $data['state'] . $NO_COLOR . PHP_EOL);
 
+			// Show the link to the milestone if it is still open and needs to be closed
+			if ($data['state'] === 'open') {
+				print($textColor . ' └ Link: ' . $info['html_url'] . $NO_COLOR . PHP_EOL);
+			}
+
 			if(array_key_exists($milestone, $config['dueDates'])) {
 				$data['due_on'] = getDateTime($config['dueDates'][$milestone]);
 			}
