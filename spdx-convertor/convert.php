@@ -344,7 +344,7 @@ if (file_exists($path . '.reuse/dep5')) {
 		foreach ($files as $file) {
 			$pathFilter = $file;
 			if (str_contains($file, '*')) {
-				$pathFilter = '/'. str_replace(['/', '.', '*'], ['\/', '\.', '(.+)'], $file) . '$/i';
+				$pathFilter = '/'. str_replace(['/', '.', '*'], ['\/', '\.', '(.*)'], $file) . '$/i';
 			}
 			$finder->notPath($pathFilter);
 		}
