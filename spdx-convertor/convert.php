@@ -127,6 +127,8 @@ function generateSpdxContent(string $originalHeader, string $file): array {
 			$license = 'SPDX-License-Identifier: AGPL-3.0-or-later';
 		} elseif (str_contains($line, '@license AGPL-3.0')) {
 			$license = 'SPDX-License-Identifier: AGPL-3.0-only';
+		} elseif (str_contains($line, '@license GNU GPL version 3 or any later version')) {
+			$license = 'SPDX-License-Identifier: GPL-3.0-or-later';
 		} elseif (str_contains($line, 'This file is licensed under the Affero General Public License version 3 or')) {
 			$license = 'SPDX-License-Identifier: AGPL-3.0-or-later';
 		} elseif (str_contains($line, '// GNU GPL version 3 or any later version')) {
@@ -169,7 +171,7 @@ function generateSpdxContent(string $originalHeader, string $file): array {
 	return [$authors, $newHeaderLines];
 }
 
-function replacePhpOrCSSCopyright(string $file, bool $isDryRun): array {
+function replacePhpOrCSSOrMOrHCopyright(string $file, bool $isDryRun): array {
 	$content = file_get_contents($file);
 
 	$headerStart = str_starts_with($content, '/*') ? 0 : strpos($content, "\n/*");
@@ -368,11 +370,11 @@ foreach ($finder->getIterator() as $file) {
 		continue;
 	}
 
-	if ($file->getExtension() === 'php' || $file->getExtension() === 'css' || $file->getExtension() === 'scss') {
+	if ($file->getExtension() === 'php' || $file->getExtension() === 'css' || $file->getExtension() === 'scss' || $file->getExtension() === 'm' || $file->getExtension() === 'h') {
 		if (!str_contains($file->getRealPath(), '/lib/Vendor/')
 			&& !str_contains($file->getRealPath(), '/vendor/')
 			&& !str_contains($file->getRealPath(), '/tests/stubs/')) {
-			$authors[] = replacePhpOrCSSCopyright($file->getRealPath(), $isDryRun);
+			$authors[] = replacePhpOrCSSOrMOrHCopyright($file->getRealPath(), $isDryRun);
 		} else {
 			echo " ├─ 🔶 \033[0;33m" . $file->getRealPath() . ' skipped' . "\033[0m\n";
 		}
