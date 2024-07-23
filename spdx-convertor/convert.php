@@ -372,7 +372,7 @@ foreach ($finder->getIterator() as $file) {
 		} else {
 			echo " ├─ 🔶 \033[0;33m" . $file->getRealPath() . ' skipped' . "\033[0m\n";
 		}
-	} elseif ($file->getExtension() === 'js' || $file->getExtension() === 'ts') {
+	} elseif (preg_match('/^[mc]?[tj]s$/', $file->getExtension())) {
 		if (
 			!str_contains($file->getRealPath(), '/vendor/')
 		) {
@@ -380,7 +380,7 @@ foreach ($finder->getIterator() as $file) {
 		} else {
 			echo " ├─ 🔶 \033[0;33m" . $file->getRealPath() . ' skipped' . "\033[0m\n";
 		}
-	} elseif ($file->getExtension() === 'vue') {
+	} elseif ($file->getExtension() === 'vue' || $file->getExtension() === 'html') {
 		if (
 			!str_contains($file->getRealPath(), '/vendor/')
 		) {
