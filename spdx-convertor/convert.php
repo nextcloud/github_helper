@@ -295,11 +295,15 @@ function replaceSwiftCopyright(string $file, bool $isDryRun): array {
 			$headerEndToken = "protocol";
 			$headerEnd = strpos($content, $headerEndToken, $headerStart);
 			if ($headerEnd === false) {
-				$headerEndToken = "class";
+				$headerEndToken = "@objcMembers";
 				$headerEnd = strpos($content, $headerEndToken, $headerStart);
 				if ($headerEnd === false) {
-					echo " ├─ ❌ \033[0;31m" . $file . ' No header comment END found' . "\033[0m\n";
-					abortFurtherAnalysing();
+					$headerEndToken = "class";
+					$headerEnd = strpos($content, $headerEndToken, $headerStart);
+					if ($headerEnd === false) {
+						echo " ├─ ❌ \033[0;31m" . $file . ' No header comment END found' . "\033[0m\n";
+						abortFurtherAnalysing();
+					}
 				}
 			}
 		}
