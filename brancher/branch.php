@@ -30,6 +30,7 @@ $repositories = [
 	'nextcloud/suspicious_login',
 	'nextcloud/text',
 	'nextcloud/twofactor_totp',
+	'nextcloud/twofactor_nextcloud_notification',
 	'nextcloud/updater',
 	'nextcloud/viewer',
 	'nextcloud-gmbh/support',
