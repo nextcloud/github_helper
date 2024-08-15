@@ -169,7 +169,18 @@ switch($originalBranch) {
 		die("Branch not found :(\n");
 }
 
-
+function translateBranch(string $branch, string $repo): string {
+	if ($branch !== 'master') {
+		return $branch;
+	}
+	if (in_array($repo, [
+		'nextcloud/text',
+		'nextcloud/twofactor_nextcloud_notification',
+	])) {
+		return 'main';
+	}
+	return $branch;
+}
 
 // use proper temp location on dev machines, assuming it's memdisc, to not wear out physical storage
 $workDir = gethostname() === 'client-builder' ? __DIR__ : trim(shell_exec('mktemp -d'));
@@ -236,17 +247,4 @@ foreach($repositories as $repo) {
 	shell_exec('cd ' . $workDir . '/' . $name . ' && ' . $SSH_OPTIONS . ' git push origin ' . $tag);
 	// Delete repository
 	shell_exec('cd ' . $workDir . ' && rm -rf ' . $name);
-}
-
-function translateBranch(string $branch, string $repo): string {
-	if ($branch !== 'master') {
-		return $branch;
-	}
-	if (in_array($repo, [
-		'nextcloud/text',
-		'nextcloud/twofactor_nextcloud_notification',
-	])) {
-		return 'main';
-	}
-	return $branch;
 }
