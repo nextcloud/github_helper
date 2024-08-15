@@ -159,6 +159,7 @@ switch($branch) {
 			'nextcloud/survey_client',
 			'nextcloud/suspicious_login',
 			'nextcloud/text',
+			'nextcloud/twofactor_nextcloud_notification',
 			'nextcloud/twofactor_totp',
 			'nextcloud/updater',
 			'nextcloud/viewer',
