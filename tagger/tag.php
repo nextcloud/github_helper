@@ -244,6 +244,7 @@ function translateBranch(string $branch, string $repo): string {
 	}
 	if (in_array($repo, [
 		'nextcloud/text',
+		'nextcloud/twofactor_nextcloud_notification',
 	])) {
 		return 'main';
 	}
