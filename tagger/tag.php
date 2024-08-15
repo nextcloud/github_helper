@@ -2,7 +2,7 @@
 if(count($argv) < 3) {
 	die("tag.php \$branchname \$tag [\$historic_date]\n");
 }
-$branch = $argv[1];
+$originalBranch = $argv[1];
 $tag = $argv[2];
 
 // to the rescue, when tagging a release was forgotten
@@ -17,7 +17,7 @@ if (isset($argv[3])) {
 	$historic = $argv[3];
 }
 
-switch($branch) {
+switch($originalBranch) {
 	case 'stable19':
 	case 'stable20':
 	case 'stable21':
@@ -170,6 +170,19 @@ switch($branch) {
 		die("Branch not found :(\n");
 }
 
+function translateBranch(string $branch, string $repo): string {
+	if ($branch !== 'master') {
+		return $branch;
+	}
+	if (in_array($repo, [
+		'nextcloud/text',
+		'nextcloud/twofactor_nextcloud_notification',
+	])) {
+		return 'main';
+	}
+	return $branch;
+}
+
 // use proper temp location on dev machines, assuming it's memdisc, to not wear out physical storage
 $workDir = gethostname() === 'client-builder' ? __DIR__ : trim(shell_exec('mktemp -d'));
 fwrite(STDERR, '[Debug] Work dir is: ' . $workDir . PHP_EOL);
@@ -192,6 +205,9 @@ foreach($repositories as $repo) {
 	if ($name === 'support' && gethostname() === 'client-builder') {
 		$SSH_OPTIONS = "GIT_SSH_COMMAND='ssh -i ~/.ssh/id_rsa.support-app -o IdentitiesOnly=yes'";
 	}
+
+	$branch = translateBranch($originalBranch, $repo);
+
 	// Clone the repository and checkout the required branch
 	fwrite(STDERR, '[Debug] cd ' . $workDir . ' && ' . $SSH_OPTIONS . ' git clone ' . $depthMode . ' --branch="' . $branch . '" git@github.com:' . $repo . PHP_EOL);
 	shell_exec('cd ' . $workDir . ' && ' . $SSH_OPTIONS . ' git clone ' . $depthMode . ' --branch="' . $branch . '" git@github.com:' . $repo);
