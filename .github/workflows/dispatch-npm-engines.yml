@@ -100,7 +100,7 @@ jobs:
       - name: Create Pull Request
         id: create_pull_request
         if: steps.check_file_existence.outputs.files_exists == 'true'
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v7
         with:
           body: Automated update of the npm and node engines versions
           base: ${{ steps.extract_base.outputs.branch }}
