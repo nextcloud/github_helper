@@ -30,11 +30,13 @@
   ],
   "dueDates": {
     "Nextcloud 28.0.10": "2024-09-12",
-    "Nextcloud 29.0.6": "2024-09-12"
+    "Nextcloud 28.0.11": "2024-10-10",
+    "Nextcloud 29.0.7": "2024-09-12",
+    "Nextcloud 29.0.8": "2024-10-10"
   },
   "closeMilestones": [
     "Nextcloud 28.0.9",
-    "Nextcloud 29.0.5"
+    "Nextcloud 29.0.6"
   ],
   "addMilestones": [
     "Nextcloud 28.0.11",
