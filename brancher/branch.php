@@ -10,6 +10,7 @@ $repositories = [
 	'nextcloud/3rdparty',
 	'nextcloud-deps/ocp',
 	'nextcloud/activity',
+	'nextcloud/app_api',
 	'nextcloud/bruteforcesettings',
 	'nextcloud/circles',
 	'nextcloud/documentation',

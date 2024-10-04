@@ -141,6 +141,7 @@ switch($originalBranch) {
 			'nextcloud/server',
 			'nextcloud/3rdparty',
 			'nextcloud/activity',
+			'nextcloud/app_api',
 			'nextcloud/bruteforcesettings',
 			'nextcloud/circles',
 			'nextcloud/example-files',
@@ -177,6 +178,7 @@ function translateBranch(string $branch, string $repo): string {
 	if (in_array($repo, [
 		'nextcloud/text',
 		'nextcloud/twofactor_nextcloud_notification',
+		'nextcloud/app_api',
 	])) {
 		return 'main';
 	}
