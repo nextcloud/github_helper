@@ -3,6 +3,7 @@
   "repos": [
     "3rdparty",
     "activity",
+    "app_api",
     "bruteforcesettings",
     "circles",
     "documentation",
