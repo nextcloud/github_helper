@@ -370,7 +370,7 @@ foreach ($finder->getIterator() as $file) {
 		continue;
 	}
 
-	if ($file->getExtension() === 'php' || $file->getExtension() === 'css' || $file->getExtension() === 'scss' || $file->getExtension() === 'm' || $file->getExtension() === 'h') {
+	if ($file->getExtension() === 'php' || $file->getExtension() === 'css' || $file->getExtension() === 'scss' || $file->getExtension() === 'm' || $file->getExtension() === 'h' || $file->getExtension() === 'md' || $file->getExtension() === 'twig' || $file->getExtension() === 'xml' || $file->getExtension() === 'Dockerfile' || $file->getExtension() === 'Caddyfile' || $file->getExtension() === 'sh' || $file->getExtension() === 'conf' || $file->getExtension() === 'script' || $file->getExtension() === 'cfg' || $file->getExtension() === 'motd' || $file->getExtension() === 'yml' || $file->getExtension() === 'yaml' || $file->getExtension() === 'css') {
 		if (!str_contains($file->getRealPath(), '/lib/Vendor/')
 			&& !str_contains($file->getRealPath(), '/vendor/')
 			&& !str_contains($file->getRealPath(), '/tests/stubs/')) {
