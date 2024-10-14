@@ -148,11 +148,11 @@ function generateSpdxContent(string $originalHeader, string $file): array {
 		} elseif (str_contains(strtolower($line), 'license')) {
 			echo " ├─ ❌ \033[0;31m" . $file . ' Unrecognized license:' . "\033[0m\n";
 			echo '    └─ ' . $line . "\n";
-			abortFurtherAnalysing();
+			continue;
 		} elseif (str_contains(strtolower($line), 'copyright')) {
 			echo " ├─ ❌ \033[0;31m" . $file . ' Unrecognized copyright:' . "\033[0m\n";
 			echo '    └─ ' . $line . "\n";
-			abortFurtherAnalysing();
+			continue;
 		}
 	}
 
@@ -177,13 +177,13 @@ function replacePhpOrCSSOrMOrHCopyright(string $file, bool $isDryRun): array {
 	$headerStart = str_starts_with($content, '/*') ? 0 : strpos($content, "\n/*");
 	if ($headerStart === false) {
 		echo " ├─ ❌ \033[0;31m" . $file . ' No header comment found' . "\033[0m\n";
-		abortFurtherAnalysing();
+		return [];
 	}
 
 	$headerEnd = strpos($content, '*/', $headerStart);
 	if ($headerEnd === false) {
 		echo " ├─ ❌ \033[0;31m" . $file . ' No header comment END found' . "\033[0m\n";
-		abortFurtherAnalysing();
+		return [];
 	}
 
 	$originalHeader = substr($content, $headerStart, $headerEnd - $headerStart + strlen('*/'));
@@ -213,13 +213,13 @@ function replaceJavaScriptCopyright(string $file, bool $isDryRun): array {
 	$headerStart = str_starts_with($content, '/*') ? 0 : strpos($content, "\n/*");
 	if ($headerStart === false) {
 		echo " ├─ ❌ \033[0;31m" . $file . ' No header comment found' . "\033[0m\n";
-		abortFurtherAnalysing();
+		return [];
 	}
 
 	$headerEnd = strpos($content, '*/', $headerStart);
 	if ($headerEnd === false) {
 		echo " ├─ ❌ \033[0;31m" . $file . ' No header comment END found' . "\033[0m\n";
-		abortFurtherAnalysing();
+		return [];
 	}
 
 	$originalHeader = substr($content, $headerStart, $headerEnd - $headerStart + strlen('*/'));
@@ -249,13 +249,13 @@ function replaceVueCopyright(string $file, bool $isDryRun): array {
 	$headerStart = str_starts_with($content, '<!--') ? 0 : strpos($content, "\n<!--");
 	if ($headerStart === false) {
 		echo " ├─ ❌ \033[0;31m" . $file . ' No header comment found' . "\033[0m\n";
-		abortFurtherAnalysing();
+		return [];
 	}
 
 	$headerEnd = strpos($content, '-->', $headerStart);
 	if ($headerEnd === false) {
 		echo " ├─ ❌ \033[0;31m" . $file . ' No header comment END found' . "\033[0m\n";
-		abortFurtherAnalysing();
+		return [];
 	}
 
 	$originalHeader = substr($content, $headerStart, $headerEnd - $headerStart + strlen('-->'));
