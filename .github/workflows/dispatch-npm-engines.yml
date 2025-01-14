@@ -51,7 +51,7 @@ jobs:
         repositories: ${{ fromJSON(needs.repositories.outputs.matrix) }}
 
     env:
-      NODE_VERSION: "^20.0.0"
+      NODE_VERSION: "^22.0.0"
       NPM_VERSION: "^10.0.0"
       BRANCH_NAME: "feat/package-node-npm-engines-update"
 
