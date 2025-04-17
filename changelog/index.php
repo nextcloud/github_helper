@@ -77,6 +77,12 @@ class GenerateChangelogCommand extends Command
 			'title' => $title,
 		];
 
+		if (isset($pr['assignees']['nodes'])
+			&& count($pr['assignees']['nodes']) > 0
+			&& isset($pr['assignees']['nodes'][0]['login'])) {
+			$data['assignee'] = $pr['assignees']['nodes'][0]['login'];
+		}
+
 		if (isset($pr['author']['login'])) {
 			$data['author'] = $pr['author']['login'];
 		}
@@ -364,6 +370,11 @@ class GenerateChangelogCommand extends Command
 						author {
 							login
 						}
+						assignees(first: 1) {
+							nodes {
+								login
+							}
+						}
 						isDraft
 					}
 					pageInfo {
@@ -398,6 +409,11 @@ class GenerateChangelogCommand extends Command
 					title
 					author {
 						login
+					}
+					assignees(first: 1) {
+						nodes {
+							login
+						}
 					}
 					isDraft
 				}
@@ -434,7 +450,7 @@ QUERY;
 			$query .= '		repository(owner: "' . $orgName . '", name: "' . $repoName . '") {';
 
 			foreach ($pullRequests as $pullRequest) {
-				$query .= "pr$pullRequest: pullRequest(number: $pullRequest) { number, author {	login }, title, labels(first: 10) { nodes { id, name } } },";
+				$query .= "pr$pullRequest: pullRequest(number: $pullRequest) { number, author {	login }, assignees(first: 1) { nodes { login } }, title, labels(first: 10) { nodes { id, name } } },";
 			}
 
 			$query .= <<<'QUERY'
@@ -556,6 +572,13 @@ QUERY;
 						if ($this->isAuthorBot($author)) {
 							$author = '(generated)';
 						}
+						
+						// If backportbot, let's see if we have someone assigned
+						if (str_contains($author, 'backport')
+							&& array_key_exists('assignee', $data)) {
+							$author = '@' . $data['assignee'];
+						}
+
 						if ($prevAuthor !== $author) {
 							$output->writeln("* $author");
 							$prevAuthor = $author;
