@@ -30,22 +30,19 @@
     "viewer"
   ],
   "dueDates": {
-    "Nextcloud 29.0.15": "2025-04-10",
-    "Nextcloud 30.0.10": "2025-05-15",
-    "Nextcloud 30.0.9": "2025-04-10",
-    "Nextcloud 30.0.8": "2025-03-19",
-    "Nextcloud 31.0.4": "2025-05-15",
-    "Nextcloud 31.0.3": "2025-04-10",
-    "Nextcloud 31.0.2": "2025-03-19"
+    "Nextcloud 30.0.11": "2025-05-15",
+    "Nextcloud 30.0.12": "2025-06-12",
+    "Nextcloud 31.0.5": "2025-05-15",
+    "Nextcloud 31.0.6": "2025-06-12"
   },
   "closeMilestones": [
-    "Nextcloud 31.0.2",
-    "Nextcloud 30.0.8",
-    "Nextcloud 29.0.14"
+    "Nextcloud 31.0.4",
+    "Nextcloud 30.0.10",
+    "Nextcloud 29.0.16"
   ],
   "addMilestones": [
-    "Nextcloud 30.0.10",
-    "Nextcloud 31.0.4"
+    "Nextcloud 30.0.11",
+    "Nextcloud 31.0.5"
   ],
   "versionAdded": {}
 }
