@@ -174,6 +174,12 @@ class GenerateChangelogCommand extends Command
 			throw new Exception('Credentials file is missing - please provide your credentials in credentials.json in the root folder.');
 		}
 
+		// Check the env variable
+		if (getenv('GITHUB_TOKEN')) {
+			$client->authenticate(getenv('GITHUB_TOKEN'), Github\Client::AUTH_ACCESS_TOKEN);
+			return;
+		}
+
 		$credentialsData = json_decode(file_get_contents(__DIR__ . '/../credentials.json'), true);
 		if (!is_array($credentialsData) || !isset($credentialsData['apikey'])) {
 			throw new Exception('Credentials file can not be read or does not provide "apikey".');
@@ -209,9 +215,12 @@ class GenerateChangelogCommand extends Command
 			throw new Exception('Credentials file is missing - please provide your credentials in credentials.json in the root folder.');
 		}
 
-		$credentialsData = json_decode(file_get_contents(__DIR__ . '/../credentials.json'), true);
-		if (!is_array($credentialsData) || !isset($credentialsData['apikey'])) {
-			throw new Exception('Credentials file can not be read or does not provide "apikey".');
+		// Check that we have valid credentials
+		if (!getenv('GITHUB_TOKEN')) {
+			$credentialsData = json_decode(file_get_contents(__DIR__ . '/../credentials.json'), true);
+			if (!is_array($credentialsData) || !isset($credentialsData['apikey'])) {
+				throw new Exception('Credentials file can not be read or does not provide "apikey".');
+			}
 		}
 
 		$format = $input->getOption('format');
