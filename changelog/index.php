@@ -68,7 +68,7 @@ class GenerateChangelogCommand extends Command
 	{
 		$title = $this->cleanTitle($pr['title']);
 		$id = '#' . $pr['number'];
-		if ($repoName !== 'server') {
+		if ($repoName !== self::REPO_SERVER) {
 			$id = $repoName . $id;
 		}
 		$data = [
@@ -163,7 +163,7 @@ class GenerateChangelogCommand extends Command
 			// Return repos names
 			$orgRepositories = array_map(fn($repo): string => $repo['name'], $results);
 		} catch (\Exception $e) {
-			throw new Exception('Unable to fetch the github repositories list.');
+			throw new Exception('Unable to fetch the github repositories list: ' . $e->getMessage());
 		}
 
 		return [...$reposToIterate, ...array_intersect($orgRepositories, $shippedApps)];
@@ -514,40 +514,48 @@ QUERY;
 				$output->writeln("");
 				$output->writeln("<h4>Changes</h4>");
 				$output->writeln("<ul>");
-				foreach ($prTitles['closed'] as $id => $data) {
-					$repoName = $data['repoName'];
-					$number = $data['number'];
-					$title = $data['title'];
-					$output->writeln("\t<li><a href=\"https://github.com/$orgName/$repoName/pull/$number\">$title ($repoName#$number)</a></li>");
+				$closedPRs = $this->groupPRsByRepo($prTitles['closed']);
+				foreach ($closedPRs as $repo => $prs) {
+					$output->writeln("<li><strong><a href=\"https://github.com/$orgName/$repo\">$repo</a></strong><ul>");
+					foreach ($prs as $id => $data) {
+						$repoName = $data['repoName'];
+						$number = $data['number'];
+						$title = $data['title'];
+						$output->writeln("\t<li><a href=\"https://github.com/$orgName/$repoName/pull/$number\">$title ($repoName#$number)</a></li>");
+					}
+					$output->writeln("</ul></li>");
 				}
 				$output->writeln("</ul>");
-				$count = count($prTitles['pending']);
-				if ($count > 0) {
-					$output->writeln("<error>$count pending PRs not printed - maybe the release is not ready yet</error>");
-				}
 				break;
 			case 'forum':
-				foreach ($prTitles['closed'] as $id => $data) {
-					$repoName = $data['repoName'];
-					$number = $data['number'];
-					$title = $data['title'];
-					$output->writeln("* [$title ($repoName#$number)](https://github.com/$orgName/$repoName/pull/$number)");
-				}
-				$count = count($prTitles['pending']);
-				if ($count > 0) {
-					$output->writeln("<error>$count pending PRs not printed - maybe the release is not ready yet</error>");
+				// Making it a second heading as the first one is the title of the post
+				$output->writeln("## Nextcloud " . $milestoneToCheck);
+				$closedPRs = $this->groupPRsByRepo($prTitles['closed']);
+				foreach ($closedPRs as $repo => $prs) {
+					$output->writeln("\n### [$repo](https://github.com/$orgName/$repo)");
+					foreach ($prs as $id => $data) {
+						$repoName = $data['repoName'];
+						$number = $data['number'];
+						$title = $this->escapeMarkdown($data['title']);
+						$output->writeln("* [$title ($repoName#$number)](https://github.com/$orgName/$repoName/pull/$number)");
+					}
 				}
 				break;
 			case 'markdown':
 			default:
-				foreach ($prTitles['closed'] as $id => $data) {
-					$repoName = $data['repoName'];
-					$number = $data['number'];
-					$title = $data['title'];
-					if ($repoName === 'server') {
-						$output->writeln("* #$number");
-					} else {
-						$output->writeln("* $orgName/$repoName#$number");
+				$output->writeln("## Nextcloud " . $milestoneToCheck);
+				$closedPRs = $this->groupPRsByRepo($prTitles['closed']);
+				foreach ($closedPRs as $repo => $prs) {
+					$output->writeln("\n### [$repo](https://github.com/$orgName/$repo)");
+					foreach ($prs as $id => $data) {
+						$repoName = $data['repoName'];
+						$number = $data['number'];
+						$title = $data['title'];
+						if ($repoName === self::REPO_SERVER) {
+							$output->writeln("* #$number");
+						} else {
+							$output->writeln("* $orgName/$repoName#$number");
+						}
 					}
 				}
 
@@ -592,7 +600,7 @@ QUERY;
 							$output->writeln("* $author");
 							$prevAuthor = $author;
 						}
-						if ($repoName === 'server') {
+						if ($repoName === self::REPO_SERVER) {
 							$output->writeln("  * [ ] #$number");
 						} else {
 							$output->writeln("  * [ ] $orgName/$repoName#$number");
@@ -605,6 +613,32 @@ QUERY;
 		// Stop using cache
 		# TODO
 		#$client->removeCache();
+	}
+
+	function escapeMarkdown(string $text): string {
+		// Escape characters that break markdown
+		$escapeChars = ['*', '_', '~', '`', '[', ']', '(', ')', '#', '+', '-', '!', '|'];
+		foreach ($escapeChars as $char) {
+			$text = str_replace($char, '\\' . $char, $text);
+		}
+		return $text;
+	}
+	
+	function groupPRsByRepo($prs) {
+		$grouped = [];
+		foreach ($prs as $pr) {
+			$repo = $pr['repoName'];
+			$grouped[$repo][] = $pr;
+		}
+		ksort($grouped);
+
+		// Put server on top
+		if (isset($grouped[self::REPO_SERVER])) {
+			$serverPRs = $grouped[self::REPO_SERVER];
+			unset($grouped[self::REPO_SERVER]);
+			$grouped = array_merge([self::REPO_SERVER => $serverPRs], $grouped);
+		}
+		return $grouped;
 	}
 }
 
