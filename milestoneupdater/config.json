@@ -36,12 +36,12 @@
     "Nextcloud 31.0.8": "2025-08-07"
   },
   "closeMilestones": [
-    "Nextcloud 31.0.6",
-    "Nextcloud 30.0.12"
+    "Nextcloud 31.0.7",
+    "Nextcloud 30.0.13"
   ],
   "addMilestones": [
-    "Nextcloud 30.0.13",
-    "Nextcloud 31.0.7"
+    "Nextcloud 30.0.14",
+    "Nextcloud 31.0.8"
   ],
   "versionAdded": {}
 }
