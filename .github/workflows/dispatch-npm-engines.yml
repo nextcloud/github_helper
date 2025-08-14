@@ -52,8 +52,7 @@ jobs:
 
     env:
       NODE_VERSION: "^22.0.0"
-      NPM_VERSION: "^10.0.0"
-      BRANCH_NAME: "feat/package-node-npm-engines-update"
+      NPM_VERSION: "^10.5.0" # node 22.0.0 was shipped with 10.5.1 we should not use older NPM with Node 22
 
     steps:
       - name: Checkout target repository
