@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Check actor permission
-        uses: skjnldsv/check-actor-permission@v3
+        uses: skjnldsv/check-actor-permission@69e92a3c4711150929bca9fcf34448c5bf5526e7 # v3
         with:
           require: admin
 
@@ -52,12 +52,11 @@ jobs:
 
     env:
       NODE_VERSION: "^22.0.0"
-      NPM_VERSION: "^10.0.0"
-      BRANCH_NAME: "feat/package-node-npm-engines-update"
+      NPM_VERSION: "^10.5.0" # node 22.0.0 was shipped with 10.5.1 we should not use older NPM with Node 22
 
     steps:
       - name: Checkout target repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           token: ${{ secrets.COMMAND_BOT_PAT }}
           repository: ${{ github.repository_owner }}/${{ matrix.repositories }}
@@ -68,15 +67,6 @@ jobs:
         with:
           files: package.json
 
-      - name: Keeping default branch
-        id: extract_base
-        if: steps.check_file_existence.outputs.files_exists == 'true'
-        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
-
-      - name: Check out new branch
-        if: steps.check_file_existence.outputs.files_exists == 'true'
-        run: git checkout -b ${{ env.BRANCH_NAME }}
-
       - name: Set node version to ${{ env.NODE_VERSION }}
         if: steps.check_file_existence.outputs.files_exists == 'true'
         run: jq '.engines.node = "${{ env.NODE_VERSION }}"' package.json > package-new.json && mv package-new.json package.json
@@ -85,28 +75,19 @@ jobs:
         if: steps.check_file_existence.outputs.files_exists == 'true'
         run: jq '.engines.npm = "${{ env.NPM_VERSION }}"' package.json > package-new.json && mv package-new.json package.json
 
-      - name: Setup git
-        if: steps.check_file_existence.outputs.files_exists == 'true'
-        run: |
-          git config --local user.email "nextcloud-command@users.noreply.github.com"
-          git config --local user.name "nextcloud-command"
-
-      - name: Commit and force push
-        run: |
-          git add .
-          git commit --signoff -m 'Update npm and node engines versions'
-          git push --force origin ${{ env.BRANCH_NAME }}
-
       - name: Create Pull Request
         id: create_pull_request
         if: steps.check_file_existence.outputs.files_exists == 'true'
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7.0.8
         with:
-          body: Automated update of the npm and node engines versions
-          base: ${{ steps.extract_base.outputs.branch }}
-          branch: ${{ env.BRANCH_NAME }}
           author: Nextcloud bot <bot@nextcloud.com>
-          title: Update npm and node engines versions 
+          committer: nextcloud-command <nextcloud-command@users.noreply.github.com>
+          title: 'build: update node and npm engines versions'
+          body: Automated update of the npm and node engines versions according to ...
+          commit-message: |
+            build: update node and npm engines versions
+          signoff: true
+          branch: 'feat/package-node-npm-engines-update'
           labels: dependencies
           token: ${{ secrets.COMMAND_BOT_PAT }}
 
