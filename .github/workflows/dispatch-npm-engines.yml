@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Check actor permission
-        uses: skjnldsv/check-actor-permission@v3
+        uses: skjnldsv/check-actor-permission@69e92a3c4711150929bca9fcf34448c5bf5526e7 # v3
         with:
           require: admin
 
@@ -57,7 +57,7 @@ jobs:
 
     steps:
       - name: Checkout target repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           token: ${{ secrets.COMMAND_BOT_PAT }}
           repository: ${{ github.repository_owner }}/${{ matrix.repositories }}
@@ -100,7 +100,7 @@ jobs:
       - name: Create Pull Request
         id: create_pull_request
         if: steps.check_file_existence.outputs.files_exists == 'true'
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e # v7.0.8
         with:
           body: Automated update of the npm and node engines versions
           base: ${{ steps.extract_base.outputs.branch }}
