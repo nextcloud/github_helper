@@ -83,7 +83,7 @@ jobs:
           author: Nextcloud bot <bot@nextcloud.com>
           committer: nextcloud-command <nextcloud-command@users.noreply.github.com>
           title: 'build: update node and npm engines versions'
-          body: Automated update of the npm and node engines versions according to ...
+          body: Automated update of the npm and node engines versions according to [Nextcloud standards](https://github.com/nextcloud/standards/issues/5).
           commit-message: |
             build: update node and npm engines versions
           signoff: true
