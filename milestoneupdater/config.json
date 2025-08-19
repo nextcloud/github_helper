@@ -38,9 +38,7 @@
     "Nextcloud 30.0.14"
   ],
   "addMilestones": [
-    "Nextcloud 30.0.15",
-    "Nextcloud 31.0.9",
-    "Nextcloud 31.0.10"
+    "Nextcloud 33"
   ],
   "versionAdded": {}
 }
