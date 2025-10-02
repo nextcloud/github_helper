@@ -172,7 +172,7 @@ foreach ($repos as $index => $repo) {
         // Get all issues in the source milestone
         $issues = $paginator->fetchAll($client->api('issue'), 'all', [$org, $repo, [
             'milestone' => $sourceMilestoneNumber,
-            'state' => 'all',
+            'state' => 'open',
         ]]);
 
         if (empty($issues)) {
