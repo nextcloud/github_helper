@@ -175,6 +175,7 @@ switch($originalBranch) {
 			'nextcloud/app_api',
 			'nextcloud/bruteforcesettings',
 			'nextcloud/circles',
+			'nextcloud/documentation',
 			'nextcloud/example-files',
 			'nextcloud/files_downloadlimit',
 			'nextcloud/files_pdfviewer',
