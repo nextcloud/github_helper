@@ -34,11 +34,13 @@
     "Nextcloud 31.0.11": "2025-11-20"
   },
   "closeMilestones": [
-    "Nextcloud 31.0.9",
-    "Nextcloud 30.0.16"
+    "Nextcloud 30.0.17",
+    "Nextcloud 31.0.10",
+    "Nextcloud 32.0.1"
   ],
   "addMilestones": [
-    "Nextcloud 32.0.2",
+    "Nextcloud 31.0.12",
+    "Nextcloud 32.0.3",
     "Nextcloud 33"
   ],
   "versionAdded": {}
