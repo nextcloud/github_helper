@@ -52,7 +52,7 @@ jobs:
 
     env:
       NODE_VERSION: "^24.0.0"
-      NPM_VERSION: "^11.3.0" # node 24.0.0 was shipped with 10.3.0 we should not use older NPM with Node 24
+      NPM_VERSION: "^11.3.0" # node 24.0.0 was shipped with 11.3.0 we should not use older NPM with Node 24
 
     steps:
       - name: Checkout target repository
