@@ -51,8 +51,8 @@ jobs:
         repositories: ${{ fromJSON(needs.repositories.outputs.matrix) }}
 
     env:
-      NODE_VERSION: "^22.0.0"
-      NPM_VERSION: "^10.5.0" # node 22.0.0 was shipped with 10.5.1 we should not use older NPM with Node 22
+      NODE_VERSION: "^24.0.0"
+      NPM_VERSION: "^11.3.0" # node 24.0.0 was shipped with 10.3.0 we should not use older NPM with Node 24
 
     steps:
       - name: Checkout target repository
