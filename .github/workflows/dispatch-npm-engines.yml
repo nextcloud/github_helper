@@ -78,7 +78,7 @@ jobs:
       - name: Create Pull Request
         id: create_pull_request
         if: steps.check_file_existence.outputs.files_exists == 'true'
-        uses: peter-evans/create-pull-request@84ae59a2cdc2258d6fa0732dd66352dddae2a412 # v7.0.9
+        uses: peter-evans/create-pull-request@22a9089034f40e5a961c8808d113e2c98fb63676 # v7.0.11
         with:
           author: Nextcloud bot <bot@nextcloud.com>
           committer: nextcloud-command <nextcloud-command@users.noreply.github.com>
