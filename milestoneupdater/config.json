@@ -30,8 +30,8 @@
     "viewer"
   ],
   "dueDates": {
-    "Nextcloud 32.0.4": "2025-01-08",
-    "Nextcloud 31.0.13": "2025-01-08"
+    "Nextcloud 32.0.4": "2025-01-15",
+    "Nextcloud 31.0.13": "2025-01-15"
   },
   "closeMilestones": [
     "Nextcloud 31.0.12",
