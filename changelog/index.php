@@ -10,13 +10,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Helper\ProgressBar;
+
 # TODO
 #use Cache\Adapter\Redis\RedisCachePool;
 
 class GenerateChangelogCommand extends Command
 {
-	const ORG_NAME = 'nextcloud';
-	const REPO_SERVER = 'server';
+	public const ORG_NAME = 'nextcloud';
+	public const REPO_SERVER = 'server';
 
 	private $skipLabels = [];
 	private bool $skipDrafts;
@@ -61,7 +62,7 @@ class GenerateChangelogCommand extends Command
 		$title = preg_replace('!(\[|\()(stable)? ?\d\d(\]|\))?\W*!i', '', $title);
 		$title = preg_replace('!^\[security\]!i', '', $title);
 		$title = trim($title);
-		return strtoupper(substr($title, 0, 1)) . substr($title, 1);
+		return ucfirst($title);
 	}
 
 	protected function processPR($repoName, $pr)
@@ -75,6 +76,8 @@ class GenerateChangelogCommand extends Command
 			'repoName' => $repoName,
 			'number' => $pr['number'],
 			'title' => $title,
+			'mergeable' => $pr['mergeable'] ?? '',
+			'reviewDecision' => $pr['reviewDecision'] ?? '',
 		];
 
 		if (isset($pr['assignees']['nodes'])
@@ -101,7 +104,7 @@ class GenerateChangelogCommand extends Command
 		}
 		if (isset($pr['labels'], $pr['labels']['nodes'])) {
 			foreach ($pr['labels']['nodes'] as $label) {
-				if (in_array($label['id'], $this->skipLabels, false) || in_array(strtolower($label['name']), $this->skipLabels, false) ) {
+				if (in_array($label['id'], $this->skipLabels, false) || in_array(strtolower($label['name']), $this->skipLabels, false)) {
 					return true;
 				}
 			}
@@ -155,13 +158,13 @@ class GenerateChangelogCommand extends Command
 			$repos = $paginator->fetchAll($organizationApi, 'repositories', $parameters);
 
 			// Filter out archived and disabled repos
-			$results = array_filter($repos, function($repo): bool {
+			$results = array_filter($repos, function ($repo): bool {
 				return $repo['archived'] === false
 					&& $repo['disabled'] === false;
 			});
 
 			// Return repos names
-			$orgRepositories = array_map(fn($repo): string => $repo['name'], $results);
+			$orgRepositories = array_map(fn ($repo): string => $repo['name'], $results);
 		} catch (\Exception $e) {
 			throw new Exception('Unable to fetch the github repositories list: ' . $e->getMessage());
 		}
@@ -169,7 +172,8 @@ class GenerateChangelogCommand extends Command
 		return [...$reposToIterate, ...array_intersect($orgRepositories, $shippedApps)];
 	}
 
-	protected function authenticateGithubClient(\Github\Client $client) {
+	protected function authenticateGithubClient(\Github\Client $client)
+	{
 		if (!file_exists(__DIR__ . '/../credentials.json')) {
 			throw new Exception('Credentials file is missing - please provide your credentials in credentials.json in the root folder.');
 		}
@@ -319,7 +323,7 @@ class GenerateChangelogCommand extends Command
 			if ($head === 'master') {
 				$info = $repo->show(self::ORG_NAME, $repoName);
 				$effectiveHead = $info['default_branch'];
-			} else if ($base === 'master') {
+			} elseif ($base === 'master') {
 				$info = $repo->show(self::ORG_NAME, $repoName);
 				$effectiveBase = $info['default_branch'];
 			}
@@ -348,15 +352,15 @@ class GenerateChangelogCommand extends Command
 				foreach ($commits as $commit) {
 					$login = $commit['author']['login'] ?? $commit['committer']['login'] ?? $commit['commit']['author']['name'];
 					$fullMessage = $commit['commit']['message'];
-					list($firstLine,) = explode("\n", $fullMessage, 2);
+					list($firstLine, ) = explode("\n", $fullMessage, 2);
 					if (substr($firstLine, 0, 20) === 'Merge pull request #') {
 						if ($noBots && (str_contains($login, '[bot]') || str_contains($login, 'nextcloud-'))) {
 							// ignore this bot-created commit
 							continue;
 						}
-						
+
 						$firstLine = substr($firstLine, 20);
-						list($number,) = explode(" ", $firstLine, 2);
+						list($number, ) = explode(" ", $firstLine, 2);
 						$pullRequests[] = $number;
 					}
 				}
@@ -376,6 +380,8 @@ class GenerateChangelogCommand extends Command
 					nodes {
 						number
 						title
+						mergeable
+						reviewDecision
 						author {
 							login
 						}
@@ -589,7 +595,7 @@ QUERY;
 						if ($this->isAuthorBot($author)) {
 							$author = '(generated)';
 						}
-						
+
 						// If backportbot, let's see if we have someone assigned
 						if (str_contains($author, 'backport')
 							&& array_key_exists('assignee', $data)) {
@@ -600,12 +606,28 @@ QUERY;
 							$output->writeln("* $author");
 							$prevAuthor = $author;
 						}
+
+						$status = '';
+						if ($data['mergeable'] === 'CONFLICTING') {
+							$status = ' ⚠';
+						}
+						if ($data['reviewDecision'] === 'APPROVED') {
+							$status = ' ✅';
+						} elseif ($data['reviewDecision'] === 'CHANGES_REQUESTED') {
+							$status = ' 🔁';
+						}
+
 						if ($repoName === self::REPO_SERVER) {
-							$output->writeln("  * [ ] #$number");
-						} else {
-							$output->writeln("  * [ ] $orgName/$repoName#$number");
+							$output->writeln("  * #$number$status");
+						} else {  
+							$output->writeln("  * $orgName/$repoName#$number$status");
 						}
 					}
+
+					$output->writeln('---');
+					$output->writeln('- ⚠: conflicts detected');
+					$output->writeln('- ✅: approved');
+					$output->writeln('- 🔁: changes requested');
 				}
 				break;
 		}
@@ -615,7 +637,8 @@ QUERY;
 		#$client->removeCache();
 	}
 
-	function escapeMarkdown(string $text): string {
+	public function escapeMarkdown(string $text): string
+	{
 		// Escape characters that break markdown
 		$escapeChars = ['*', '_', '~', '`', '[', ']', '(', ')', '#', '+', '-', '!', '|'];
 		foreach ($escapeChars as $char) {
@@ -623,8 +646,9 @@ QUERY;
 		}
 		return $text;
 	}
-	
-	function groupPRsByRepo($prs) {
+
+	public function groupPRsByRepo($prs)
+	{
 		$grouped = [];
 		foreach ($prs as $pr) {
 			$repo = $pr['repoName'];
