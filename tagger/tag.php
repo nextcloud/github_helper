@@ -4,6 +4,9 @@ if(count($argv) < 3) {
 }
 $originalBranch = $argv[1];
 $tag = $argv[2];
+if (!preg_match('/^v[1-9]\d+\.\d+\.\d+(?:(?:alpha|beta|rc)\d+)?$/', $tag)) {
+  die('Invalid tag format. It should be vXX.Y.Z[alphaX|betaX|rcX]');
+}
 
 // to the rescue, when tagging a release was forgotten
 // call it with the date of the release tar ball. This can be received from the download server via, e.g.
