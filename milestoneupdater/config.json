@@ -30,16 +30,17 @@
     "viewer"
   ],
   "dueDates": {
-    "Nextcloud 32.0.4": "2025-01-15",
-    "Nextcloud 31.0.13": "2025-01-15"
+    "Nextcloud 32.0.5": "2026-01-16",
+    "Nextcloud 32.0.6": "2026-02-12",
+    "Nextcloud 32.0.7": "2026-03-12",
+    "Nextcloud 31.0.14": "2026-02-12"
   },
   "closeMilestones": [
-    "Nextcloud 31.0.12",
-    "Nextcloud 32.0.3"
+    "Nextcloud 31.0.13",
+    "Nextcloud 32.0.5"
   ],
   "addMilestones": [
-    "Nextcloud 31.0.14",
-    "Nextcloud 32.0.5",
+    "Nextcloud 32.0.7",
     "Nextcloud 33"
   ],
   "versionAdded": {}
