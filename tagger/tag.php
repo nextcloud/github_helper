@@ -170,6 +170,7 @@ switch($originalBranch) {
 	case 'stable30':
 	case 'stable31':
 	case 'stable32':
+	case 'stable33':
 	case 'master':
 		$repositories = [
 			'nextcloud/server',
