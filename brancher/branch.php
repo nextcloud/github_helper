@@ -17,6 +17,7 @@ $repositories = [
 	'nextcloud/example-files',
 	'nextcloud/files_downloadlimit',
 	'nextcloud/files_pdfviewer',
+	'nextcloud/files_lock',
 	'nextcloud/firstrunwizard',
 	'nextcloud/logreader',
 	'nextcloud/nextcloud_announcements',
