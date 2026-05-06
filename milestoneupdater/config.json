@@ -10,6 +10,7 @@
     "example-files",
     "files_downloadlimit",
     "files_pdfviewer",
+    "files_lock",
     "firstrunwizard",
     "logreader",
     "nextcloud_announcements",

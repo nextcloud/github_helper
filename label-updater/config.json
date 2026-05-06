@@ -18,6 +18,7 @@
     "files_downloadactivity",
     "files_downloadlimit",
     "files_pdfviewer",
+    "files_lock",
     "files_retention",
     "files_texteditor",
     "firstrunwizard",
