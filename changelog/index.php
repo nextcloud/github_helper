@@ -157,10 +157,12 @@ class GenerateChangelogCommand extends Command
 			$parameters = array(self::ORG_NAME);
 			$repos = $paginator->fetchAll($organizationApi, 'repositories', $parameters);
 
-			// Filter out archived and disabled repos
+			// Filter out archived and disabled repos, and appstore (name clash)
 			$results = array_filter($repos, function ($repo): bool {
 				return $repo['archived'] === false
-					&& $repo['disabled'] === false;
+					&& $repo['disabled'] === false
+					&& $repo['name'] !== 'appstore'
+					;
 			});
 
 			// Return repos names
@@ -619,7 +621,7 @@ QUERY;
 
 						if ($repoName === self::REPO_SERVER) {
 							$output->writeln("  * #$number$status");
-						} else {  
+						} else {
 							$output->writeln("  * $orgName/$repoName#$number$status");
 						}
 					}
