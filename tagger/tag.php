@@ -238,20 +238,6 @@ switch($originalBranch) {
 		die("Branch not found :(\n");
 }
 
-function translateBranch(string $branch, string $repo): string {
-	if ($branch !== 'master') {
-		return $branch;
-	}
-	if (in_array($repo, [
-		'nextcloud/text',
-		'nextcloud/twofactor_nextcloud_notification',
-		'nextcloud/app_api',
-	])) {
-		return 'main';
-	}
-	return $branch;
-}
-
 // use proper temp location on dev machines, assuming it's memdisc, to not wear out physical storage
 $workDir = gethostname() === 'client-builder' ? __DIR__ : trim(shell_exec('mktemp -d'));
 fwrite(STDERR, '[Debug] Work dir is: ' . $workDir . PHP_EOL);
@@ -275,18 +261,18 @@ foreach($repositories as $repo) {
 		$SSH_OPTIONS = "GIT_SSH_COMMAND='ssh -i ~/.ssh/id_rsa.support-app -o IdentitiesOnly=yes'";
 	}
 
-	$branch = translateBranch($originalBranch, $repo);
+	$branchOpt = $originalBranch === 'master' || $originalBranch === 'main' ? '' : '--branch='.escapeshellarg($originalBranch);
 
 	// Clone the repository and checkout the required branch
-	fwrite(STDERR, '[Debug] cd ' . $workDir . ' && ' . $SSH_OPTIONS . ' git clone ' . $depthMode . ' --branch="' . $branch . '" git@github.com:' . $repo . PHP_EOL);
-	shell_exec('cd ' . $workDir . ' && ' . $SSH_OPTIONS . ' git clone ' . $depthMode . ' --branch="' . $branch . '" git@github.com:' . $repo);
+	fwrite(STDERR, '[Debug] cd ' . $workDir . ' && ' . $SSH_OPTIONS . ' git clone ' . $depthMode . $branchOpt . ' git@github.com:' . $repo . PHP_EOL);
+	shell_exec('cd ' . $workDir . ' && ' . $SSH_OPTIONS . ' git clone ' . $depthMode . $branchOpt . ' git@github.com:' . $repo);
 
 	// checkout historic commit if applicable
 	if ($historic) {
 		if (!is_dir($workDir . '/' . $name)) {
 			// we end up here, with a failed clone, when there were no commits in our time range. We redo with depth=42.
 			// 42 for good luck. 1 Might bring too new commits.
-			shell_exec('cd ' . $workDir . ' && ' . $SSH_OPTIONS . ' git clone --depth=42 --branch="' . $branch . '" git@github.com:' . $repo);
+			shell_exec('cd ' . $workDir . ' && ' . $SSH_OPTIONS . ' git clone --depth=42 ' . $branchOpt . ' git@github.com:' . $repo);
 		}
 
 		$commitHash = trim(shell_exec('cd ' . $workDir . '/' . $name . ' && git log -n1 --format=%H --until="' . $historic . '"'));
@@ -294,7 +280,7 @@ foreach($repositories as $repo) {
 			shell_exec('cd ' . $workDir . ' && rm -rf ' . $name);
 			// we end up here, when there were no old enough commits in our time range! We redo with depth=42.
 			// 42 for good luck.
-			shell_exec('cd ' . $workDir . ' && ' . $SSH_OPTIONS . ' git clone --depth=42 --branch="' . $branch . '" git@github.com:' . $repo);
+			shell_exec('cd ' . $workDir . ' && ' . $SSH_OPTIONS . ' git clone --depth=42 ' . $branchOpt . ' git@github.com:' . $repo);
 			$commitHash = trim(shell_exec('cd ' . $workDir . '/' . $name . ' && git log -n1 --format=%H --until="' . $historic . '"'));
 		}
 		if (strlen($commitHash) !== 40) {
