@@ -1,8 +1,15 @@
 <?php
-if(count($argv) !== 2) {
+
+declare(strict_types=1);
+
+if (count($argv) !== 2) {
 	die("branch.php \$branchname\n");
 }
 $branch = $argv[1];
+
+$tmpDir = '/dev/shm/brancher';
+
+mkdir($tmpDir);
 
 // keep them in sync with the ones from tagger/tag.php
 $repositories = [
@@ -38,18 +45,20 @@ $repositories = [
 	'nextcloud-gmbh/support',
 ];
 
-foreach($repositories as $repo) {
+foreach ($repositories as $repo) {
 	$name = explode('/', $repo)[1];
 	$SSH_OPTIONS = '';
 	if ($name === 'support' && gethostname() === 'client-builder') {
 		$SSH_OPTIONS = "GIT_SSH_COMMAND='ssh -i ~/.ssh/id_rsa.support-app -o IdentitiesOnly=yes'";
 	}
 	// Clone the repository
-	shell_exec('cd ' . __DIR__ . ' && ' . $SSH_OPTIONS . ' git clone git@github.com:' . $repo);
+	shell_exec('cd ' . $tmpDir . ' && ' . $SSH_OPTIONS . ' git clone git@github.com:' . $repo . ' --depth=1');
 	// Checkout the new branch
-	shell_exec('cd ' . __DIR__ . '/'. $name . ' && git checkout -b ' . $branch);
+	shell_exec('cd ' . $tmpDir . '/' . $name . ' && git checkout -b ' . $branch);
 	// Push the branch
-	shell_exec('cd ' . __DIR__ . '/' . $name . ' && ' . $SSH_OPTIONS . ' git push origin ' . $branch);
+	shell_exec('cd ' . $tmpDir . '/' . $name . ' && ' . $SSH_OPTIONS . ' git push origin ' . $branch);
 	// Delete repository
-	shell_exec('cd ' . __DIR__ . ' && rm -rf ' . $name);
+	shell_exec('cd ' . $tmpDir . ' && rm -rf ' . $name);
 }
+
+rmdir($tmpDir);
