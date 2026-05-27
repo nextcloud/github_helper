@@ -29,6 +29,7 @@ $repositories = [
 	'nextcloud/logreader',
 	'nextcloud/nextcloud_announcements',
 	'nextcloud/notifications',
+	'nextcloud/office',
 	'nextcloud/password_policy',
 	'nextcloud/photos',
 	'nextcloud/privacy',
