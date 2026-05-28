@@ -239,9 +239,65 @@ switch($originalBranch) {
 		die("Branch not found :(\n");
 }
 
+// Check if gh CLI is available
+$exitCode = 0;
+exec('which gh 2>/dev/null', $devNull, $exitCode);
+$ghAvailable = $exitCode === 0;
+unset($devNull, $exitCode);
+
+if ($ghAvailable) {
+	fwrite(STDERR, '[Info] Using gh API for tagging (fast mode)' . PHP_EOL);
+} else {
+	fwrite(STDERR, '[Info] gh CLI not found, falling back to git clone' . PHP_EOL);
+}
+
+/**
+ * Tag a repository via gh release create + delete (keeps the tag).
+ * Always tags current branch HEAD.
+ *
+ * @return bool true on success
+ */
+function tagViaGh(string $repo, string $branch, string $tag): bool {
+	// Check if release already exists (e.g. server creates its own release separately)
+	$exitCode = 0;
+	exec(sprintf(
+		'gh release view %s --repo %s 2>/dev/null',
+		escapeshellarg($tag), escapeshellarg($repo)
+	), $viewOutput, $exitCode);
+	$releaseExists = $exitCode === 0;
+
+	$exitCode = 0;
+	exec(sprintf(
+		'gh release create %s --repo %s --target %s --title %s --notes "" 2>&1',
+		escapeshellarg($tag), escapeshellarg($repo), escapeshellarg($branch), escapeshellarg($tag)
+	), $output, $exitCode);
+	if ($exitCode !== 0) {
+		// If release already existed, tag already exists too — that's fine
+		if ($releaseExists) {
+			fwrite(STDERR, '[OK] ' . $repo . ' already has release ' . $tag . ', skipping' . PHP_EOL);
+			return true;
+		}
+		fwrite(STDERR, '[Warning] gh: could not create release for ' . $repo . ': ' . trim(implode('', $output)) . PHP_EOL);
+		return false;
+	}
+
+	// Only delete the release if we just created it
+	sleep(1);
+	$exitCode = 0;
+	exec(sprintf(
+		'gh release delete %s --repo %s --yes 2>&1',
+		escapeshellarg($tag), escapeshellarg($repo)
+	), $deleteOutput, $exitCode);
+	if ($exitCode !== 0) {
+		fwrite(STDERR, '[Warning] gh: release created but could not delete for ' . $repo . ': ' . trim(implode('', $deleteOutput)) . PHP_EOL);
+	}
+
+	fwrite(STDERR, '[OK] ' . $repo . ' tagged ' . $tag . ' (via gh)' . PHP_EOL);
+	return true;
+}
+
 // use proper temp location on dev machines, assuming it's memdisc, to not wear out physical storage
-$workDir = gethostname() === 'client-builder' ? __DIR__ : trim(shell_exec('mktemp -d'));
-fwrite(STDERR, '[Debug] Work dir is: ' . $workDir . PHP_EOL);
+$workDir = gethostname() === 'client-builder' ? __DIR__ : null;
 
 // for historic commits we need to pull some more history to be able to find the relevant commit
 $depthMode = '--depth=1';
@@ -256,6 +312,20 @@ if ($historic) {
 }
 
 foreach($repositories as $repo) {
+	// Try gh API first
+	if ($ghAvailable && !$historic) {
+		if (tagViaGh($repo, $originalBranch, $tag)) {
+			continue;
+		}
+		fwrite(STDERR, '[Info] Falling back to git clone for ' . $repo . PHP_EOL);
+	}
+
+	// Fallback: clone + signed tag
+	if ($workDir === null) {
+		$workDir = trim(shell_exec('mktemp -d'));
+		fwrite(STDERR, '[Debug] Work dir is: ' . $workDir . PHP_EOL);
+	}
+
 	$name = explode('/', $repo)[1];
 	$SSH_OPTIONS = '';
 	if ($name === 'support' && gethostname() === 'client-builder') {
