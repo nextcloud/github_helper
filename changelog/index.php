@@ -293,6 +293,8 @@ class GenerateChangelogCommand extends Command
 			$output->writeln('<error>No version detected - the output will not contain any pending PRs. Use a git tag starting with "v" like "v13.0.5".</error>');
 		}
 
+		$displayVersion = (substr($head, 0, 1) === 'v') ? substr($head, 1) : ($milestoneToCheck ?? $head);
+
 		$prTitles = ['closed' => [], 'pending' => []];
 
 		# TODO
@@ -351,17 +353,13 @@ class GenerateChangelogCommand extends Command
 				$effectiveBase = $info['default_branch'];
 			}
 			if (in_array($repoName, $newApps)) {
-				$output->writeln('<info>' . $repoName . ' is new in this release.</info>');
-				// print 3 empty lines to not overwrite the message with the progress bar
-				$output->writeln('');
-				$output->writeln('');
-				$output->writeln('');
 				$prTitles['closed'][$repoName . '#0'] = [
 					'repoName' => $repoName,
 					'number' => 0,
 					'title' => 'Newly added in this release',
 					'newApp' => true,
 				];
+				$progressBar->setMessage("$repoName is new in this release.");
 				$progressBar->advance();
 				continue;
 			}
@@ -542,7 +540,7 @@ QUERY;
 
 		switch ($format) {
 			case 'html':
-				$version = $milestoneToCheck;
+				$version = $displayVersion;
 				$versionDashed = str_replace('.', '-', $version);
 				$date = new \DateTime('now');
 				$date = $date->add(new \DateInterval('P1D'));
@@ -577,7 +575,7 @@ QUERY;
 				break;
 			case 'forum':
 				// Making it a second heading as the first one is the title of the post
-				$output->writeln("## Nextcloud " . $milestoneToCheck);
+				$output->writeln("## Nextcloud " . $displayVersion);
 				$closedPRs = $this->groupPRsByRepo($prTitles['closed']);
 				foreach ($closedPRs as $repo => $prs) {
 					$output->writeln("\n### [$repo](https://github.com/$orgName/$repo)");
@@ -595,7 +593,7 @@ QUERY;
 				break;
 			case 'markdown':
 			default:
-				$output->writeln("## Nextcloud " . $milestoneToCheck);
+				$output->writeln("## Nextcloud " . $displayVersion);
 				$closedPRs = $this->groupPRsByRepo($prTitles['closed']);
 				foreach ($closedPRs as $repo => $prs) {
 					$output->writeln("\n### [$repo](https://github.com/$orgName/$repo)");
