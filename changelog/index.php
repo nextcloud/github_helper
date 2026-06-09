@@ -359,7 +359,7 @@ class GenerateChangelogCommand extends Command
 				$prTitles['closed'][$repoName . '#0'] = [
 					'repoName' => $repoName,
 					'number' => 0,
-					'title' => 'Newly created and added in this release',
+					'title' => 'Newly added in this release',
 					'newApp' => true,
 				];
 				$progressBar->advance();
