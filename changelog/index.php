@@ -65,6 +65,21 @@ class GenerateChangelogCommand extends Command
 		return ucfirst($title);
 	}
 
+	/**
+	 * The shippedApps list from core/shipped.json at a given server ref
+	 * (tag or branch). Returns [] when it can't be fetched.
+	 */
+	protected function getShippedApps($ref)
+	{
+		$client = new \GuzzleHttp\Client();
+		try {
+			$res = $client->request('GET', "https://raw.githubusercontent.com/nextcloud/server/$ref/core/shipped.json");
+			return json_decode($res->getBody()->getContents(), true)['shippedApps'] ?? [];
+		} catch (\Exception $e) {
+			return [];
+		}
+	}
+
 	protected function processPR($repoName, $pr)
 	{
 		$title = $this->cleanTitle($pr['title']);
@@ -130,12 +145,10 @@ class GenerateChangelogCommand extends Command
 	 */
 	protected function getReposToIterate($head = 'master')
 	{
-		$client = new \GuzzleHttp\Client();
 		$ghClient = new \Github\Client();
 		$this->authenticateGithubClient($ghClient);
 
 		// TODO iterate over all repos
-		$shippedApps = [];
 		$orgRepositories = [];
 		$reposToIterate = [
 			"server",
@@ -143,10 +156,8 @@ class GenerateChangelogCommand extends Command
 			"updater"
 		];
 
-		try {
-			$res = $client->request('GET', "https://raw.githubusercontent.com/nextcloud/server/$head/core/shipped.json");
-			$shippedApps = json_decode($res->getBody()->getContents(), true)['shippedApps'] ?? [];
-		} catch (\Exception $e) {
+		$shippedApps = $this->getShippedApps($head);
+		if (empty($shippedApps)) {
 			throw new Exception('Unable to fetch the shipped apps list.');
 		}
 
@@ -316,6 +327,16 @@ class GenerateChangelogCommand extends Command
 
 		$isBetaNull = strpos($base, 'beta0') !== false;
 
+		// Apps shipped at head but not at base are new in this release. They get
+		// a dedicated changelog note instead of a (meaningless) PR diff.
+		$newApps = [];
+		if ($repoName === self::REPO_SERVER) {
+			$baseShipped = $this->getShippedApps($base);
+			if (!empty($baseShipped)) {
+				$newApps = array_diff($this->getShippedApps($head), $baseShipped);
+			}
+		}
+
 		foreach ($reposToIterate as $repoName) {
 			$pullRequests = [];
 			/** @var \Github\Api\Repo $repo */
@@ -328,6 +349,21 @@ class GenerateChangelogCommand extends Command
 			} elseif ($base === 'master') {
 				$info = $repo->show(self::ORG_NAME, $repoName);
 				$effectiveBase = $info['default_branch'];
+			}
+			if (in_array($repoName, $newApps)) {
+				$output->writeln('<info>' . $repoName . ' is new in this release.</info>');
+				// print 3 empty lines to not overwrite the message with the progress bar
+				$output->writeln('');
+				$output->writeln('');
+				$output->writeln('');
+				$prTitles['closed'][$repoName . '#0'] = [
+					'repoName' => $repoName,
+					'number' => 0,
+					'title' => 'Newly created and added in this release',
+					'newApp' => true,
+				];
+				$progressBar->advance();
+				continue;
 			}
 			if (!$isBetaNull) {
 				try {
@@ -526,6 +562,10 @@ QUERY;
 				foreach ($closedPRs as $repo => $prs) {
 					$output->writeln("<li><strong><a href=\"https://github.com/$orgName/$repo\">$repo</a></strong><ul>");
 					foreach ($prs as $id => $data) {
+						if (!empty($data['newApp'])) {
+							$output->writeln("\t<li>" . htmlspecialchars($data['title']) . "</li>");
+							continue;
+						}
 						$repoName = $data['repoName'];
 						$number = $data['number'];
 						$title = $data['title'];
@@ -542,6 +582,10 @@ QUERY;
 				foreach ($closedPRs as $repo => $prs) {
 					$output->writeln("\n### [$repo](https://github.com/$orgName/$repo)");
 					foreach ($prs as $id => $data) {
+						if (!empty($data['newApp'])) {
+							$output->writeln("* " . $this->escapeMarkdown($data['title']));
+							continue;
+						}
 						$repoName = $data['repoName'];
 						$number = $data['number'];
 						$title = $this->escapeMarkdown($data['title']);
@@ -556,6 +600,10 @@ QUERY;
 				foreach ($closedPRs as $repo => $prs) {
 					$output->writeln("\n### [$repo](https://github.com/$orgName/$repo)");
 					foreach ($prs as $id => $data) {
+						if (!empty($data['newApp'])) {
+							$output->writeln("* " . $data['title']);
+							continue;
+						}
 						$repoName = $data['repoName'];
 						$number = $data['number'];
 						$title = $data['title'];
