@@ -12,3 +12,26 @@ updates:
     open-pull-requests-limit: 10
     labels:
       - dependencies
+    cooldown:
+      default-days: 10
+
+  # Composer: Tooling
+  - package-ecosystem: composer
+    directories:
+      - "/changelog"
+      - "/collaboration-checker"
+      - "/label-updater"
+      - "/milestonemover"
+      - "/milestoneupdater"
+      - "/sensitive-issue-searcher"
+      - "/spdx-convertor"
+    versioning-strategy: "increase"
+    schedule:
+      interval: weekly
+      day: saturday
+      time: "03:00"
+      timezone: Europe/Berlin
+    labels:
+      - dependencies
+    cooldown:
+      default-days: 10
