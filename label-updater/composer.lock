@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "40fb2b82e8c3392a8a05d47ba0734683",
+    "content-hash": "e3b35aac021488c9ea39742a0f90cc3a",
     "packages": [
         {
             "name": "clue/stream-filter",
@@ -986,20 +986,20 @@
         },
         {
             "name": "psr/cache",
-            "version": "1.0.1",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/cache.git",
-                "reference": "d11b50ad223250cf17b86e38383413f5a6764bf8"
+                "reference": "aa5030cfa5405eccfdcb1083ce040c2cb8d253bf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/cache/zipball/d11b50ad223250cf17b86e38383413f5a6764bf8",
-                "reference": "d11b50ad223250cf17b86e38383413f5a6764bf8",
+                "url": "https://api.github.com/repos/php-fig/cache/zipball/aa5030cfa5405eccfdcb1083ce040c2cb8d253bf",
+                "reference": "aa5030cfa5405eccfdcb1083ce040c2cb8d253bf",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0"
+                "php": ">=8.0.0"
             },
             "type": "library",
             "extra": {
@@ -1019,7 +1019,7 @@
             "authors": [
                 {
                     "name": "PHP-FIG",
-                    "homepage": "http://www.php-fig.org/"
+                    "homepage": "https://www.php-fig.org/"
                 }
             ],
             "description": "Common interface for caching libraries",
@@ -1029,9 +1029,9 @@
                 "psr-6"
             ],
             "support": {
-                "source": "https://github.com/php-fig/cache/tree/master"
+                "source": "https://github.com/php-fig/cache/tree/3.0.0"
             },
-            "time": "2016-08-06T20:24:11+00:00"
+            "time": "2021-02-03T23:26:27+00:00"
         },
         {
             "name": "psr/http-client",
@@ -1465,29 +1465,30 @@
         },
         {
             "name": "tedivm/stash",
-            "version": "v0.16.0",
+            "version": "v1.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tedious/Stash.git",
-                "reference": "7d42f58e4f395397d7c76d4eff55eb56aacadc34"
+                "reference": "39c426ed180f25a40c973608370191dacd5e0b56"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tedious/Stash/zipball/7d42f58e4f395397d7c76d4eff55eb56aacadc34",
-                "reference": "7d42f58e4f395397d7c76d4eff55eb56aacadc34",
+                "url": "https://api.github.com/repos/tedious/Stash/zipball/39c426ed180f25a40c973608370191dacd5e0b56",
+                "reference": "39c426ed180f25a40c973608370191dacd5e0b56",
                 "shasum": ""
             },
             "require": {
-                "php": ">7.0",
-                "psr/cache": "~1.0"
+                "php": "^8.0",
+                "psr/cache": "^2|^3"
             },
             "provide": {
-                "psr/cache-implementation": "1.0.0"
+                "psr/cache-implementation": "2.0|3.0"
             },
             "require-dev": {
+                "dms/phpunit-arraysubset-asserts": "^0.5.0",
                 "friendsofphp/php-cs-fixer": "^2.8",
-                "phpunit/phpunit": "^6",
-                "satooshi/php-coveralls": "1.0.*"
+                "php-coveralls/php-coveralls": "^2.0",
+                "phpunit/phpunit": "^9.0|^10"
             },
             "type": "library",
             "autoload": {
@@ -1523,15 +1524,19 @@
             ],
             "support": {
                 "issues": "https://github.com/tedious/Stash/issues",
-                "source": "https://github.com/tedious/Stash/tree/v0.16.0"
+                "source": "https://github.com/tedious/Stash/tree/v1.2.2"
             },
             "funding": [
+                {
+                    "url": "https://github.com/tedivm",
+                    "type": "github"
+                },
                 {
                     "url": "https://tidelift.com/funding/github/packagist/tedivm/stash",
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-01-18T04:06:48+00:00"
+            "time": "2025-12-27T14:08:18+00:00"
         }
     ],
     "packages-dev": [],
