@@ -2,6 +2,6 @@
     "require": {
         "symfony/console": "^8.1",
         "knplabs/github-api": "^3.16",
-        "guzzlehttp/guzzle": "^7.4"
+        "guzzlehttp/guzzle": "^7.12"
     }
 }
