@@ -14,6 +14,9 @@ updates:
       - dependencies
     cooldown:
       default-days: 10
+    groups:
+      actions:
+        applies-to: version-updates
 
   # Composer: Tooling
   - package-ecosystem: composer
@@ -35,3 +38,7 @@ updates:
       - dependencies
     cooldown:
       default-days: 10
+    groups:
+      composer:
+        applies-to: version-updates
+        group-by: dependency-name
