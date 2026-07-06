@@ -17,6 +17,8 @@ updates:
     groups:
       actions:
         applies-to: version-updates
+        patterns:
+          - "*"
 
   # Composer: Tooling
   - package-ecosystem: composer
