@@ -716,7 +716,10 @@ QUERY;
 	}
 }
 
-$application = new Application();
-
-$application->add(new GenerateChangelogCommand());
-$application->run();
+// Only bootstrap and run the application when executed directly on the CLI,
+// so the command class can be loaded by tests without running the app.
+if (PHP_SAPI === 'cli' && isset($_SERVER['SCRIPT_FILENAME']) && realpath($_SERVER['SCRIPT_FILENAME']) === __FILE__) {
+	$application = new Application();
+	$application->addCommand(new GenerateChangelogCommand());
+	$application->run();
+}

@@ -38,13 +38,12 @@ $searchTerms = [
 
 
 $client = new \Github\Client();
-$client->authenticate($token, '', \Github\Client::AUTH_HTTP_TOKEN);
+$client->authenticate($token, \Github\AuthMethod::ACCESS_TOKEN);
 
 
-$paginator  = new Github\ResultPager($client);
+$paginator  = new Github\ResultPager($client, 100);
 /** @var \Github\Api\Issue $issues */
 $issueApi = $client->api('issue');
-$issueApi->setPerPage(100);
 /** @var array $issues */
 $issues = $paginator->fetchAll($issueApi, 'all', [$owner, $repository , ['state' => 'all']]);
 foreach($issues as $issue) {

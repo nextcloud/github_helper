@@ -3,5 +3,11 @@
         "symfony/console": "^8.1",
         "knplabs/github-api": "^3.16",
         "guzzlehttp/guzzle": "^7.13"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.5"
+    },
+    "scripts": {
+        "test": "phpunit"
     }
 }
