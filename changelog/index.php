@@ -22,7 +22,7 @@ class GenerateChangelogCommand extends Command
 	private $skipLabels = [];
 	private bool $skipDrafts;
 
-	protected function configure()
+	protected function configure(): void
 	{
 		$this
 			->setName('generate:changelog')
@@ -219,7 +219,7 @@ class GenerateChangelogCommand extends Command
 	/**
 	 * @throws Exception
 	 */
-	protected function execute(InputInterface $input, OutputInterface $output)
+	protected function execute(InputInterface $input, OutputInterface $output): int
 	{
 		$repoName = $input->getArgument('repo');
 		$base = $input->getArgument('base');
@@ -683,6 +683,8 @@ QUERY;
 		// Stop using cache
 		# TODO
 		#$client->removeCache();
+
+		return Command::SUCCESS;
 	}
 
 	public function escapeMarkdown(string $text): string
