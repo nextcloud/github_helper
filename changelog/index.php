@@ -718,5 +718,5 @@ QUERY;
 
 $application = new Application();
 
-$application->add(new GenerateChangelogCommand());
+$application->addCommand(new GenerateChangelogCommand());
 $application->run();
