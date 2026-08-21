@@ -201,6 +201,40 @@ switch($originalBranch) {
 		];
 		break;
 	case 'stable34':
+		$repositories = [
+			'nextcloud/server',
+			'nextcloud/3rdparty',
+			'nextcloud/activity',
+			'nextcloud/app_api',
+			'nextcloud/bruteforcesettings',
+			'nextcloud/circles',
+			'nextcloud/documentation',
+			'nextcloud/example-files',
+			'nextcloud/files_downloadlimit',
+			'nextcloud/files_pdfviewer',
+			'nextcloud/files_lock',
+			'nextcloud/firstrunwizard',
+			'nextcloud/logreader',
+			'nextcloud/nextcloud_announcements',
+			'nextcloud/notifications',
+			'nextcloud/office',
+			'nextcloud/password_policy',
+			'nextcloud/photos',
+			'nextcloud/privacy',
+			'nextcloud/recommendations',
+			'nextcloud/related_resources',
+			'nextcloud/serverinfo',
+			'nextcloud/survey_client',
+			'nextcloud/suspicious_login',
+			'nextcloud/text',
+			'nextcloud/twofactor_nextcloud_notification',
+			'nextcloud/twofactor_totp',
+			'nextcloud/updater',
+			'nextcloud/viewer',
+			'nextcloud-gmbh/support',
+		];
+		break;
+	case 'stable35':
 	case 'master':
 		$repositories = [
 			'nextcloud/server',
@@ -209,6 +243,7 @@ switch($originalBranch) {
 			'nextcloud/app_api',
 			'nextcloud/bruteforcesettings',
 			'nextcloud/circles',
+			'nextcloud/dbdoctor',
 			'nextcloud/documentation',
 			'nextcloud/example-files',
 			'nextcloud/files_downloadlimit',
