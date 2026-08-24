@@ -21,32 +21,6 @@ if (isset($argv[3])) {
 }
 
 switch($originalBranch) {
-	case 'stable21':
-		// keep them in sync with the ones from brancher/branch.php
-		$repositories = [
-			'nextcloud/server',
-			'nextcloud/3rdparty',
-			'nextcloud/activity',
-			'nextcloud/example-files',
-			'nextcloud/files_pdfviewer',
-			'nextcloud/files_rightclick',
-			'nextcloud/files_videoplayer',
-			'nextcloud/firstrunwizard',
-			'nextcloud/logreader',
-			'nextcloud/nextcloud_announcements',
-			'nextcloud/notifications',
-			'nextcloud/password_policy',
-			'nextcloud/photos',
-			'nextcloud/privacy',
-			'nextcloud/recommendations',
-			'nextcloud/serverinfo',
-			'nextcloud/survey_client',
-			'nextcloud/text',
-			'nextcloud/updater',
-			'nextcloud/viewer',
-			'nextcloud-gmbh/support',
-		];
-		break;
 	case 'stable22':
 	case 'stable23':
 	case 'stable24':
@@ -201,6 +175,40 @@ switch($originalBranch) {
 		];
 		break;
 	case 'stable34':
+		$repositories = [
+			'nextcloud/server',
+			'nextcloud/3rdparty',
+			'nextcloud/activity',
+			'nextcloud/app_api',
+			'nextcloud/bruteforcesettings',
+			'nextcloud/circles',
+			'nextcloud/documentation',
+			'nextcloud/example-files',
+			'nextcloud/files_downloadlimit',
+			'nextcloud/files_pdfviewer',
+			'nextcloud/files_lock',
+			'nextcloud/firstrunwizard',
+			'nextcloud/logreader',
+			'nextcloud/nextcloud_announcements',
+			'nextcloud/notifications',
+			'nextcloud/office',
+			'nextcloud/password_policy',
+			'nextcloud/photos',
+			'nextcloud/privacy',
+			'nextcloud/recommendations',
+			'nextcloud/related_resources',
+			'nextcloud/serverinfo',
+			'nextcloud/survey_client',
+			'nextcloud/suspicious_login',
+			'nextcloud/text',
+			'nextcloud/twofactor_nextcloud_notification',
+			'nextcloud/twofactor_totp',
+			'nextcloud/updater',
+			'nextcloud/viewer',
+			'nextcloud-gmbh/support',
+		];
+		break;
+	case 'stable35':
 	case 'master':
 		$repositories = [
 			'nextcloud/server',
@@ -209,6 +217,7 @@ switch($originalBranch) {
 			'nextcloud/app_api',
 			'nextcloud/bruteforcesettings',
 			'nextcloud/circles',
+			'nextcloud/dbdoctor',
 			'nextcloud/documentation',
 			'nextcloud/example-files',
 			'nextcloud/files_downloadlimit',
