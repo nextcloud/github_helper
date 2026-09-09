@@ -20,7 +20,6 @@ $repositories = [
 	'nextcloud/app_api',
 	'nextcloud/bruteforcesettings',
 	'nextcloud/circles',
-	'nextcloud/dbdoctor',
 	'nextcloud/documentation',
 	'nextcloud/example-files',
 	'nextcloud/files_downloadlimit',
