@@ -35,7 +35,7 @@ $GIT remote set-url --push origin git@github.com:nextcloud-gmbh/$APP_ID.git
 
 $GIT checkout --orphan gmbh-main
 
-cat > README.md<<'EOF'
+cat > README.md<<EOF
 # $APP_ID
 
 This repository is a clone of https://github.com/nextcloud/$APP_ID
