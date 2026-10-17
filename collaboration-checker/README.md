@@ -10,3 +10,5 @@ The result in JSON format shows the repos to which the user has access to, with 
 1. The user lacks permissions
 2. The user has read permissions on repos of public organizations
 3. The user has simple write permissions on repos of `nextcloud`
+
+Additionally, repos are listed with a `codeowners` key when the user is listed in the `CODEOWNERS` file of the default branch, regardless of their permissions. The key contains that branch plus latest stable branches on which the user is listed.

@@ -3,5 +3,10 @@
         "knplabs/github-api": "^3.16",
         "guzzlehttp/guzzle": "^8.2",
         "ext-json": "*"
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
     }
 }
