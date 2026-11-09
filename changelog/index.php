@@ -153,7 +153,8 @@ class GenerateChangelogCommand extends Command
 		$reposToIterate = [
 			"server",
 			"3rdparty",
-			"updater"
+			"updater",
+			"documentation",
 		];
 
 		$shippedApps = $this->getShippedApps($head);
