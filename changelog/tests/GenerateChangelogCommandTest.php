@@ -79,4 +79,36 @@ final class GenerateChangelogCommandTest extends TestCase
 			);
 		}
 	}
+
+	public function testCleanTitleRemovesRecognizedLeadingPrefixes(): void
+	{
+		$command = new class extends GenerateChangelogCommand {
+			public function normalizeTitle(string $title): string
+			{
+				return $this->cleanTitle($title);
+			}
+		};
+
+		$cases = [
+			'stacked stable branches' => ['[stable33] [stable35] fix: example', 'Fix: example'],
+			'master branch' => ['[stable33] [master] fix: example', 'Fix: example'],
+			'main branch' => ['[main] fix: example', 'Fix: example'],
+			'security before branch' => ['[security] [stable33] fix: example', 'Fix: example'],
+			'security after branch' => ['[stable33] [security] fix: example', 'Fix: example'],
+			'security between branches' => ['[stable33] [security] [stable35] fix: example', 'Fix: example'],
+			'case insensitive' => ['[SECURITY] [STABLE33] [MASTER] fix: example', 'Fix: example'],
+			'parenthesized branch' => ['(stable33) (master) fix: example', 'Fix: example'],
+			'numeric version' => ['[33] fix: example', 'Fix: example'],
+			'unrecognized prefix' => ['[stable33] [master] [blah] fix: example', '[blah] fix: example'],
+			'stop at unrecognized prefix' => ['[blah] [stable33] fix: example', '[blah] [stable33] fix: example'],
+			'branch inside title' => ['fix [stable33] thing', 'Fix [stable33] thing'],
+			'unclosed prefix' => ['[stable33 fix: example', '[stable33 fix: example'],
+			'mismatched delimiters' => ['[stable33) fix: example', '[stable33) fix: example'],
+			'parenthesized security is not recognized' => ['(security) fix: example', '(security) fix: example'],
+		];
+
+		foreach ($cases as $name => [$input, $expected]) {
+			$this->assertSame($expected, $command->normalizeTitle($input), $name);
+		}
+	}
 }
