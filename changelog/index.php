@@ -60,12 +60,10 @@ class GenerateChangelogCommand extends Command
 	protected function cleanTitle($title)
 	{
 		$title = preg_replace(
-			'!^(?:(?:\[(?:(?:stable)? ?\d\d|master)\]|\((?:(?:stable)? ?\d\d|master)\))[\s:,-]*)+!i',
+			'!^(?:(?:\[(?:(?:stable)? ?\d\d|master|main|security)\]|\((?:(?:stable)? ?\d\d|master|main)\))[\s:,-]*)+!i',
 			'',
 			$title,
 		);
-
-		$title = preg_replace('!^\[security\]!i', '', $title);
 		$title = trim($title);
 		return ucfirst($title);
 	}
